@@ -14,6 +14,28 @@ jobs:
         with:
           node-version: '22'
       - run: npm test
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: empezar_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: empezar_test
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -f supabase/test-bootstrap.sql -f supabase/migrations/202609050001_initial.sql -f supabase/test-wallet.sql
   ios:
     runs-on: macos-15
     steps:
@@ -27,4 +49,9 @@ jobs:
         working-directory: apps/ios
       - name: Build native app
         run: xcodebuild -project Empezar.xcodeproj -scheme Empezar -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+        working-directory: apps/ios
+      - name: Run native tests
+        run: |
+          device_id=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for devices in d["devices"].values() for x in devices if x["name"].startswith("iPhone")))')
+          xcodebuild -project Empezar.xcodeproj -scheme Empezar -destination "platform=iOS Simulator,id=$device_id" CODE_SIGNING_ALLOWED=NO test
         working-directory: apps/ios
