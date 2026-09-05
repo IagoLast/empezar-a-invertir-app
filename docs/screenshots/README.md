@@ -1,7 +1,7 @@
 # Capturas nativas de iPhone
 
 Capturadas en el simulador de iOS después de compilar y pasar los tests.
-Código de la captura: `c3082d2b5977fa4ef01e1c51ab46ae8f295ab98c`.
+Código de la captura: `338552cf54139bfba51c3764c3c7df53dd758cdc`.
 
 Blanco y azul por defecto. El tema se cambia en **Perfil → Apariencia** y se conserva entre sesiones.
 Las capturas usan una cuenta sin autenticar: las cotizaciones no disponibles aparecen como `—`, sin precios ni rentabilidades inventados.
