@@ -59,6 +59,12 @@ jobs:
         working-directory: apps/ios
       - name: Capture native iPhone screens
         run: bash scripts/capture-ios.sh
+      - name: Upload native screenshots for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-iphone-screenshots
+          path: docs/screenshots
+          retention-days: 14
       - name: Keep screenshots in the repository
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |

@@ -5,15 +5,15 @@ struct LearnView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 27) {
-                Text("Un poco más claro.\nCada día.").font(.system(.largeTitle, design: .serif)).padding(.top, 12)
+                Text("Un poco más claro.\nCada día.").font(.system(.largeTitle, design: .rounded)).padding(.top, 12)
                 Text("Ideas pequeñas para tomar decisiones más conscientes.").font(.subheadline).foregroundStyle(Theme.muted).lineSpacing(4)
                 HStack { Text("LOS FUNDAMENTOS").font(.caption).tracking(1.4); Spacer(); Text("\(store.portfolio.completedLessons.count) de 4").font(.caption) }
-                ProgressView(value: Double(store.portfolio.completedLessons.count), total: 4).tint(Theme.ink).accessibilityLabel("Lecciones completadas")
+                ProgressView(value: Double(store.portfolio.completedLessons.count), total: 4).tint(Theme.accent).accessibilityLabel("Lecciones completadas")
                 ForEach(Content.lessons) { lesson in
                     NavigationLink { LessonView(lesson: lesson) } label: {
                         VStack(alignment: .leading, spacing: 18) {
-                            HStack { Text(lesson.number).font(.system(.title, design: .serif)); Spacer(); Image(systemName: store.portfolio.completedLessons.contains(lesson.id) ? "checkmark.circle.fill" : lesson.icon).font(.title2) }
-                            Text(lesson.title).font(.system(.title2, design: .serif))
+                            HStack { Text(lesson.number).font(.system(.title, design: .rounded)); Spacer(); Image(systemName: store.portfolio.completedLessons.contains(lesson.id) ? "checkmark.circle.fill" : lesson.icon).font(.title2) }
+                            Text(lesson.title).font(.system(.title2, design: .rounded))
                             HStack { Text("\(lesson.minutes) min · \(lesson.subtitle)").font(.caption); Spacer(); Image(systemName: "arrow.right") }
                         }.padding(23).foregroundStyle(Theme.ink).background(Theme.surface, in: RoundedRectangle(cornerRadius: 25))
                     }.buttonStyle(.plain)
@@ -32,7 +32,7 @@ struct LessonView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 27) {
                 HStack { Pill(text: "Lección \(lesson.number)", icon: lesson.icon); Spacer(); Text("\(lesson.minutes) min").font(.caption).foregroundStyle(Theme.muted) }
-                Text(lesson.title).font(.system(.largeTitle, design: .serif))
+                Text(lesson.title).font(.system(.largeTitle, design: .rounded))
                 Text(lesson.subtitle).font(.title3).foregroundStyle(Theme.muted)
                 ForEach(Array(lesson.paragraphs.enumerated()), id: \.offset) { _, paragraph in Text(paragraph).font(.body).lineSpacing(7).fixedSize(horizontal: false, vertical: true) }
                 ReadingCard(eyebrow: "Quédate con esto", title: lesson.takeaway, text: lesson.exercise, dark: true)
@@ -55,7 +55,7 @@ struct ValuationView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 27) {
                 Pill(text: "Tus supuestos", icon: "slider.horizontal.3")
-                Text("El valor depende\nde lo que asumes.").font(.system(.largeTitle, design: .serif))
+                Text("El valor depende\nde lo que asumes.").font(.system(.largeTitle, design: .rounded))
                 Text("Un ejercicio de beneficio × múltiplo. No es una valoración completa ni una recomendación de compra.").font(.subheadline).foregroundStyle(Theme.muted).lineSpacing(4)
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Beneficio anual por acción estimado ($)").font(.subheadline)

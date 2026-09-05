@@ -13,8 +13,8 @@ struct AuthView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 25) {
-                    Image(systemName: "leaf").font(.largeTitle).padding(.top, 30)
-                    Text(sent ? "Mira tu correo." : "Tu aprendizaje,\nsiempre contigo.").font(.system(.largeTitle, design: .serif))
+                    Image(systemName: "person.crop.circle").font(.largeTitle).padding(.top, 30)
+                    Text(sent ? "Mira tu correo." : "Tu aprendizaje,\nsiempre contigo.").font(.system(.largeTitle, design: .rounded))
                     Text(sent ? "Introduce el código que hemos enviado a \(email)." : "Guarda tu cartera y tu progreso con un código por correo. Sin contraseñas.").foregroundStyle(Theme.muted).lineSpacing(4)
                     if sent {
                         TextField("Código del correo", text: $code).textContentType(.oneTimeCode).keyboardType(.numberPad).padding(20).background(Theme.surface, in: RoundedRectangle(cornerRadius: 18))
@@ -47,7 +47,7 @@ struct WalletView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 25) {
                     Pill(text: "Opcional", icon: "leaf")
-                    Text("Más espacio\npara practicar.").font(.system(.largeTitle, design: .serif))
+                    Text("Más espacio\npara practicar.").font(.system(.largeTitle, design: .rounded))
                     Text("Añade saldo virtual si quieres explorar más ideas. Todas las lecciones siguen siendo gratuitas.").foregroundStyle(Theme.muted).lineSpacing(4)
                     ReadingCard(eyebrow: "Tu saldo disponible", title: Money.text(store.portfolio.cashCents), text: "Dinero ficticio. Las recargas no cuentan como ganancias.", dark: true)
                     if !store.signedIn {
@@ -77,12 +77,21 @@ struct ProfileView: View {
     @EnvironmentObject var store: AppStore
     @Environment(\.dismiss) private var dismiss
     @State private var confirmDelete = false
+    @AppStorage("app-appearance") private var appearance = AppAppearance.light.rawValue
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    Text("Aprender es la inversión.").font(.system(.title2, design: .serif)).padding(.vertical, 12)
+                    Text("Tu perfil").font(.title2.weight(.bold)).padding(.vertical, 12)
                     Text("Cuenta en USD · 10.000 $ virtuales de bienvenida").font(.subheadline)
+                }
+                Section("Apariencia") {
+                    Picker("Tema", selection: $appearance) {
+                        ForEach(AppAppearance.allCases) { option in
+                            Text(option.title).tag(option.rawValue)
+                        }
+                    }.pickerStyle(.segmented).padding(.vertical, 8).accessibilityIdentifier("appearance-picker")
+                    Text("Claro por defecto. Sistema sigue la apariencia de tu iPhone.").font(.caption).foregroundStyle(Theme.muted)
                 }
                 Section("Tu cuenta") {
                     if store.signedIn {
@@ -96,7 +105,7 @@ struct ProfileView: View {
                     Text("Esta V0 ejecuta unidades enteras con una comisión ficticia de 1 $. Aún no contabiliza dividendos, splits ni intereses. Los ETF de bonos no son bonos individuales.").font(.subheadline)
                     Link("Proveedor de datos ↗", destination: URL(string: "https://twelvedata.com")!)
                 }
-            }.scrollContentBackground(.hidden).appCanvas().navigationTitle("Tu cuenta").navigationBarTitleDisplayMode(.inline)
+            }.scrollContentBackground(.hidden).appCanvas().navigationTitle("Perfil").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Cerrar") { dismiss() } } }
                 .alert("¿Eliminar tu cuenta?", isPresented: $confirmDelete) {
                     Button("Cancelar", role: .cancel) {}

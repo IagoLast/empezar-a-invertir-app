@@ -2,8 +2,15 @@ import SwiftUI
 
 @main struct EmpezarApp: App {
     @StateObject private var store = AppStore()
-    var body: some Scene { WindowGroup { RootView().environmentObject(store).tint(Theme.ink) } }
+    @AppStorage("app-appearance") private var appearance = AppAppearance.light.rawValue
+    var body: some Scene {
+        WindowGroup {
+            RootView().environmentObject(store).tint(Theme.accent)
+                .preferredColorScheme((AppAppearance(rawValue: appearance) ?? .light).colorScheme)
+        }
+    }
 }
+
 struct RootView: View {
     @EnvironmentObject var store: AppStore
     @Environment(\.scenePhase) private var scenePhase
@@ -19,10 +26,13 @@ struct RootView: View {
         Group {
             if onboarded || store.signedIn {
                 TabView(selection: $selected) {
-                    NavigationStack { PortfolioView(explore: { selected = 1 }) }.tabItem { Label("Cartera", systemImage: "square.stack.3d.up") }.tag(0)
-                    NavigationStack { ExploreView() }.tabItem { Label("Explorar", systemImage: "circle.grid.2x2") }.tag(1)
-                    NavigationStack { LearnView() }.tabItem { Label("Aprender", systemImage: "book.closed") }.tag(2)
-                }.toolbarBackground(Theme.paper, for: .tabBar).toolbarBackground(.visible, for: .tabBar)
+                    NavigationStack { portfolioRoot }
+                        .tabItem { Label("Cartera", systemImage: "chart.pie.fill") }.tag(0)
+                    NavigationStack { ExploreView() }
+                        .tabItem { Label("Mercados", systemImage: "magnifyingglass") }.tag(1)
+                    NavigationStack { LearnView() }
+                        .tabItem { Label("Aprender", systemImage: "book.closed") }.tag(2)
+                }
             } else { WelcomeView { onboarded = true; if Configuration.configured { store.showAuth = true } } }
         }
         .sheet(isPresented: $store.showAuth) { AuthView() }
@@ -32,26 +42,48 @@ struct RootView: View {
         .task { await store.start() }
         .onChange(of: scenePhase) { _, phase in if phase == .active { Task { await store.refresh() } } }
     }
+    @ViewBuilder private var portfolioRoot: some View {
+        #if DEBUG
+        if UserDefaults.standard.string(forKey: "preview-screen") == "asset", let instrument = Content.instruments.first {
+            InstrumentView(instrument: instrument)
+        } else if UserDefaults.standard.string(forKey: "preview-screen") == "trade", let instrument = Content.instruments.first {
+            TradeView(instrument: instrument, side: "buy")
+        } else { PortfolioView(explore: { selected = 1 }) }
+        #else
+        PortfolioView(explore: { selected = 1 })
+        #endif
+    }
 }
+
 struct WelcomeView: View {
     var start: () -> Void
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 30) {
-                Text("empezar.").font(.system(.title, design: .serif)).padding(.top, 12)
-                HStack { Spacer(); OrbitMark(); Spacer() }.padding(.vertical, 20)
-                Text("Dinero virtual.\nLo que aprendes,\nes real.").font(.system(.largeTitle, design: .serif)).fixedSize(horizontal: false, vertical: true)
-                Text("Tu primer paso para entender la bolsa. Invierte 10.000 $ virtuales en empresas y fondos reales, a tu ritmo.").font(.body).lineSpacing(5).foregroundStyle(Theme.lime.opacity(0.85))
-                VStack(alignment: .leading, spacing: 18) {
-                    Label("Precios reales y operaciones simuladas", systemImage: "globe")
-                    Label("Negocios, bonos y valoración", systemImage: "book")
-                    Label("Sin depósitos ni dinero retirable", systemImage: "leaf")
-                }.font(.subheadline)
-                Button(action: start) {
-                    HStack { Text(Configuration.configured ? "Empezar a aprender" : "Explorar la V0"); Spacer(); Image(systemName: "arrow.right") }
-                        .font(.body.weight(.semibold)).padding(21).foregroundStyle(Theme.forest).background(Theme.lime, in: RoundedRectangle(cornerRadius: 20))
-                }.padding(.top, 10)
-            }.padding(28)
-        }.foregroundStyle(Theme.lime).background(Theme.forest)
+                HStack {
+                    Image(systemName: "chart.line.uptrend.xyaxis").foregroundStyle(Theme.accent)
+                    Text("empezar").font(.title2.weight(.bold))
+                    Spacer()
+                    Pill(text: "Dinero virtual", icon: "sparkles")
+                }.padding(.top, 16)
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Tu primera cartera.\nA tu ritmo.").font(.largeTitle.weight(.bold))
+                    Text("Busca empresas, compra acciones con dinero virtual y descubre cómo evoluciona tu cartera.")
+                        .font(.body).foregroundStyle(Theme.muted).lineSpacing(4)
+                }.padding(.top, 30)
+                VStack(alignment: .leading, spacing: 20) {
+                    Label("Tu punto de partida", systemImage: "wallet.bifold").font(.subheadline).foregroundStyle(Theme.accent)
+                    Text(Money.text(1_000_000)).font(.system(.largeTitle, design: .rounded).weight(.bold)).minimumScaleFactor(0.6).lineLimit(1)
+                    Text("Saldo virtual de bienvenida").font(.subheadline).foregroundStyle(Theme.muted)
+                    Divider().overlay(Theme.line)
+                    Label("Compra y vende sin arriesgar tu dinero", systemImage: "arrow.left.arrow.right")
+                    Label("Empresas y fondos reales", systemImage: "building.2")
+                    Label("Todo lo que necesitas para aprender", systemImage: "book.closed")
+                }.font(.subheadline).padding(24).dataCard()
+                PrimaryButton(title: "Crear mi primera cartera", icon: "plus") { start() }
+                Text("Las operaciones son simuladas. El saldo virtual no se puede retirar ni canjear por dinero real.")
+                    .font(.caption).foregroundStyle(Theme.muted).lineSpacing(3)
+            }.padding(24)
+        }.appCanvas()
     }
 }

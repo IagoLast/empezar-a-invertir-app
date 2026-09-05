@@ -36,6 +36,9 @@ struct Position: Codable, Identifiable {
     let symbol: String
     let units: Int
     let costCents: Int64
+    var averageCostCents: Int64 { units > 0 ? Int64((Double(costCents) / Double(units)).rounded()) : 0 }
+    func marketValueCents(at quote: Quote) -> Int64 { Int64(units) * quote.priceCents }
+    func profitCents(at quote: Quote) -> Int64 { marketValueCents(at: quote) - costCents }
 }
 struct Order: Codable, Identifiable {
     let id, requestId, symbol, side: String
@@ -66,6 +69,7 @@ struct Portfolio: Codable {
         }
         return total
     }
+    var investedCents: Int64? { equityCents.map { $0 - cashCents } }
     var profitCents: Int64? { equityCents.map { $0 - contributedCents } }
     var hasStaleValuation: Bool { positions.contains { quote($0.symbol)?.expired ?? true } }
 }

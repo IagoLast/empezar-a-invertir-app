@@ -2,9 +2,9 @@
 
 **Dinero virtual. Lo que aprendes, es real.**
 
-V0 nativa para iPhone: aprende acciones, ETF, bonos y valoración comprando y vendiendo con 10.000 $ virtuales iniciales y precios reales de **Twelve Data**. Diseño en español, SwiftUI, modo claro/oscuro, tres pestañas y confirmación de cada orden. Sin análisis técnico.
+V0 nativa para iPhone: aprende acciones, ETF, bonos y valoración comprando y vendiendo con 10.000 $ virtuales iniciales y precios reales de **Twelve Data**. Diseño en español, SwiftUI, blanco y azul por defecto, modo oscuro opcional en Perfil → Apariencia, tres pestañas y confirmación de cada orden. Sin análisis técnico.
 
-[Ver capturas reales del simulador de iPhone](docs/screenshots/README.md). El CI las regenera en `main` después de compilar y pasar los tests, sin credenciales ni precios inventados.
+[Ver capturas reales del simulador de iPhone](docs/screenshots/README.md). El CI genera capturas claras y oscuras de cartera, mercados, perfil, ficha, compra y aprendizaje después de compilar y pasar los tests, sin credenciales ni precios inventados. En las PR se adjuntan como artefacto; en `main` se actualizan en el repositorio.
 
 ## Monorepo
 
@@ -32,6 +32,15 @@ open Empezar.xcodeproj
 ```
 
 Selecciona un simulador iPhone y ejecuta **Empezar**. Sin configuración puedes explorar las pantallas y lecciones; las cotizaciones y compras permanecen deshabilitadas. La app no genera precios falsos como sustituto de la API. Para conectar los servicios, sigue [SETUP.md](docs/SETUP.md).
+
+## Interfaz
+
+- Cartera centrada en valor total, invertido, efectivo y resultado por posición; movimientos en una vista separada.
+- Búsqueda por nombre o símbolo dentro del catálogo disponible y filtros de acciones, ETF y ETF de bonos.
+- Ficha con precio, posición, coste medio y acciones de compra/venta; selector de unidades con máximo disponible y revisión explícita.
+- Apariencia persistente en **Perfil → Apariencia**: Claro (predeterminado), Oscuro o Sistema.
+- Controles Liquid Glass con SDK/iOS 26; materiales nativos en iOS 17–18 y superficies opacas con Reducir transparencia. Las tarjetas de datos conservan contraste.
+- Dirección visual inspirada en [Revolut X](https://www.revolut.com/revolut-x/) y [Coinbase](https://www.coinbase.com/advanced-trade): jerarquía financiera, acciones claras y navegación directa, adaptadas a una identidad blanca y azul.
 
 ## Lo que incluye
 
