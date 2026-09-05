@@ -31,7 +31,7 @@ enum Theme {
 }
 
 private struct AppCanvas: ViewModifier {
-    func body(content: Content) -> some View {
+    func body(content: _ViewModifier_Content<Self>) -> some View {
         content.background {
             ZStack(alignment: .topTrailing) {
                 Theme.paper
@@ -45,13 +45,13 @@ private struct AppCanvas: ViewModifier {
 private struct GlassControl: ViewModifier {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     var radius: CGFloat
-    @ViewBuilder func body(content: Content) -> some View {
+    @ViewBuilder func body(content: _ViewModifier_Content<Self>) -> some View {
         if reduceTransparency {
             content.background(Theme.surface, in: RoundedRectangle(cornerRadius: radius))
                 .overlay { RoundedRectangle(cornerRadius: radius).strokeBorder(Theme.line, lineWidth: 1) }
         } else { platformGlass(content) }
     }
-    @ViewBuilder private func platformGlass(_ content: Content) -> some View {
+    @ViewBuilder private func platformGlass(_ content: _ViewModifier_Content<Self>) -> some View {
         #if compiler(>=6.2)
         if #available(iOS 26.0, *) {
             content.glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: radius))
@@ -60,7 +60,7 @@ private struct GlassControl: ViewModifier {
         legacyGlass(content)
         #endif
     }
-    private func legacyGlass(_ content: Content) -> some View {
+    private func legacyGlass(_ content: _ViewModifier_Content<Self>) -> some View {
         content.background(.regularMaterial, in: RoundedRectangle(cornerRadius: radius))
             .overlay {
                 RoundedRectangle(cornerRadius: radius).strokeBorder(
@@ -71,7 +71,7 @@ private struct GlassControl: ViewModifier {
 
 private struct PressStyle: ButtonStyle {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    func makeBody(configuration: Configuration) -> some View {
+    func makeBody(configuration: ButtonStyleConfiguration) -> some View {
         configuration.label.opacity(configuration.isPressed ? 0.8 : 1)
             .scaleEffect(configuration.isPressed && !reduceMotion ? 0.98 : 1)
             .animation(reduceMotion ? nil : .easeOut(duration: 0.15), value: configuration.isPressed)
