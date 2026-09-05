@@ -1,0 +1,30 @@
+name: Verify V0
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+  ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: brew install xcodegen
+      - run: npm run ios:prepare
+      - run: xcodegen generate
+        working-directory: apps/ios
+      - name: Build native app
+        run: xcodebuild -project Empezar.xcodeproj -scheme Empezar -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+        working-directory: apps/ios

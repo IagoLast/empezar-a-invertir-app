@@ -10,11 +10,12 @@ export const GET = endpoint('GET', async request => {
   if (!cached.refresh) return cached.data || { available: false };
   try {
     const result = await provider('statistics', symbol);
+    if (result.meta?.symbol !== symbol || result.meta?.currency !== 'USD') throw new Error('Invalid fundamentals symbol');
     const s = result.statistics;
     const pe = s?.valuations_metrics?.trailing_pe ?? s?.valuation_metrics?.price_to_earnings;
     const eps = s?.financials?.income_statement?.diluted_eps_ttm;
     const number = v => v !== null && v !== undefined && Number.isFinite(Number(v)) ? Number(v) : null;
-    const data = { available: true, symbol, pe: number(pe), eps: number(eps), source: 'Twelve Data', fetchedAt: new Date().toISOString() };
+    const data = { available: true, symbol, pe: number(pe), eps: number(eps), period: s?.financials?.most_recent_quarter ?? null, source: 'Twelve Data', fetchedAt: new Date().toISOString() };
     await rpc('save_fundamentals', { p_symbol: symbol, p_data: data }, null, true);
     return data;
   } catch { return cached.data || { available: false }; }
