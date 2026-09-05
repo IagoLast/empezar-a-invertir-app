@@ -130,6 +130,11 @@ struct InstrumentView: View {
             .sheet(isPresented: Binding(get: { tradeSide != nil }, set: { if !$0 { tradeSide = nil } })) {
                 TradeView(instrument: instrument, side: tradeSide ?? "buy")
             }
+            .onAppear {
+                #if DEBUG
+                if UserDefaults.standard.string(forKey: "preview-screen") == "trade" { tradeSide = "buy" }
+                #endif
+            }
             .task {
                 guard store.signedIn else { return }
                 await updateQuote()

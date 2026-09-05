@@ -44,10 +44,8 @@ struct RootView: View {
     }
     @ViewBuilder private var portfolioRoot: some View {
         #if DEBUG
-        if UserDefaults.standard.string(forKey: "preview-screen") == "asset", let instrument = Content.instruments.first {
+        if ["asset", "trade"].contains(UserDefaults.standard.string(forKey: "preview-screen") ?? ""), let instrument = Content.instruments.first {
             InstrumentView(instrument: instrument)
-        } else if UserDefaults.standard.string(forKey: "preview-screen") == "trade", let instrument = Content.instruments.first {
-            TradeView(instrument: instrument, side: "buy")
         } else { PortfolioView(explore: { selected = 1 }) }
         #else
         PortfolioView(explore: { selected = 1 })
