@@ -1,0 +1,5 @@
+{
+  "framework": null,
+  "regions": ["cdg1"],
+  "functions": { "api/*.js": { "maxDuration": 15 } }
+}

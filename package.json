@@ -1,0 +1,6 @@
+{
+  "name": "empezar-a-invertir", "version": "0.1.0", "private": true,
+  "workspaces": ["apps/api", "packages/contracts"],
+  "scripts": { "test": "npm test --workspace=apps/api && node scripts/check-contracts.mjs", "dev:api": "npm run dev --workspace=apps/api", "ios:prepare": "node scripts/prepare-ios.mjs", "check": "npm test" },
+  "engines": { "node": ">=22" }
+}

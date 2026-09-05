@@ -1,0 +1,11 @@
+.DS_Store
+.env
+.env.local
+node_modules/
+.vercel/
+apps/ios/Empezar/Resources/Config.plist
+apps/ios/*.xcodeproj/
+apps/ios/build/
+*.xcuserstate
+xcuserdata/
+artifacts/
