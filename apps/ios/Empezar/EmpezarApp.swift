@@ -8,7 +8,13 @@ struct RootView: View {
     @EnvironmentObject var store: AppStore
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("has-onboarded-v0") private var onboarded = false
-    @State private var selected = 0
+    @State private var selected: Int = {
+        #if DEBUG
+        return UserDefaults.standard.integer(forKey: "preview-tab")
+        #else
+        return 0
+        #endif
+    }()
     var body: some View {
         Group {
             if onboarded || store.signedIn {

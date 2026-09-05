@@ -38,6 +38,8 @@ jobs:
       - run: psql -v ON_ERROR_STOP=1 -f supabase/test-bootstrap.sql -f supabase/migrations/202609050001_initial.sql -f supabase/test-wallet.sql
   ios:
     runs-on: macos-15
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,10 +50,24 @@ jobs:
       - run: xcodegen generate
         working-directory: apps/ios
       - name: Build native app
-        run: xcodebuild -project Empezar.xcodeproj -scheme Empezar -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+        run: xcodebuild -project Empezar.xcodeproj -scheme Empezar -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
         working-directory: apps/ios
       - name: Run native tests
         run: |
           device_id=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for devices in d["devices"].values() for x in devices if x["name"].startswith("iPhone")))')
-          xcodebuild -project Empezar.xcodeproj -scheme Empezar -destination "platform=iOS Simulator,id=$device_id" CODE_SIGNING_ALLOWED=NO test
+          xcodebuild -project Empezar.xcodeproj -scheme Empezar -destination "platform=iOS Simulator,id=$device_id" -derivedDataPath build CODE_SIGNING_ALLOWED=NO test
         working-directory: apps/ios
+      - name: Capture native iPhone screens
+        run: bash scripts/capture-ios.sh
+      - name: Keep screenshots in the repository
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/screenshots
+          if ! git diff --cached --quiet; then
+            git commit -m 'docs: refresh native iPhone screenshots [skip ci]'
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
+          fi
