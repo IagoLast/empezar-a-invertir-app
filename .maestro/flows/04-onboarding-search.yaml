@@ -12,7 +12,7 @@ name: Onboarding and guest search
 - assertVisible: "Construye criterio, no solo una cartera."
 - tapOn: "Siguiente"
 - assertVisible: '10.000 US\$ virtuales para empezar.'
-- tapOn: "Ahora no, entrar gratis"
+- tapOn: "Explorar la app"
 - assertVisible: "Mi cartera"
 - tapOn: "Comprar activos"
 - tapOn:
@@ -41,5 +41,10 @@ name: Onboarding and guest search
     id: "asset-AAPL"
 - tapOn:
     id: "asset-AAPL"
-- assertVisible: "Iniciar sesión"
+- assertVisible:
+    id: "detail-buy"
+- tapOn:
+    id: "detail-buy"
+- assertVisible:
+    id: "sign-in-apple"
 - assertNotVisible: "Comprar"

@@ -6,9 +6,10 @@ name: Quantity validation and maximum
     arguments:
       maestro-scenario: happy
 - runFlow: ../shared/open-trade.yaml
-- doubleTapOn:
+- tapOn:
     id: "trade-quantity"
-- eraseText
+    point: "90%,50%"
+- eraseText: 10
 - inputText: "0"
 - tapOn: "Listo"
 - scrollUntilVisible:
@@ -21,9 +22,10 @@ name: Quantity validation and maximum
     element:
       id: "trade-quantity"
     direction: UP
-- doubleTapOn:
+- tapOn:
     id: "trade-quantity"
-- eraseText
+    point: "90%,50%"
+- eraseText: 10
 - inputText: "100"
 - tapOn: "Listo"
 - scrollUntilVisible:
@@ -44,7 +46,7 @@ name: Quantity validation and maximum
 - assertVisible: "Orden en marcha"
 - tapOn: "Listo"
 - extendedWaitUntil:
-    visible: "Tu inversión · 99 unidades"
+    visible: "Tienes 99 unidades · Elige comprar más o vender"
     timeout: 45000
 - tapOn: "Cartera"
 - assertVisible: '99,00.*'

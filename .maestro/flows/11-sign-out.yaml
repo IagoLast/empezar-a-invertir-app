@@ -12,6 +12,10 @@ name: Sign out clears account state
 - tapOn: "Cartera"
 - tapOn:
     id: "open-profile"
+- scrollUntilVisible:
+    element: "Cerrar sesión"
+    direction: DOWN
+    centerElement: true
 - tapOn: "Cerrar sesión"
 # The seeded session skipped onboarding; signing out returns to it.
 - tapOn:
@@ -23,11 +27,16 @@ name: Sign out clears account state
     direction: DOWN
 - tapOn: "Movimientos"
 - assertVisible: "Aún no hay operaciones"
-- tapOn: "Comprar activos"
+- tapOn: "Mercados"
 - tapOn:
     id: "asset-search"
 - inputText: "AAPL"
 - tapOn:
     id: "asset-AAPL"
-- assertVisible: "Iniciar sesión para comprar"
+- assertVisible:
+    id: "detail-buy"
+- tapOn:
+    id: "detail-buy"
+- assertVisible:
+    id: "sign-in-apple"
 - assertNotVisible: "Comprar"

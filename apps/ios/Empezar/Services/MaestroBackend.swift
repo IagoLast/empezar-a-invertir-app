@@ -69,7 +69,10 @@ final class MaestroURLProtocol: URLProtocol {
             .queryItems?.first(where: { $0.name == "symbol" })?.value ?? ""
         switch (request.httpMethod ?? "GET", request.url!.path) {
         case ("GET", "/api/search"):
-            return (200, try JSONSerialization.data(withJSONObject: ["results": [["symbol": "ITX.MC", "name": "Inditex", "kind": "stock", "exchange": "Madrid"]]]))
+            let query = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)?
+                .queryItems?.first(where: { $0.name == "q" })?.value?.lowercased() ?? ""
+            let results = Content.instruments.filter { query.isEmpty || $0.symbol.lowercased().contains(query) || $0.name.lowercased().contains(query) }
+            return try json(["results": results.map { ["symbol": $0.symbol, "name": $0.name, "kind": $0.kind, "exchange": "US"] }])
         case ("GET", "/api/history"):
             let points: [[String: Any]] = (0..<20).map { index -> [String: Any] in
                 let value = Double(index)
