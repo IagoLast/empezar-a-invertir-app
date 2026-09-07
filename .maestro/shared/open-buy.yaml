@@ -1,0 +1,9 @@
+appId: com.empezarainvertir.app
+---
+- runFlow: open-trade.yaml
+- scrollUntilVisible:
+    element: "Revisar compra"
+    direction: DOWN
+    centerElement: true
+- tapOn: "Revisar compra"
+- assertVisible: "Revisa tu operación"

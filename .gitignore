@@ -6,6 +6,7 @@ node_modules/
 apps/ios/Empezar/Resources/Config.plist
 apps/ios/*.xcodeproj/
 apps/ios/build/
+apps/ios/.derived-data/
 *.xcuserstate
 xcuserdata/
 artifacts/

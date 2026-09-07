@@ -1,0 +1,33 @@
+appId: com.empezarainvertir.app
+name: Sign out clears account state
+---
+- launchApp:
+    clearState: true
+    arguments:
+      maestro-scenario: happy
+- runFlow: ../shared/open-buy.yaml
+- tapOn: "Confirmar compra virtual"
+- assertVisible: "Compra completada"
+- tapOn: "Listo"
+- tapOn: "Cartera"
+- tapOn:
+    id: "open-profile"
+- tapOn: "Cerrar sesión"
+# The seeded session skipped onboarding; signing out returns to it.
+- tapOn:
+    id: "skip-onboarding"
+- assertVisible: "Mi cartera"
+- assertVisible: '10.000,00.*'
+- scrollUntilVisible:
+    element: "Tu cartera empieza aquí"
+    direction: DOWN
+- tapOn: "Movimientos"
+- assertVisible: "Aún no hay operaciones"
+- tapOn: "Comprar activos"
+- tapOn:
+    id: "asset-search"
+- inputText: "AAPL"
+- tapOn:
+    id: "asset-AAPL"
+- assertVisible: "Iniciar sesión"
+- assertNotVisible: "Comprar"

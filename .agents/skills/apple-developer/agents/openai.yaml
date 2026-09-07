@@ -1,0 +1,4 @@
+interface:
+  display_name: "Apple Developer"
+  short_description: "Run the Empezar Apple Developer workflow"
+  default_prompt: "Use $apple-developer to complete this Empezar task safely and verify the result."

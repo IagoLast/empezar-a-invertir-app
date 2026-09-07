@@ -3,6 +3,15 @@ import Foundation
 struct Instrument: Codable, Identifiable, Hashable {
     var id: String { symbol }
     let symbol, name, kind, category, monogram, color, summary, question, risk, learn, source: String
+    static func market(symbol: String, name: String? = nil, kind: String = "stock", exchange: String = "") -> Instrument {
+        if let existing = Content.instruments.first(where: { $0.symbol == symbol }) { return existing }
+        return Instrument(symbol: symbol, name: name ?? symbol, kind: kind, category: exchange.isEmpty ? (kind == "stock" ? "Acción" : "ETF") : exchange,
+                          monogram: String(symbol.prefix(2)), color: "#245B48",
+                          summary: kind == "stock" ? "Una acción representa una parte de una empresa. Conoce su negocio y sus riesgos antes de invertir." : "Un ETF reúne una cesta de activos. Consulta su composición, costes y riesgos antes de invertir.",
+                          question: "¿Por qué invertirías en este activo?", risk: "El precio puede bajar y puedes perder parte o todo lo invertido. Las divisas también afectan al resultado.",
+                          learn: "Practica con una cantidad pequeña y revisa cómo cambia el valor de tu inversión.",
+                          source: "https://finance.yahoo.com/quote/\(symbol)")
+    }
 }
 struct Lesson: Codable, Identifiable, Hashable {
     let id, number, title, subtitle: String
@@ -21,14 +30,24 @@ struct Quote: Codable, Identifiable {
     let mode: String
     let delaySeconds: Int
     let source: String
+    var logoURL: String? = nil
+    var nativePrice: Double? = nil
+    var nativeCurrency: String? = nil
+    var exchangeRate: Double? = nil
+    var fxAsOf: String? = nil
+    var name: String? = nil
+    var kind: String? = nil
+    var nativePriceText: String { nativePrice.flatMap { price in nativeCurrency.map { price.formatted(.currency(code: $0)) } } ?? Money.text(priceCents) }
+    var usesConversion: Bool { nativeCurrency != nil && nativeCurrency != "USD" }
     var expired: Bool { (ISO.date(expiresAt) ?? .distantPast) <= Date() }
     var canTrade: Bool { marketOpen && tradable && !expired }
     var status: String {
         if !marketOpen { return "Mercado cerrado · último precio" }
         if expired { return "Precio pendiente de actualizar" }
+        if mode == "cached" { return tradable ? "Último precio disponible" : "Precio pendiente de actualizar" }
         if mode == "delayed" { return "Diferido \(delaySeconds / 60) min" }
-        if mode == "eod" { return "Dato de cierre" }
-        return tradable ? "Tiempo real · feed parcial" : "Precio pendiente de actualizar"
+        if mode == "eod" { return "Precio de cierre" }
+        return tradable ? "Último precio disponible" : "Precio pendiente de actualizar"
     }
 }
 struct Position: Codable, Identifiable {
@@ -106,5 +125,16 @@ enum Content {
             preconditionFailure("Missing bundled content. Run npm run ios:prepare before generating the Xcode project.")
         }
         return value
+    }
+}
+
+struct LocalLimitOrder: Codable, Identifiable {
+    let id: String
+    let symbol: String
+    let units: Int
+    let limitCents: Int64
+    let createdAt: Date
+    func accepts(_ quote: Quote) -> Bool {
+        quote.symbol == symbol && quote.canTrade && quote.priceCents <= limitCents
     }
 }

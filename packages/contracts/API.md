@@ -1,28 +1,37 @@
-# Contrato HTTP V0
+# HTTP contract
 
-JSON, importes en céntimos enteros de **USD**, unidades enteras, fechas ISO 8601 UTC. Todos los endpoints salvo el webhook requieren `Authorization: Bearer <Supabase access token>` de un usuario verificado. Las respuestas incluyen `Cache-Control: no-store`.
+JSON, integer USD cents for wallet amounts, whole units and ISO 8601 UTC dates. External `market-preview` prices are decimal amounts in the returned currency. Endpoints require `Authorization: Bearer <Supabase access token>` from an Apple/Google identity, except public quote/search/preview/history routes and the independently authenticated webhook. Responses use `Cache-Control: no-store`.
 
-| Método | Ruta | Entrada | Salida |
+| Method | Route | Input | Output |
 |---|---|---|---|
 | GET | `/api/state` | — | Portfolio |
-| GET | `/api/quote?symbol=AAPL` | Símbolo del catálogo | Quote |
-| GET | `/api/fundamentals?symbol=AAPL` | AAPL o MSFT | `{available, symbol?, pe?, eps?, period?, source?, fetchedAt?}` |
-| POST | `/api/trade` | `{requestId: UUID, symbol, side: buy\|sell, units: 1..100000, quoteId: UUID}` | Portfolio tras la transacción |
+| GET | `/api/search?q=NVDA` | Name or symbol, 1–80 characters | `{results: [{symbol, name, kind, exchange}]}` |
+| GET | `/api/market-preview?symbol=NVDA` | Yahoo symbol | `{symbol, price, currency, changePercent, asOf, source, logoURL}`; read-only, decimal price in the specified currency |
+| GET | `/api/quote?symbol=AAPL` | Provider stock/ETF symbol, including international listings | Quote |
+| GET | `/api/history?symbol=ITX.MC&range=1m` | `1w`, `1m`, `3m`, `1y`, `5y` | `{symbol, range, currency, source, points: [{date, open, high, low, close}]}` |
+| GET | `/api/fundamentals?symbol=AAPL` | AAPL or MSFT | `{available, symbol?, pe?, eps?, period?, source?, fetchedAt?}` |
+| POST | `/api/trade` | `{requestId: UUID, symbol, side: buy\|sell, units: 1..100000, quoteId: UUID}` | Portfolio after commit |
 | POST | `/api/lesson` | `{lessonId: lesson-1..lesson-4}` | Portfolio |
 | DELETE | `/api/account` | — | `{deleted: true}` |
-| POST | `/api/revenuecat` | Webhook v1 RevenueCat + Authorization configurado | `{received: true, appliedCents?, duplicate?, ignored?}` |
+| POST | `/api/revenuecat` | RevenueCat v1 webhook and configured Authorization | `{received: true, appliedCents?, duplicate?, ignored?}` |
 
 **Portfolio**: `userId`, `currency`, `cashCents`, `contributedCents`, `positions`, `quotes`, `orders`, `completedLessons`, `purchases`.
 
-- Position: `{symbol, units, costCents}`; coste medio agregado, incluye comisiones de compra.
-- Order: `{id, requestId, symbol, side, units, priceCents, feeCents, createdAt}`; se devuelven las 50 más recientes.
+- Position: `{symbol, units, costCents}`; aggregate acquisition cost including buy fees.
+- Order: `{id, requestId, symbol, side, units, priceCents, feeCents, createdAt}`; latest 50 returned.
 - Purchase: `{transactionId, productId, credited, refunded}`.
-- Quote: `{id, symbol, priceCents, currency, changePercent, asOf, fetchedAt, expiresAt, marketOpen, tradable, mode, delaySeconds, source}`.
+- Quote: `{id, symbol, priceCents, currency, changePercent, asOf, fetchedAt, expiresAt, marketOpen, tradable, mode, delaySeconds, source, logoURL?, nativePrice?, nativeCurrency?, exchangeRate?, fxAsOf?, name?, kind?}`.
 
-La cartera no inventa una valoración para posiciones sin precio. `equity = cash + sum(units × quote.priceCents)`. `profit = equity - contributedCents`; es resultado absoluto, no una rentabilidad ponderada por tiempo. Un dato antiguo se etiqueta como tal.
+Missing quotes never produce invented valuations. `equity = cash + sum(units × quote.priceCents)`. `profit = equity - contributedCents` is an absolute result, not a time-weighted return. Stale data is identified.
 
-Errores: `{error: CODE, message: mensaje en español}`. `400` datos inválidos, `401/403` sesión, `409` saldo/unidades/precio/mercado/conflicto de idempotencia, `503` proveedor o servidor no disponible.
+Errors: `{error: CODE, message: Spanish user-facing message}`. Status codes: `400` invalid input, `401/403` authentication, `409` cash/units/quote/market/idempotency conflict, `422` unsupported asset type, `503` provider or server unavailable.
 
-La app conserva `requestId` y el cuerpo de una orden pendiente. Un timeout no demuestra que haya fallado: se reenvía el mismo cuerpo. La DB devuelve éxito si ya estaba ejecutada y rechaza reutilizar la clave con otro contenido. Un nuevo precio requiere nueva revisión y nueva clave después de resolver el intento anterior.
+Pending orders retain their request ID and body. A timeout does not prove failure: resend the same body. The database returns success for an already executed order and rejects reuse with different content. A new quote requires a new review and request ID after resolving the previous attempt.
 
-`quoteId` identifica una cotización emitida por el servidor y válida durante 60 segundos. Ningún precio ni ID de usuario enviado por el cliente puede sustituir el precio guardado o `auth.uid()`. Las operaciones se bloquean si el instrumento está desactivado, el dato está caducado o el mercado está cerrado.
+`quoteId` identifies a server-issued quote with explicit `expiresAt` (Yahoo: at most 20 minutes after retrieval and one hour after the market timestamp). Client prices and user IDs cannot replace the stored price or `auth.uid()`. Disabled instruments, expired data and closed markets cannot trade.
+
+Search, external previews and history use bounded 15-minute per-instance caches. Requesting a trading quote validates the provider's EQUITY/ETF type and registers the instrument through a service-role-only RPC; user-supplied prices never register assets. Portfolio quotes retain the shared PostgreSQL cache. State includes the starter quotes and the user's current holdings, not every globally discovered symbol.
+
+All execution amounts remain USD cents. International quotes preserve `nativePrice`, `nativeCurrency`, `exchangeRate` (USD per native currency unit) and `fxAsOf`. GBP pence, Israeli agorot and South African cents are converted to their major units first. Missing, mismatched, future or FX data at least four days old blocks new execution quotes. Quote expiry is also capped by FX expiry. Historical OHLC stays in the provider's original currency/unit and is never used to execute trades.
+
+Apply `supabase/migrations/202609070001_global_markets.sql` before deploying the expanded quote API. Existing positions and wallets keep their USD accounting.

@@ -1,25 +1,68 @@
-# Empezar a invertir
+# Empezar
 
-**Dinero virtual. Lo que aprendes, es real.**
+A native iPhone app for learning about stocks, ETFs, bonds and valuation through simulated investing. New portfolios start with USD 10,000 in virtual cash. Market prices come from Yahoo Finance with a shared 15-minute cache. The interface and educational content are in Spanish; code, comments, filenames and developer documentation are in English.
 
-V0 nativa para iPhone: aprende acciones, ETF, bonos y valoración comprando y vendiendo con 10.000 $ virtuales iniciales y precios reales de **Twelve Data**. Diseño en español, SwiftUI, blanco y azul por defecto, modo oscuro opcional en Perfil → Apariencia, tres pestañas y confirmación de cada orden. Sin análisis técnico.
+Built with SwiftUI for iOS 17+, with a white-and-blue default appearance, optional dark mode and three tabs. No technical analysis. [Simulator screenshots](docs/screenshots/README.md).
 
-[Ver capturas reales del simulador de iPhone](docs/screenshots/README.md). El CI genera capturas claras y oscuras de cartera, mercados, perfil, ficha, compra y aprendizaje después de compilar y pasar los tests, sin credenciales ni precios inventados. En las PR se adjuntan como artefacto; en `main` se actualizan en el repositorio.
+## Delivery checklist
 
-## Monorepo
+Status checked on September 6, 2026. Free preview access is enabled. Real charges are not active or verified.
 
-| Directorio | Responsabilidad |
+### Implemented
+
+- [x] Native paywall, monthly subscription integration and virtual-cash purchases.
+- [x] RevenueCat catalog: `plus` entitlement, monthly plan, USD 10,000 and USD 25,000 virtual-cash packs.
+- [x] Local iOS configuration connected to the existing Supabase project and `http://localhost:3001` backend.
+- [x] 19 native unit tests, four authentication UI tests and 32 backend tests. These do not validate real sign-in or purchases.
+- [x] Initial database migration applied; RLS and server-only cache writes verified.
+- [x] Yahoo Finance integration with shared caching and optional logos; prices available to guests.
+- [x] Contextual explanations, educational asset details and pull-to-refresh for data screens.
+
+### Authentication and backend
+
+- [ ] Configure and enable Google OAuth in Supabase.
+- [x] Register the Apple bundle ID in TIMETIME and enable Sign in with Apple.
+- [x] Build and verify a signed iPhone development app with matching TIMETIME provisioning and Apple sign-in entitlements.
+- [x] Enable Apple in Supabase (reported by the user and confirmed through public provider settings).
+- [ ] Register callback URLs; test sign-in, sign-out and session recovery.
+- [ ] Deploy the backend to Vercel and configure its HTTPS URL in iOS.
+- [ ] Review data redistribution terms before commercial release.
+
+### Payments
+
+- [ ] Connect App Store Connect and In-App Purchase credentials to RevenueCat.
+- [ ] Create and configure the monthly subscription and two consumables in Apple.
+- [ ] Confirm proposed Spanish prices: EUR 4.99/month, EUR 1.99 and EUR 3.99 top-ups. They are not published.
+- [ ] Configure a proposed seven-day trial for eligible users and choose sales territories.
+- [ ] Connect the RevenueCat webhook with authentication and separate sandbox/production environments.
+- [ ] Test purchases, restoration, expiration, account switching, top-ups, duplicate events and refunds in sandbox.
+- [ ] Add server-side subscription authorization before paid release; the current access gate is in iOS.
+- [ ] Explicitly disable `FREE_PREVIEW_ENABLED` when ready. Free preview access is not an Apple subscription trial.
+
+### Release
+
+- [ ] Publish the privacy policy and set `PRIVACY_POLICY_URL` for iOS and TestFlight.
+- [ ] Complete signing, App Store metadata, privacy declarations and screenshots.
+- [ ] Upload to TestFlight and verify the full flow on a physical iPhone.
+
+Authentication audit and exact manual steps: [AUTHENTICATION.md](docs/AUTHENTICATION.md).
+
+Configuration: [setup](docs/SETUP.md), [payments](docs/PAYMENTS.md), [TestFlight](docs/TESTFLIGHT.md).
+
+## Repository layout
+
+| Directory | Responsibility |
 |---|---|
-| `apps/ios` | App SwiftUI para iOS 17+, autenticación por código, Keychain y RevenueCat |
-| `apps/api` | Funciones Vercel / Node.js, autenticación, cotizaciones y webhook |
-| `packages/contracts` | Catálogo y lecciones compartidos; contrato HTTP |
-| `supabase` | Migración Postgres, RLS y pruebas del motor transaccional |
-| `scripts` | Preparación de recursos iOS y automatización de TestFlight |
-| `.github/workflows` | CI de API, Postgres e iOS; subida manual a TestFlight |
+| `apps/ios` | SwiftUI app, Apple/Google authentication, Keychain and RevenueCat |
+| `apps/api` | Vercel Node.js functions, authentication, quotes and webhook |
+| `packages/contracts` | Shared catalog, Spanish lesson content and HTTP contract |
+| `supabase` | PostgreSQL migration, RLS and transactional wallet tests |
+| `scripts` | iOS resource preparation and release automation |
+| `.github/workflows` | API, PostgreSQL and iOS CI; TestFlight upload on every push to `main` |
 
-## Probar la interfaz en Xcode
+## Run in Xcode
 
-Requisitos: macOS con Xcode, Node 22+ y [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+Requires macOS, Xcode, Node 22+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 
 ```bash
 git clone https://github.com/IagoLast/empezar-a-invertir-app.git
@@ -31,42 +74,38 @@ xcodegen generate
 open Empezar.xcodeproj
 ```
 
-Selecciona un simulador iPhone y ejecuta **Empezar**. Sin configuración puedes explorar las pantallas y lecciones; las cotizaciones y compras permanecen deshabilitadas. La app no genera precios falsos como sustituto de la API. Para conectar los servicios, sigue [SETUP.md](docs/SETUP.md).
+Select an iPhone simulator and run **Empezar**, or use `npm run ios:run` from the repository root to build, verify Apple sign-in entitlements and relaunch the local simulator app. Without service configuration, lessons and screens remain explorable but market data and purchases are unavailable. The app does not fabricate prices. Follow [SETUP.md](docs/SETUP.md) to connect services or run the local backend.
 
-## Interfaz
+## User experience
 
-- Cartera centrada en valor total, invertido, efectivo y resultado por posición; movimientos en una vista separada.
-- Búsqueda por nombre o símbolo dentro del catálogo disponible y filtros de acciones, ETF y ETF de bonos.
-- Ficha con precio, posición, coste medio y acciones de compra/venta; selector de unidades con máximo disponible y revisión explícita.
-- Apariencia persistente en **Perfil → Apariencia**: Claro (predeterminado), Oscuro o Sistema.
-- Controles Liquid Glass con SDK/iOS 26; materiales nativos en iOS 17–18 y superficies opacas con Reducir transparencia. Las tarjetas de datos conservan contraste.
-- Dirección visual inspirada en [Revolut X](https://www.revolut.com/revolut-x/) y [Coinbase](https://www.coinbase.com/advanced-trade): jerarquía financiera, acciones claras y navegación directa, adaptadas a una identidad blanca y azul.
+- Portfolio value, cash, investments and individual results; activity in a separate view. Contributions and top-ups are not profits.
+- Search stocks and ETFs by company name or symbol. Trading remains limited to AAPL, MSFT, VTI and BND.
+- Asset details explain the investment, price, risks and relevant concepts. Logos fall back to category icons.
+- Information icons sit beside their labels, with a shared tappable area and explanatory bottom sheets with examples.
+- Pull down to refresh portfolios, markets, asset details, trade quotes, wallet and subscription options. Restoring purchases and resolving pending orders remain explicit actions.
+- Appearance is stored across sessions: light, dark or system. Liquid Glass on iOS 26, native materials on iOS 17–18, opaque surfaces when Reduce Transparency is enabled.
+- Visual references: [Revolut X](https://www.revolut.com/revolut-x/) and [Coinbase](https://www.coinbase.com/advanced-trade), adapted to the app's own identity.
 
-## Lo que incluye
+See [UX.md](docs/UX.md) for copy and interaction guidelines.
 
-- Cartera, posiciones, distribución, efectivo y movimientos. Las aportaciones y recargas no cuentan como beneficio.
-- Compra y venta de unidades enteras de AAPL, MSFT, VTI y BND. Solo USD en esta V0.
-- Cotizaciones reales, fuente, hora, modalidad del feed y estado de mercado. El servidor bloquea precios caducados y mercado cerrado.
-- Revisión de orden, comisión simulada explícita de 1 $, confirmación y reintento con la misma clave de idempotencia.
-- Cuatro lecciones y laboratorio de valoración con supuestos editables; datos fundamentales opcionales mediante el endpoint statistics del proveedor.
-- Login por OTP de correo, sesión en Keychain y eliminación de cuenta.
-- Recargas consumibles RevenueCat de 10.000 y 25.000 dólares virtuales. El precio real se toma de App Store; el saldo solo lo acredita el webhook del servidor.
-- Dedupe por evento y transacción de Apple, separación sandbox/producción, reembolsos y orden inverso refund/purchase.
+## Features and boundaries
 
-## Verificación
+Orders use whole units, USD prices and a USD 1 simulated fee. Each order is reviewed before confirmation. The server rejects expired quotes and closed-market trades. Pending orders retain their idempotency keys for safe retries.
+
+The app includes four lessons and a valuation exercise with editable assumptions. Optional Yahoo Finance fundamentals provide trailing-twelve-month P/E and EPS. Apple/Google sessions are stored in Keychain; account deletion is supported.
+
+RevenueCat consumables grant USD 10,000 or USD 25,000 virtual cash. StoreKit supplies localized real prices. Only the server webhook grants cash; event and Apple transaction deduplication, refunds and refund-before-purchase ordering are supported. Sandbox and production are isolated.
+
+The simulator has no bid/ask spread, order book, fractional shares, limit orders, after-hours execution, currency conversion, dividends, stock splits or interest. Profit is price movement net of implemented fees, not total return including distributions. BND is a bond ETF, not an individual bond. Top-ups are optional; there are no rankings or mechanics requiring them.
+
+Before external release, complete service deployment, distribution-rights review, Apple/RevenueCat setup, sandbox integration tests, privacy policy and store metadata. Cached prices are educational data, not a real-time execution feed.
+
+## Verification
 
 ```bash
 npm test
 ```
 
-20 pruebas de la API, validación de contratos, pruebas de cartera y RLS sobre PostgreSQL, compilación SwiftUI y tests nativos en GitHub Actions. [Ver CI](https://github.com/IagoLast/empezar-a-invertir-app/actions/workflows/ci.yml).
+Runs 32 API tests and shared-resource checks. [CI](https://github.com/IagoLast/empezar-a-invertir-app/actions/workflows/ci.yml) also validates PostgreSQL wallet/RLS behavior, builds SwiftUI and runs native tests. Screenshot artifacts are produced on PRs and committed on `main` after verification.
 
-[TestFlight: workflow, credenciales y ejecución](docs/TESTFLIGHT.md). La subida firmada necesita configurar los secrets de Apple; aún no se ha subido un build.
-
-## Límites explícitos de la V0
-
-Las órdenes se simulan al último precio del feed, con una comisión fija. No hay bid/ask, profundidad, fracciones, órdenes limitadas, ejecución fuera de sesión, cambio de divisas, dividendos, splits ni intereses. El P&L es variación de precio neta de las comisiones implementadas; no rentabilidad total con distribuciones. Estas limitaciones también aparecen en la app.
-
-**BND es un ETF de bonos**, no un bono individual. Los bonos individuales se explican en las lecciones; requieren ampliar datos y motor de cálculo para negociarlos. Las compras IAP son opcionales, no hay rankings ni mecanismos que obliguen a recargar.
-
-Antes de una beta externa: contratar derechos de display/redistribución para el feed de Twelve Data, desplegar servicios, configurar App Store Connect/RevenueCat, probar compras sandbox de extremo a extremo y completar política de privacidad y metadatos de la app. El feed US por defecto de Twelve Data es parcial, no un precio consolidado NBBO. [Detalles y fuentes](docs/SETUP.md#datos-reales-y-licencia).
+`npm run test:ios:e2e` builds the simulator app and runs 11 Maestro flows against a simulated backend. See [MAESTRO.md](docs/MAESTRO.md). Real OAuth, payments and signed uploads require separate integration verification.

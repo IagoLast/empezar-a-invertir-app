@@ -1,0 +1,70 @@
+name: iOS Maestro
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: maestro-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  maestro:
+    name: iOS user flows
+    runs-on: macos-26
+    timeout-minutes: 35
+    env:
+      MAESTRO_VERSION: '2.10.0'
+      MAESTRO_CLI_NO_ANALYTICS: '1'
+      MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install XcodeGen and pinned Maestro CLI
+        run: |
+          brew install xcodegen
+          curl --fail --location --retry 3 \
+            "https://github.com/mobile-dev-inc/maestro/releases/download/cli-${MAESTRO_VERSION}/maestro.zip" \
+            -o "$RUNNER_TEMP/maestro.zip"
+          unzip -q "$RUNNER_TEMP/maestro.zip" -d "$RUNNER_TEMP/maestro-cli"
+          echo "$RUNNER_TEMP/maestro-cli/maestro/bin" >> "$GITHUB_PATH"
+      - name: Select an available iPhone simulator
+        run: |
+          device_id=$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          devices = json.load(sys.stdin)["devices"]
+          runtimes = sorted((r for r in devices if ".iOS-" in r),
+                            key=lambda r: tuple(map(int, r.split(".iOS-")[1].split("-"))),
+                            reverse=True)
+          candidates = [d for r in runtimes for d in devices[r]
+                        if d["name"].startswith("iPhone") and d.get("isAvailable")]
+          if not candidates:
+              sys.exit("No available iPhone simulator in this Xcode image")
+          print(candidates[0]["udid"])
+          ')
+          echo "SIMULATOR_ID=$device_id" >> "$GITHUB_ENV"
+          xcodebuild -version
+          xcrun simctl bootstatus "$device_id" -b
+      - name: Build and run all Maestro flows
+        run: npm run test:ios:e2e
+      - name: Upload JUnit report, logs and failure screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-ios-results
+          path: artifacts/maestro
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Shut down test simulator
+        if: always() && env.SIMULATOR_ID != ''
+        run: xcrun simctl shutdown "$SIMULATOR_ID"

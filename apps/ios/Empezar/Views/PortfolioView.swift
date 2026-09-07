@@ -1,11 +1,12 @@
 import SwiftUI
 
+
 struct PortfolioView: View {
     @EnvironmentObject var store: AppStore
     var explore: () -> Void
     @State private var profile = false
     @State private var wallet = false
-    @State private var section = "Posiciones"
+    @State private var selling: Instrument?
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -13,12 +14,8 @@ struct PortfolioView: View {
                 balance
                 actions
                 notices
-                Picker("Contenido de la cartera", selection: $section) {
-                    Text("Posiciones").tag("Posiciones")
-                    Text("Movimientos").tag("Movimientos")
-                }.pickerStyle(.segmented)
-                if section == "Posiciones" { positions } else { OrderHistory() }
-                if !store.portfolio.positions.isEmpty && section == "Posiciones" { AllocationView() }
+                positions
+                if !store.portfolio.positions.isEmpty { AllocationView() }
                 Text("Dinero virtual · Cuenta en USD").font(.caption).foregroundStyle(Theme.muted)
                     .frame(maxWidth: .infinity).padding(.vertical, 8)
             }.padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 24)
@@ -26,6 +23,7 @@ struct PortfolioView: View {
             .refreshable { await store.refresh() }
             .sheet(isPresented: $profile) { ProfileView() }
             .sheet(isPresented: $wallet) { WalletView() }
+            .sheet(item: $selling) { TradeView(instrument: $0, side: "sell") }
             .onAppear {
                 #if DEBUG
                 if UserDefaults.standard.bool(forKey: "preview-profile") { profile = true }
@@ -35,19 +33,18 @@ struct PortfolioView: View {
     private var header: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text("empezar").font(.subheadline.weight(.bold)).foregroundStyle(Theme.accent)
                 Text("Mi cartera").font(.largeTitle.weight(.bold))
             }
             Spacer()
             Button { profile = true } label: {
-                Image(systemName: "person.crop.circle").font(.title2).frame(width: 48, height: 48).glassControl(radius: 24)
+                ProfileAvatar()
             }.accessibilityLabel("Perfil y apariencia").accessibilityIdentifier("open-profile")
         }
     }
     private var balance: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
-                Text("Valor de la cartera").font(.subheadline).foregroundStyle(Theme.muted)
+                ConceptLabel(title: store.signedIn ? "Valor de mi cartera" : "Tu saldo virtual al empezar", concept: .portfolioValue).font(.subheadline)
                 Spacer()
                 Pill(text: "Virtual", icon: "sparkles")
             }
@@ -55,7 +52,9 @@ struct PortfolioView: View {
                 Text(store.portfolio.equityCents.map(Money.text) ?? "—")
                     .font(.system(.largeTitle, design: .rounded).weight(.bold)).monospacedDigit()
                     .minimumScaleFactor(0.6).lineLimit(1).contentTransition(.numericText())
-                if let profit = store.portfolio.profitCents {
+                if !store.signedIn {
+                    Text("Crea tu cuenta y practica tu primera inversión.").font(.subheadline).foregroundStyle(Theme.muted)
+                } else if let profit = store.portfolio.profitCents {
                     ViewThatFits(in: .horizontal) {
                         HStack(spacing: 8) { profitBadge(profit); Text("Resultado total").font(.caption).foregroundStyle(Theme.muted) }
                         VStack(alignment: .leading, spacing: 8) { profitBadge(profit); Text("Resultado total").font(.caption).foregroundStyle(Theme.muted) }
@@ -80,12 +79,12 @@ struct PortfolioView: View {
         }.padding(22).dataCard()
     }
     @ViewBuilder private var balanceMetrics: some View {
-        metric("Invertido", value: store.portfolio.investedCents.map(Money.text) ?? "—", icon: "chart.pie")
-        metric("Disponible", value: Money.text(store.portfolio.cashCents), icon: "wallet.bifold")
+        metric("En inversiones", value: store.portfolio.investedCents.map(Money.text) ?? "—", icon: "chart.pie", concept: .investedValue)
+        metric("Disponible", value: Money.text(store.portfolio.cashCents), icon: "wallet.bifold", concept: .virtualCash)
     }
-    private func metric(_ title: String, value: String, icon: String) -> some View {
+    private func metric(_ title: String, value: String, icon: String, concept: LearningConcept? = nil) -> some View {
         VStack(alignment: .leading, spacing: 7) {
-            Label(title, systemImage: icon).font(.caption).foregroundStyle(Theme.muted)
+            HStack(spacing: 5) { if let concept { ConceptLabel(title: title, concept: concept).font(.caption) } else { Label(title, systemImage: icon).font(.caption).foregroundStyle(Theme.muted) } }.frame(minHeight: 44, alignment: .leading)
             Text(value).font(.headline).monospacedDigit().fixedSize(horizontal: true, vertical: false)
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -102,10 +101,10 @@ struct PortfolioView: View {
         }
     }
     @ViewBuilder private var actionButtons: some View {
-        PrimaryButton(title: "Invertir", icon: "plus", action: explore)
+        PrimaryButton(title: "Comprar activos", icon: "plus", action: explore)
         Button { wallet = true } label: {
             Label("Añadir saldo", systemImage: "wallet.bifold").font(.body.weight(.semibold))
-                .frame(maxWidth: .infinity).padding(.horizontal, 18).padding(.vertical, 18).glassControl(radius: 20)
+                .frame(maxWidth: .infinity).padding(.horizontal, 18).padding(.vertical, 18).flatControl(radius: 16)
         }.buttonStyle(.plain).foregroundStyle(Theme.accent)
     }
     @ViewBuilder private var notices: some View {
@@ -126,12 +125,12 @@ struct PortfolioView: View {
     }
     private var positions: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SectionHeading(title: "Tus activos", detail: "\(store.portfolio.positions.count) posiciones")
+            ConceptLabel(title: "Tus activos · \(store.portfolio.positions.count) posiciones", concept: .positions).font(.headline)
             if store.portfolio.positions.isEmpty {
                 VStack(spacing: 16) {
                     Image(systemName: "chart.pie").font(.largeTitle).foregroundStyle(Theme.accent)
                         .frame(width: 68, height: 68).background(Theme.pale, in: RoundedRectangle(cornerRadius: 22))
-                    Text("Tu cartera empieza aquí").font(.title3.weight(.semibold))
+                    ConceptLabel(title: "Tu cartera empieza aquí", concept: .positions).font(.title3.weight(.semibold))
                     Text("Busca tu primera acción o ETF y practica con tu saldo virtual.")
                         .font(.subheadline).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
                     Button("Buscar activos", action: explore).font(.body.weight(.semibold)).frame(minHeight: 44)
@@ -139,10 +138,16 @@ struct PortfolioView: View {
             } else {
                 VStack(spacing: 0) {
                     ForEach(store.portfolio.positions) { position in
-                        if let instrument = Content.instruments.first(where: { $0.symbol == position.symbol }) {
+                        VStack(spacing: 0) {
+                            let instrument = store.instrument(position.symbol)
                             NavigationLink { InstrumentView(instrument: instrument) } label: {
                                 PositionRow(instrument: instrument, position: position, quote: store.portfolio.quote(position.symbol))
                             }.buttonStyle(.plain)
+                            Button { selling = instrument } label: {
+                                Label("Vender \(instrument.name)", systemImage: "arrow.up.right")
+                                    .font(.subheadline.weight(.semibold)).frame(maxWidth: .infinity, minHeight: 48)
+                            }.buttonStyle(.bordered).padding(.bottom, 16)
+                                .accessibilityIdentifier("sell-position-\(position.symbol)")
                             if position.id != store.portfolio.positions.last?.id { Divider().overlay(Theme.line) }
                         }
                     }
@@ -159,7 +164,7 @@ struct PositionRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 12) {
-                AssetMark(instrument: instrument)
+                AssetMark(instrument: instrument, logoURL: quote?.logoURL)
                 VStack(alignment: .leading, spacing: 5) {
                     Text(instrument.name).font(.body.weight(.semibold))
                     Text("\(instrument.symbol) · \(position.units) unidades").font(.caption).foregroundStyle(Theme.muted)
@@ -193,7 +198,7 @@ struct AllocationView: View {
     @EnvironmentObject var store: AppStore
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            SectionHeading(title: "Distribución")
+            ConceptLabel(title: "Distribución", concept: .allocation).font(.headline)
             if let total = store.portfolio.equityCents, total > 0 {
                 ForEach(store.portfolio.positions) { position in
                     if let quote = store.portfolio.quote(position.symbol) {
@@ -210,7 +215,7 @@ struct AllocationView: View {
             HStack { Text(title); Spacer(); Text(weight.formatted(.percent.precision(.fractionLength(1)))).monospacedDigit() }.font(.subheadline)
             GeometryReader { geo in
                 Capsule().fill(Theme.pale).overlay(alignment: .leading) {
-                    Capsule().fill(color.gradient).frame(width: geo.size.width * min(max(weight, 0), 1))
+                    Capsule().fill(color).frame(width: geo.size.width * min(max(weight, 0), 1))
                 }
             }.frame(height: 6).accessibilityHidden(true)
         }
@@ -221,16 +226,16 @@ struct OrderHistory: View {
     @EnvironmentObject var store: AppStore
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SectionHeading(title: "Últimos movimientos")
+            ConceptLabel(title: "Operaciones realizadas", concept: .activity).font(.headline)
             if store.portfolio.orders.isEmpty {
                 VStack(spacing: 14) {
                     Image(systemName: "arrow.left.arrow.right").font(.title).foregroundStyle(Theme.accent)
-                    Text("Aún no hay operaciones").font(.headline)
+                    ConceptLabel(title: "Aún no hay operaciones", concept: .activity).font(.headline)
                     Text("Tus compras y ventas aparecerán aquí, con su importe y comisión.").font(.subheadline).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
                 }.frame(maxWidth: .infinity).padding(28).dataCard()
             } else {
                 VStack(spacing: 0) {
-                    ForEach(store.portfolio.orders.prefix(10)) { order in
+                    ForEach(store.portfolio.orders) { order in
                         VStack(alignment: .leading, spacing: 10) {
                             HStack(spacing: 12) {
                                 Image(systemName: order.side == "buy" ? "arrow.down.left" : "arrow.up.right")
@@ -241,15 +246,47 @@ struct OrderHistory: View {
                                 }
                             }
                             HStack {
-                                Text(ISO.date(order.createdAt)?.formatted(date: .abbreviated, time: .shortened) ?? "").font(.caption).foregroundStyle(Theme.muted)
+                                Text(ISO.date(order.createdAt)?.formatted(.dateTime.day().month(.abbreviated).year().hour().minute().locale(Locale(identifier: "es_ES"))) ?? "").font(.caption).foregroundStyle(Theme.muted)
                                 Spacer()
                                 Text(Money.text(order.priceCents * Int64(order.units))).font(.subheadline.weight(.semibold)).monospacedDigit()
                             }
                         }.padding(.vertical, 16)
-                        if order.id != store.portfolio.orders.prefix(10).last?.id { Divider().overlay(Theme.line) }
+                        if order.id != store.portfolio.orders.last?.id { Divider().overlay(Theme.line) }
                     }
                 }.padding(.horizontal, 18).dataCard()
             }
         }
+    }
+}
+
+struct ActivityView: View {
+    @EnvironmentObject var store: AppStore
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                if let notice = store.notice { Text(notice).font(.subheadline).foregroundStyle(Theme.accent) }
+                if store.pendingTrade != nil {
+                    PrimaryButton(title: "Comprobar operación pendiente", loading: store.busy) { Task { await store.retryTrade() } }
+                }
+                if !store.limitOrders.isEmpty {
+                    ConceptLabel(title: "Órdenes limitadas en este dispositivo", concept: .orderType).font(.headline)
+                    ForEach(store.limitOrders) { order in
+                        VStack(alignment: .leading, spacing: 12) {
+                            ConceptLabel(title: "Compra de \(order.symbol)", concept: .orderType).font(.headline)
+                            Text("\(order.units) unidades · máximo \(Money.text(order.limitCents)) por unidad").font(.subheadline)
+                            Text("Pendiente · no se ha reservado saldo").font(.caption).foregroundStyle(Theme.muted)
+                            PrimaryButton(title: "Comprobar y ejecutar", disabled: store.pendingTrade != nil, loading: store.busy) {
+                                Task { await store.executeLimitOrder(order) }
+                            }
+                            Button("Cancelar orden", role: .destructive) { store.cancelLimitOrder(order) }
+                                .frame(minHeight: 44).disabled(store.busy || store.pendingTrade?.requestId == order.id)
+                        }.padding(20).dataCard()
+                    }
+                }
+                OrderHistory()
+            }.padding(20)
+        }
+            .appCanvas().navigationTitle("Movimientos").navigationBarTitleDisplayMode(.inline)
+            .refreshable { await store.refresh() }
     }
 }

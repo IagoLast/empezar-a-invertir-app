@@ -1,6 +1,54 @@
 [
-  {"symbol":"AAPL","name":"Apple","kind":"stock","category":"Tecnología","monogram":"a","color":"#EAEAE5","summary":"Dispositivos, software y servicios que funcionan juntos.","question":"¿Qué hace que un cliente vuelva?","risk":"Depende de la demanda de dispositivos, su ecosistema y su cadena de suministro.","learn":"El precio de una acción es lo que pagas. El valor depende del efectivo que el negocio pueda generar en el futuro.","source":"https://investor.apple.com/"},
-  {"symbol":"MSFT","name":"Microsoft","kind":"stock","category":"Tecnología","monogram":"m","color":"#E6ECE7","summary":"Software, servicios en la nube y herramientas para empresas.","question":"¿Cuánto cuesta seguir creciendo?","risk":"La inversión en infraestructura y la competencia pueden reducir los márgenes.","learn":"Crecer en ingresos no basta: observa cuánto beneficio y caja quedan después de los gastos y las inversiones.","source":"https://www.microsoft.com/en-us/Investor/"},
-  {"symbol":"VTI","name":"Mercado de EE. UU.","kind":"etf","category":"ETF de acciones","monogram":"v","color":"#F0E5DD","summary":"Vanguard Total Stock Market ETF: exposición amplia a acciones estadounidenses.","question":"¿Estoy diversificando de verdad?","risk":"Diversifica empresas, pero sigue expuesto al mercado de acciones de un solo país.","learn":"Un ETF es un vehículo, no una promesa de seguridad. Importa qué activos tiene dentro y cuánto cuesta mantenerlo.","source":"https://investor.vanguard.com/investment-products/etfs/profile/vti"},
-  {"symbol":"BND","name":"Bonos de EE. UU.","kind":"bond_etf","category":"ETF de bonos","monogram":"b","color":"#E5E7F1","summary":"Vanguard Total Bond Market ETF: una cartera de bonos estadounidenses de grado de inversión.","question":"¿Qué pasa si suben los tipos?","risk":"Su precio puede caer cuando suben los tipos. No tiene el vencimiento fijo de un bono individual.","learn":"Un bono es una deuda. Un ETF de bonos reúne muchas deudas y renueva su cartera; no garantiza recuperar un nominal en una fecha concreta.","source":"https://investor.vanguard.com/investment-products/etfs/profile/bnd"}
+  {
+    "symbol": "AAPL",
+    "name": "Apple",
+    "kind": "stock",
+    "category": "Tecnología",
+    "monogram": "a",
+    "color": "#EAEAE5",
+    "summary": "Dispositivos, software y servicios que funcionan juntos.",
+    "question": "¿Qué hace que un cliente vuelva?",
+    "risk": "Depende de la demanda de dispositivos, su ecosistema y su cadena de suministro.",
+    "learn": "Piensa en lo que anima a una persona a renovar su dispositivo o mantener una suscripción. Que los clientes vuelvan puede ayudar al negocio, pero no garantiza que sus beneficios sigan creciendo.",
+    "source": "https://investor.apple.com/"
+  },
+  {
+    "symbol": "MSFT",
+    "name": "Microsoft",
+    "kind": "stock",
+    "category": "Tecnología",
+    "monogram": "m",
+    "color": "#E6ECE7",
+    "summary": "Software, servicios en la nube y herramientas para empresas.",
+    "question": "¿Cuánto cuesta seguir creciendo?",
+    "risk": "La competencia y el coste de construir centros de datos pueden reducir el beneficio que conserva de cada venta.",
+    "learn": "Vender más no siempre significa ganar más. Una empresa también necesita pagar personal, equipos y nuevas instalaciones. Observa cuánto dinero queda después de esos gastos.",
+    "source": "https://www.microsoft.com/en-us/Investor/"
+  },
+  {
+    "symbol": "VTI",
+    "name": "Mercado de EE. UU.",
+    "kind": "etf",
+    "category": "ETF de acciones",
+    "monogram": "v",
+    "color": "#F0E5DD",
+    "summary": "Vanguard Total Stock Market ETF reúne acciones de muchas empresas de Estados Unidos en una sola inversión.",
+    "question": "¿Estoy diversificando de verdad?",
+    "risk": "Diversifica empresas, pero sigue expuesto al mercado de acciones de un solo país.",
+    "learn": "Tener muchas empresas reduce la dependencia de una sola. Pero si todas están en el mismo país, comparten parte de sus riesgos. Mira también los sectores y países que reúne un fondo.",
+    "source": "https://investor.vanguard.com/investment-products/etfs/profile/vti"
+  },
+  {
+    "symbol": "BND",
+    "name": "Bonos de EE. UU.",
+    "kind": "bond_etf",
+    "category": "ETF de bonos",
+    "monogram": "b",
+    "color": "#E5E7F1",
+    "summary": "Vanguard Total Bond Market ETF reúne bonos de Estados Unidos: préstamos a gobiernos y empresas con una calidad crediticia relativamente alta.",
+    "question": "¿Qué pasa si suben los tipos?",
+    "risk": "Su precio puede caer cuando suben los tipos. No tiene el vencimiento fijo de un bono individual.",
+    "learn": "Cuando los nuevos bonos ofrecen más intereses, los antiguos suelen perder atractivo y bajar de precio. BND reúne muchos bonos y renueva su cartera: no promete devolverte una cantidad fija en una fecha concreta.",
+    "source": "https://investor.vanguard.com/investment-products/etfs/profile/bnd"
+  }
 ]

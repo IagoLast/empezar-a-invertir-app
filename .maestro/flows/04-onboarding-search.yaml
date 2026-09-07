@@ -1,0 +1,45 @@
+appId: com.empezarainvertir.app
+name: Onboarding and guest search
+---
+- launchApp:
+    clearState: true
+    arguments:
+      maestro-scenario: guest
+- assertVisible: "Aprende a invertir con dinero ficticio."
+- tapOn: "Siguiente"
+- assertVisible: "Entiende qué estás comprando."
+- tapOn: "Siguiente"
+- assertVisible: "Construye criterio, no solo una cartera."
+- tapOn: "Siguiente"
+- assertVisible: '10.000 US\$ virtuales para empezar.'
+- tapOn: "Ahora no, entrar gratis"
+- assertVisible: "Mi cartera"
+- tapOn: "Comprar activos"
+- tapOn:
+    id: "asset-search"
+- inputText: "zzznothing"
+- pressKey: Enter
+- assertVisible: "Sin resultados"
+- scrollUntilVisible:
+    element: "Ver todos los activos"
+    direction: DOWN
+    centerElement: true
+- tapOn: "Ver todos los activos"
+- assertNotVisible: "Sin resultados"
+- scrollUntilVisible:
+    element:
+      id: "asset-search"
+    direction: UP
+- tapOn:
+    id: "asset-search"
+- inputText: "AAPL"
+- pressKey: Enter
+- tapOn: "ETF"
+- assertVisible: "Sin resultados"
+- tapOn: "Acciones"
+- assertVisible:
+    id: "asset-AAPL"
+- tapOn:
+    id: "asset-AAPL"
+- assertVisible: "Iniciar sesión"
+- assertNotVisible: "Comprar"

@@ -1,0 +1,20 @@
+appId: com.empezarainvertir.app
+name: Closed markets prevent trading
+---
+- launchApp:
+    clearState: true
+    arguments:
+      maestro-scenario: market-closed
+- runFlow: ../shared/open-trade.yaml
+- scrollUntilVisible:
+    element: "Mercado cerrado. Puedes guardar una orden limitada y comprobarla cuando abra."
+    direction: DOWN
+- assertNotVisible: "Revisar compra"
+- swipe:
+    direction: DOWN
+- swipe:
+    start: 50%, 30%
+    end: 50%, 85%
+    duration: 700
+- assertVisible: "Mercado cerrado. Puedes guardar una orden limitada y comprobarla cuando abra."
+- assertNotVisible: "Confirmar compra virtual"

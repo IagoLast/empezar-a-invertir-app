@@ -1,0 +1,24 @@
+appId: com.empezarainvertir.app
+name: Completed lessons survive portfolio refresh
+---
+- launchApp:
+    clearState: true
+    arguments:
+      maestro-scenario: happy
+- assertVisible: "Mi cartera"
+- tapOn: "Aprender"
+- assertVisible: "0 de 20"
+- tapOn:
+    id: "lesson-book-purpose"
+- tapOn:
+    id: "book-reading-options"
+- tapOn: "Ir al final de la lección"
+- tapOn: "Marcar como completada"
+- assertVisible: "Lección completada"
+- tapOn: "Cartera"
+- swipe:
+    start: 50%, 30%
+    end: 50%, 85%
+    duration: 700
+- tapOn: "Aprender"
+- assertVisible: "Lección completada"

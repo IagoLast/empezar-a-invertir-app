@@ -1,0 +1,27 @@
+appId: com.empezarainvertir.app
+name: Book progress survives app relaunch
+---
+- launchApp:
+    clearState: true
+    arguments:
+      maestro-scenario: happy
+- tapOn: "Aprender"
+- tapOn:
+    id: "book-resume"
+- tapOn:
+    id: "book-reading-options"
+- tapOn: "Ir al final de la lección"
+- tapOn: "Marcar como completada"
+- assertVisible: "Lección completada"
+- tapOn:
+    id: "book-next"
+- assertVisible: "Dinero"
+- stopApp
+- launchApp:
+    arguments:
+      maestro-scenario: happy
+- tapOn: "Aprender"
+- assertVisible: "1 de 20"
+- tapOn:
+    id: "book-resume"
+- assertVisible: "Dinero"

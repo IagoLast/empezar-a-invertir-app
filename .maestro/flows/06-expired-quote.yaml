@@ -1,0 +1,20 @@
+appId: com.empezarainvertir.app
+name: Expired quotes prevent trading
+---
+- launchApp:
+    clearState: true
+    arguments:
+      maestro-scenario: quote-expired
+- runFlow: ../shared/open-trade.yaml
+- scrollUntilVisible:
+    element: "Desliza hacia abajo para obtener un precio actualizado."
+    direction: DOWN
+- assertNotVisible: "Revisar compra"
+- swipe:
+    direction: DOWN
+- swipe:
+    start: 50%, 30%
+    end: 50%, 85%
+    duration: 700
+- assertVisible: "Desliza hacia abajo para obtener un precio actualizado."
+- assertNotVisible: "Confirmar compra virtual"

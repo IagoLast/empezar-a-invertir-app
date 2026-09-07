@@ -1,0 +1,21 @@
+appId: com.empezarainvertir.app
+name: Recover a pending trade without duplication
+---
+- launchApp:
+    clearState: true
+    arguments:
+      maestro-scenario: trade-response-lost
+- runFlow: ../shared/open-buy.yaml
+- tapOn: "Confirmar compra virtual"
+- assertVisible: "No se recibió la confirmación. Comprueba la operación pendiente."
+- assertNotVisible: "Compra completada"
+- tapOn: "Cerrar"
+- tapOn: "Cartera"
+- tapOn: "Comprobar operación pendiente"
+- assertVisible: "Operación confirmada. Tu cartera está actualizada."
+- assertNotVisible: "Comprobar operación pendiente"
+- assertVisible: '9899,00.*'
+- scrollUntilVisible:
+    element: "AAPL · 1 unidades"
+    direction: DOWN
+- assertVisible: "AAPL · 1 unidades"

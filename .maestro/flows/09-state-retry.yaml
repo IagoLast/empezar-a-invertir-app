@@ -1,0 +1,16 @@
+appId: com.empezarainvertir.app
+name: Recover after a portfolio load error
+---
+- launchApp:
+    clearState: true
+    arguments:
+      maestro-scenario: state-retry
+- assertVisible: "No se puede cargar la cartera. Inténtalo de nuevo."
+- tapOn: "Entendido"
+- swipe:
+    start: 50%, 30%
+    end: 50%, 85%
+    duration: 700
+- runFlow: ../shared/open-buy.yaml
+- tapOn: "Confirmar compra virtual"
+- assertVisible: "Compra completada"

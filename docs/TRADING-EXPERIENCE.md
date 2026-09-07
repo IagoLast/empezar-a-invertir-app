@@ -1,0 +1,17 @@
+# Portfolio and asset experience
+
+The native bottom tab bar provides Portfolio, Markets, Activity and Learn, preserving the system Liquid Glass appearance on iOS 26. Each tab owns its navigation stack. Activity has its own tab. Contextual information opens educational sheets in Spanish.
+
+Authentication decodes optional provider profile metadata and refreshes it for existing sessions. The home and profile display the provider image over HTTPS, with initials when no image is available. Apple accounts may not provide a profile photo.
+
+Every stock/ETF search result opens the same trading detail as the starter assets. Buy and Sell stay anchored at the bottom; Sell is disabled with an explanation until a position exists. Portfolio holdings have a direct Sell action and are rendered even when their symbols are outside the bundled catalog. Quote metadata supplies their names after a state reload. The home action is “Comprar activos”. Search includes market-region filters and a small set of international discovery suggestions, including Inditex; filters operate on suggestions and returned matches, not an exhaustive exchange directory.
+
+The chart loads provider OHLC history for one week, one month, three months, one year or five years. Line and candle modes use the same actual points; missing observations are skipped without generated prices. History is shown in the source currency, while trades, fees and portfolio accounting settle in USD. Quote details and trade review disclose the original price and FX conversion. Pull-to-refresh reloads history and quotes without placing an order.
+
+Provider-validated stocks and ETFs can be registered dynamically by the server, including listings such as ITX.MC. The deployment requires migration `202609070001_global_markets.sql` before the API update. Indices, derivatives and unsupported provider instrument types cannot execute trades. Missing or stale FX data blocks fresh execution quotes.
+
+Market purchases use the existing quote-based server trade endpoint. Local limit buy orders persist separately per authenticated account on this device. They do not reserve cash, sync between devices or execute in the background. Users explicitly choose “Comprobar y ejecutar” in activity. The app fetches a valid quote and requires its symbol and price to satisfy the order; the server executes that exact quote ID and checks cash, market status and expiration. A stable request ID allows an ambiguous response to be resolved without creating a second trade. Pull-to-refresh only loads state and quotes.
+
+Validation covers session metadata compatibility, historical OHLC decoding, international listing filters and limit eligibility, plus simulator flows for navigation, educational sheets, chart selection, buying an international asset, selling it directly from the portfolio, closed-market limit entry and saving/cancelling a local limit order. Build and install with `npm run ios:run` to retain simulator signing and Apple entitlements.
+
+The interface uses full-width shared cards, plain amount fields, and custom selection rows. The order-type control opens a bottom sheet with a short explanation for each supported order and a “Saber más” navigation link to detailed examples. Choosing an order type never submits a trade. The review/confirmation action remains anchored below the scroll content. Profile appearance and book reading options also use sheets, while chart styles have directly visible choices. Native keyboards, text selection, accessibility and the Liquid Glass tab bar remain available.

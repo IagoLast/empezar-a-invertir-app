@@ -1,0 +1,12 @@
+appId: com.empezarainvertir.app
+---
+- assertVisible: "Mi cartera"
+- tapOn: "Comprar activos"
+- tapOn:
+    id: "asset-search"
+- inputText: "AAPL"
+- tapOn:
+    id: "asset-AAPL"
+- tapOn: "Comprar"
+- assertVisible:
+    id: "trade-quantity"

@@ -1,7 +1,41 @@
 import { randomUUID } from 'node:crypto';
 import { APIError } from './http.js';
-import { config, rpc } from './supabase.js';
+import { rpc } from './supabase.js';
+import { yahooQuote, logoURL } from './yahoo.js';
+export const QUOTE_CACHE_MS = 15 * 60 * 1000;
+const MAX_TRADE_AGE_MS = 60 * 60 * 1000;
 export const symbols = new Set(['AAPL', 'MSFT', 'VTI', 'BND']);
+export const validSymbol = symbol => typeof symbol === 'string' && /^[A-Z0-9][A-Z0-9.-]{0,19}$/.test(symbol);
+const MAX_FX_AGE_MS = 4 * 86400000;
+
+// Wallets settle in USD. Preserve the exchange's native price alongside the execution price.
+export async function settlementQuote(raw, symbol, loadQuote = yahooQuote, now = Date.now()) {
+  if (!raw || raw.symbol !== symbol || !['EQUITY', 'ETF'].includes(raw.quoteType)) {
+    throw new APIError(422, 'ASSET_UNSUPPORTED', 'Solo se puede operar con acciones y ETF que tengan una cotización disponible.');
+  }
+  if (typeof raw.regularMarketPrice !== 'number' || !Number.isFinite(raw.regularMarketPrice) || raw.regularMarketPrice <= 0) throw Error('Invalid native price');
+  let currency = raw.currency, scale = 1;
+  const minorUnits = { GBp: 'GBP', GBX: 'GBP', ILA: 'ILS', ZAc: 'ZAR' };
+  if (minorUnits[currency]) { currency = minorUnits[currency]; scale = 0.01; }
+  if (typeof currency !== 'string' || !/^[A-Z]{3}$/.test(currency)) throw Error('Invalid currency');
+  let rate = 1, fxAsOf;
+  if (currency !== 'USD') {
+    const fxSymbol = `${currency}USD=X`;
+    const fx = await loadQuote(fxSymbol);
+    const stamp = fx?.regularMarketTime instanceof Date ? fx.regularMarketTime.getTime() : NaN;
+    if (fx?.symbol !== fxSymbol || !Number.isFinite(fx.regularMarketPrice) || fx.regularMarketPrice <= 0
+      || !Number.isFinite(stamp) || stamp > now + 60000 || stamp <= now - MAX_FX_AGE_MS) throw Error('Invalid FX quote');
+    rate = fx.regularMarketPrice;
+    fxAsOf = new Date(stamp).toISOString();
+  }
+  const nativePrice = raw.regularMarketPrice * scale;
+  const converted = nativePrice * rate;
+  if (!Number.isFinite(converted) || converted <= 0 || converted >= 10000000) throw Error('Invalid settlement price');
+  const quote = normalizeQuote({ ...raw, currency: 'USD', regularMarketPrice: Number(converted.toFixed(8)) }, symbol, now);
+  if (fxAsOf) quote.expiresAt = new Date(Math.min(Date.parse(quote.expiresAt), Date.parse(fxAsOf) + MAX_FX_AGE_MS)).toISOString();
+  return { ...quote, nativePrice, nativeCurrency: currency, exchangeRate: rate, fxAsOf,
+    name: raw.longName || raw.shortName || symbol, kind: raw.quoteType === 'ETF' ? 'etf' : 'stock' };
+}
 export function priceCents(raw) {
   if (typeof raw !== 'string' || !/^\d{1,7}(\.\d{1,8})?$/.test(raw)) throw new Error('Invalid provider price');
   // Decimal parsing, not floating point multiplication; round to the nearest cent.
@@ -10,44 +44,47 @@ export function priceCents(raw) {
   if (!Number.isSafeInteger(cents) || cents <= 0) throw new Error('Invalid provider price');
   return cents;
 }
-export function normalizeQuote(raw, symbol, now = Date.now(), mode = 'realtime', delaySeconds = 0) {
-  if (raw.status === 'error' || raw.symbol !== symbol || raw.currency !== 'USD' || typeof raw.is_market_open !== 'boolean') throw new Error('Invalid provider quote');
-  const stamp = raw.last_quote_at ?? raw.timestamp;
-  if (!Number.isInteger(stamp) || stamp * 1000 > now + 60000 || stamp * 1000 < now - 7 * 86400000) throw new Error('Invalid quote timestamp');
-  if (!['realtime', 'delayed', 'eod'].includes(mode) || !Number.isInteger(delaySeconds) || delaySeconds < 0 || (mode === 'delayed' && delaySeconds === 0)) throw new Error('Invalid feed configuration');
-  const age = now - stamp * 1000;
-  // Never execute against yesterday's quote during an open market, or at a close after hours.
-  const tradable = raw.is_market_open && mode !== 'eod' && age <= delaySeconds * 1000 + 120000;
-  const change = Number(raw.percent_change);
-  if (!Number.isFinite(change)) throw new Error('Invalid provider change');
-  return { id: randomUUID(), symbol, priceCents: priceCents(raw.close), currency: 'USD', changePercent: change,
-    asOf: new Date(stamp * 1000).toISOString(), fetchedAt: new Date(now).toISOString(), expiresAt: new Date(now + 60000).toISOString(),
-    marketOpen: raw.is_market_open, tradable, mode, delaySeconds, source: 'Twelve Data' };
+export function normalizeQuote(raw, symbol, now = Date.now()) {
+  if (!raw || raw.symbol !== symbol || raw.currency !== 'USD' || !['REGULAR', 'CLOSED', 'PRE', 'PREPRE', 'POST', 'POSTPOST'].includes(raw.marketState)) throw new Error('Invalid provider quote');
+  const stamp = raw.regularMarketTime instanceof Date ? raw.regularMarketTime.getTime() : NaN;
+  if (!Number.isFinite(stamp) || stamp > now + 60000 || stamp < now - 7 * 86400000) throw new Error('Invalid quote timestamp');
+  if (typeof raw.regularMarketPrice !== 'number' || !Number.isFinite(raw.regularMarketPrice)) throw new Error('Invalid provider price');
+  const change = raw.regularMarketChangePercent;
+  if (typeof change !== 'number' || !Number.isFinite(change)) throw new Error('Invalid provider change');
+  const marketOpen = raw.marketState === 'REGULAR';
+  // Educational execution can use delayed data, but never data older than one hour.
+  const tradable = marketOpen && now - stamp < MAX_TRADE_AGE_MS;
+  const expiry = marketOpen ? Math.min(now + QUOTE_CACHE_MS + 5 * 60000, stamp + MAX_TRADE_AGE_MS) : now + QUOTE_CACHE_MS;
+  return { id: randomUUID(), symbol, priceCents: priceCents(String(raw.regularMarketPrice)), currency: 'USD', changePercent: change,
+    asOf: new Date(stamp).toISOString(), fetchedAt: new Date(now).toISOString(), expiresAt: new Date(expiry).toISOString(),
+    marketOpen, tradable, mode: 'cached', delaySeconds: Math.max(0, Math.floor((now - stamp) / 1000)),
+    source: 'Yahoo Finance', logoURL: logoURL(raw.logoUrl) };
 }
-export async function provider(endpoint, symbol) {
-  const url = new URL(`https://api.twelvedata.com/${endpoint}`);
-  url.searchParams.set('symbol', symbol);
-  url.searchParams.set('apikey', config('TWELVE_DATA_API_KEY'));
-  const response = await fetch(url, { signal: AbortSignal.timeout(7000) });
-  if (!response.ok) throw new APIError(503, 'MARKET_UNAVAILABLE', 'El proveedor no está disponible. Vuelve a intentarlo.');
-  const result = await response.json();
-  if (result.status === 'error') throw new APIError(503, 'MARKET_UNAVAILABLE', 'No podemos actualizar este dato ahora.');
-  return result;
+export function normalizeFundamentals(raw, symbol, now = Date.now()) {
+  if (!raw || raw.symbol !== symbol || raw.currency !== 'USD') throw new Error('Invalid fundamentals');
+  const number = value => typeof value === 'number' && Number.isFinite(value) ? value : null;
+  const pe = number(raw.trailingPE), eps = number(raw.epsTrailingTwelveMonths);
+  return { available: pe !== null || eps !== null, symbol, pe, eps, period: 'TTM', source: 'Yahoo Finance', fetchedAt: new Date(now).toISOString() };
 }
-export async function getQuote(symbol) {
-  const cached = await rpc('quote_cache', { p_symbol: symbol }, null, true);
-  if (cached.quote && Date.parse(cached.quote.fetchedAt) > Date.now() - 30000) return cached.quote;
-  if (!cached.refresh) {
-    if (cached.quote) return cached.quote; // Expiry still enforced by Postgres, no new execution lifetime.
-    throw new APIError(503, 'QUOTE_LOADING', 'Estamos actualizando el precio. Inténtalo en unos segundos.');
+export function createQuoteService({ database = rpc, loadQuote = yahooQuote, clock = Date.now } = {}) {
+  return async function getQuote(symbol) {
+    const cached = await database('quote_cache', { p_symbol: symbol }, null, true);
+    if (cached.quote && cached.quote.source === 'Yahoo Finance' && Date.parse(cached.quote.fetchedAt) > clock() - QUOTE_CACHE_MS && Date.parse(cached.quote.expiresAt) > clock()) return cached.quote;
+    if (!cached.refresh) {
+      if (cached.quote) return cached.quote; // Expiry still enforced by Postgres, no new execution lifetime.
+      throw new APIError(503, 'QUOTE_LOADING', 'Estamos actualizando el precio. Inténtalo en unos segundos.');
+    }
+    try {
+      const quote = await settlementQuote(await loadQuote(symbol), symbol, loadQuote, clock());
+      await database('save_quote', { p_quote: quote }, null, true);
+      return quote;
+    } catch (error) {
+      // Retain original timestamps; never turn stale data into a fresh executable quote.
+      if (cached.quote) return cached.quote;
+      if (error instanceof APIError) throw error;
+      throw new APIError(503, 'MARKET_UNAVAILABLE', 'No hay una cotización disponible. No se puede operar sin un precio real.');
+    }
   }
-  try {
-    const quote = normalizeQuote(await provider('quote', symbol), symbol, Date.now(), config('MARKET_DATA_MODE'), Number(process.env.MARKET_DATA_DELAY_SECONDS || 0));
-    await rpc('save_quote', { p_quote: quote }, null, true);
-    return quote;
-  } catch {
-    // Retain original timestamps; never turn stale data into a fresh executable quote.
-    if (cached.quote) return cached.quote;
-    throw new APIError(503, 'MARKET_UNAVAILABLE', 'No hay una cotización disponible. No se puede operar sin un precio real.');
-  }
 }
+
+export const getQuote = createQuoteService();

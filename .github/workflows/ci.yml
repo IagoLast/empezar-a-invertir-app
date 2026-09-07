@@ -13,6 +13,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: npm ci
       - run: npm test
   database:
     runs-on: ubuntu-latest
@@ -35,7 +36,7 @@ jobs:
       PGDATABASE: empezar_test
     steps:
       - uses: actions/checkout@v4
-      - run: psql -v ON_ERROR_STOP=1 -f supabase/test-bootstrap.sql -f supabase/migrations/202609050001_initial.sql -f supabase/test-wallet.sql
+      - run: psql -v ON_ERROR_STOP=1 -f supabase/test-bootstrap.sql -f supabase/migrations/202609050001_initial.sql -f supabase/migrations/202609070001_global_markets.sql -f supabase/test-wallet.sql -f supabase/test-global-markets.sql
   ios:
     runs-on: macos-26
     permissions:
@@ -50,13 +51,22 @@ jobs:
       - run: xcodegen generate
         working-directory: apps/ios
       - name: Build native app
-        run: xcodebuild -project Empezar.xcodeproj -scheme Empezar -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+        run: xcodebuild -project Empezar.xcodeproj -scheme Empezar -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- build
         working-directory: apps/ios
+      - name: Verify simulator Apple sign-in entitlements
+        run: python3 scripts/verify-ios-simulator-signing.py apps/ios/build/Build/Products/Debug-iphonesimulator/Empezar.app
       - name: Run native tests
         run: |
           device_id=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for devices in d["devices"].values() for x in devices if x["name"].startswith("iPhone")))')
-          xcodebuild -project Empezar.xcodeproj -scheme Empezar -destination "platform=iOS Simulator,id=$device_id" -derivedDataPath build CODE_SIGNING_ALLOWED=NO test
+          xcodebuild -project Empezar.xcodeproj -scheme Empezar -destination "platform=iOS Simulator,id=$device_id" -derivedDataPath build CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- test
         working-directory: apps/ios
+      - name: Upload native test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-test-results
+          path: apps/ios/build/Logs/Test
+          retention-days: 14
       - name: Capture native iPhone screens
         run: bash scripts/capture-ios.sh
       - name: Upload native screenshots for review

@@ -1,11 +1,14 @@
 name: Upload to TestFlight
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
   group: testflight
   cancel-in-progress: false
+  queue: max
 jobs:
   upload:
     if: github.ref == 'refs/heads/main'
@@ -19,11 +22,15 @@ jobs:
       SUPABASE_URL: ${{ vars.SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
       REVENUECAT_PUBLIC_KEY: ${{ vars.REVENUECAT_PUBLIC_KEY }}
+      FREE_PREVIEW_ENABLED: ${{ vars.FREE_PREVIEW_ENABLED || 'true' }}
+      PRIVACY_POLICY_URL: ${{ vars.PRIVACY_POLICY_URL }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install dependencies
+        run: npm ci
       - name: Verify API and shared contracts
         run: npm test
       - name: Install XcodeGen

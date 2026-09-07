@@ -1,0 +1,48 @@
+appId: com.empezarainvertir.app
+name: Quantity validation and maximum
+---
+- launchApp:
+    clearState: true
+    arguments:
+      maestro-scenario: happy
+- runFlow: ../shared/open-trade.yaml
+- doubleTapOn:
+    id: "trade-quantity"
+- eraseText
+- inputText: "0"
+- tapOn: "Listo"
+- scrollUntilVisible:
+    element: "Introduce entre 1 y 100.000 unidades enteras."
+    direction: DOWN
+- assertVisible:
+    text: "Revisar compra"
+    enabled: false
+- scrollUntilVisible:
+    element:
+      id: "trade-quantity"
+    direction: UP
+- doubleTapOn:
+    id: "trade-quantity"
+- eraseText
+- inputText: "100"
+- tapOn: "Listo"
+- scrollUntilVisible:
+    element: "Saldo insuficiente. Prueba con menos unidades."
+    direction: DOWN
+- assertVisible:
+    text: "Revisar compra"
+    enabled: false
+- scrollUntilVisible:
+    element: "Usar máximo: 99 unidades"
+    direction: UP
+- tapOn: "Usar máximo: 99 unidades"
+- scrollUntilVisible:
+    element: "Revisar compra"
+    direction: DOWN
+- tapOn: "Revisar compra"
+- tapOn: "Confirmar compra virtual"
+- assertVisible: "Compra completada"
+- tapOn: "Listo"
+- assertVisible: "99 unidades"
+- tapOn: "Cartera"
+- assertVisible: '99,00.*'

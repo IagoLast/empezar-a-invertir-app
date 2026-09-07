@@ -1,0 +1,3 @@
+[submodule "libro-bolsa"]
+	path = libro-bolsa
+	url = git@github.com:IagoLast/libro-bolsa.git

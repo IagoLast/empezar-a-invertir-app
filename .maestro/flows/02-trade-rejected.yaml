@@ -1,0 +1,18 @@
+appId: com.empezarainvertir.app
+name: Rejected trades preserve cash
+---
+- launchApp:
+    clearState: true
+    arguments:
+      maestro-scenario: trade-rejected
+- runFlow: ../shared/open-buy.yaml
+- tapOn: "Confirmar compra virtual"
+- assertVisible: "Saldo insuficiente según el servidor."
+- assertNotVisible: "Compra completada"
+- tapOn: "Cerrar"
+- assertNotVisible: "Tu posición"
+- tapOn: "Cartera"
+- assertVisible: '10.000,00.*'
+- assertNotVisible: "Comprobar operación pendiente"
+- tapOn: "Movimientos"
+- assertVisible: "Aún no hay operaciones"

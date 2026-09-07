@@ -1,102 +1,110 @@
-# Conectar la V0
+# Service setup
 
 ## 1. Supabase
 
-1. Crea un proyecto de Supabase.
-2. Ejecuta `supabase/migrations/202609050001_initial.sql` en el SQL Editor. Está pensada para un proyecto nuevo. No ejecutes los archivos `test-*.sql` en tu proyecto: crean identidades y datos únicamente para una base desechable de pruebas.
-3. Activa login por correo. En Authentication → Email Templates → Magic Link, muestra `{{ .Token }}` para enviar un código en lugar de un enlace. Configura tu SMTP para una beta con usuarios reales.
-4. No actives usuarios anónimos. La API requiere usuario verificado.
-5. Conserva URL, clave publishable/anon y service-role/secret. La última **solo** va en Vercel.
+1. Create a Supabase project.
+2. Apply `supabase/migrations/202609050001_initial.sql` and then `supabase/migrations/202609070001_global_markets.sql` in the SQL Editor. The initial migration targets a new database; existing installations need only the global-markets migration before deploying the expanded API. Never run `test-*.sql` against this project: those files create identities and data for disposable test databases only.
+3. Under Authentication → Providers, enable Google and configure its Google Cloud client ID/secret. Register `https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback` as an authorized Google redirect URI.
+4. Enable Apple. Register `com.empezarainvertir.app` as the native App ID, add the bundle ID to Supabase's accepted client IDs and enable Sign in with Apple in Apple Developer.
+5. Add `empezar://auth-callback` under Authentication → URL Configuration → Redirect URLs. Google uses OAuth with PKCE; Apple uses native AuthenticationServices with a nonce.
+6. Disable email and anonymous authentication. The API accepts Apple and Google identities only.
+7. Keep the project URL, public publishable/anon key and server service-role/secret key. The server key belongs only in backend configuration.
 
-RLS permite leer únicamente la cartera de cada usuario. El cliente no puede escribir saldos, posiciones, cotizaciones ni transacciones de pago. Los RPC de trading usan `auth.uid()`, bloquean la fila de la cartera y registran orden y movimiento dentro de la misma transacción.
+RLS limits reads to each user's portfolio. Clients cannot write balances, positions, quotes or payment transactions. Trading RPCs use `auth.uid()`, lock the wallet row and record the order and ledger movement in one transaction.
 
 ## 2. Vercel
 
-Importa este repositorio. Configura **Root Directory = `apps/api`**, framework **Other**, sin comando de build ni directorio de salida personalizado. Los handlers de `api/*.js` se despliegan como funciones Node.js. Las rutas son `/api/state`, `/api/quote`, etc.
+Import the repository with **Root Directory = `apps/api`**, framework **Other**, no build command and no custom output directory. `api/*.js` handlers become Node.js functions at `/api/state`, `/api/quote`, etc.
 
-Copia las variables de `apps/api/.env.example` a Environment Variables en Vercel:
+Copy values from `apps/api/.env.example` into Vercel environment variables:
 
-| Variable | Uso |
+| Variable | Purpose |
 |---|---|
-| `SUPABASE_URL` | URL del proyecto |
-| `SUPABASE_ANON_KEY` | Clave pública publishable/anon |
-| `SUPABASE_SERVICE_ROLE_KEY` | Clave secreta de servidor para RPC de datos/pagos y eliminación de cuenta |
-| `TWELVE_DATA_API_KEY` | Clave privada del proveedor de mercado |
-| `MARKET_DATA_MODE` | `realtime`, `delayed` o `eod`, según el feed contratado |
-| `MARKET_DATA_DELAY_SECONDS` | `0` para realtime; retraso contratado en segundos para delayed |
-| `ENABLE_FUNDAMENTALS` | `true` solo con acceso a `/statistics`; en otro caso los ratios se muestran como no disponibles |
-| `REVENUECAT_WEBHOOK_AUTH` | Valor aleatorio largo que RevenueCat enviará exactamente en Authorization |
-| `REVENUECAT_APP_ID` | ID de la app iOS en RevenueCat (`app_…`) |
-| `REVENUECAT_ENVIRONMENT` | `SANDBOX` para desarrollo/TestFlight, `PRODUCTION` para compras de producción |
+| `SUPABASE_URL` | Project URL |
+| `SUPABASE_ANON_KEY` | Public publishable/anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Secret server key for data/payment RPCs and account deletion |
+| `ENABLE_FUNDAMENTALS` | `true` enables Yahoo P/E and EPS with a 24-hour cache; `false` disables them |
+| `REVENUECAT_WEBHOOK_AUTH` | Long random value RevenueCat sends exactly in Authorization |
+| `REVENUECAT_APP_ID` | RevenueCat iOS app ID; currently `app899c976007` |
+| `REVENUECAT_ENVIRONMENT` | `SANDBOX` for development/TestFlight or `PRODUCTION` |
 
-Usa proyectos separados de Vercel/Supabase para sandbox y producción. La app de RevenueCat debe tener un webhook para cada backend, filtrado por entorno. Los datos y saldos no se comparten entre esos dos backends.
-
-Desarrollo local:
+Use separate Vercel/Supabase projects for sandbox and production. Configure one environment-filtered RevenueCat webhook per backend. Their data and balances must not be shared.
 
 ```bash
 cd apps/api
 cp .env.example .env
-# Completa .env localmente.
+# Fill in .env locally.
 node --env-file=.env dev.js
 ```
 
-El servidor local escucha en `127.0.0.1:3000`. La app mantiene HTTPS obligatorio; para el simulador utiliza el despliegue HTTPS de Vercel o un túnel HTTPS propio. No se incluye una excepción ATS global.
+The local server defaults to port 3000; `PORT` overrides it. iOS permits local networking without a global ATS exception. Use HTTPS for external hosts. See the local simulator configuration below.
 
 ## 3. iOS
 
-Ejecuta `npm run ios:prepare`. Crea recursos a partir de `packages/contracts` y copia `Config.example.plist` cuando falta la configuración. Edita `apps/ios/Empezar/Resources/Config.plist` (ignorado por git):
+Run `npm run ios:prepare` to generate resources from `packages/contracts` and copy the example configuration if missing. Edit the ignored `apps/ios/Empezar/Resources/Config.plist`:
 
-- `API_BASE_URL`: URL de Vercel, sin barra final ni `/api`.
-- `SUPABASE_URL` y `SUPABASE_ANON_KEY`: valores públicos del mismo proyecto.
-- `REVENUECAT_PUBLIC_KEY`: clave SDK iOS `appl_…`.
+- `API_BASE_URL`: backend base URL, without a trailing slash or `/api`.
+- `SUPABASE_URL`, `SUPABASE_ANON_KEY`: public values for the same project.
+- `REVENUECAT_PUBLIC_KEY`: public iOS SDK key starting with `appl_`.
+- `FREE_PREVIEW_ENABLED`: `true` keeps current free access.
+- `PRIVACY_POLICY_URL`: HTTPS URL of the published privacy policy.
 
-No incluyas service-role, la clave Twelve Data, `.p8`, `.p12` ni el secreto del webhook en la app. Genera el proyecto con XcodeGen después de preparar recursos. En un dispositivo real, selecciona tu equipo de firma y un Bundle ID registrado.
+Never embed service-role keys, `.p8`, `.p12` or webhook secrets. Generate the project with XcodeGen after preparing resources. Physical devices require a signing team and registered bundle ID. The target includes Sign in with Apple and the `empezar://` URL scheme; the provisioning profile and Apple identifier must enable the same capability.
 
-## 4. App Store Connect y RevenueCat
+## 4. App Store Connect and RevenueCat
 
-Crea dos productos **Consumable**, con los identificadores exactos:
+See [PAYMENTS.md](PAYMENTS.md) for catalog IDs, monthly subscription, proposed prices and remaining Apple/backend work. Free preview is not an Apple subscription trial.
 
-| Product ID | Saldo acreditado por el backend |
+Create consumable products with these exact identifiers:
+
+| Product ID | Server-granted virtual cash |
 |---|---:|
-| `ei.cash.10000` | 10.000 $ virtuales |
-| `ei.cash.25000` | 25.000 $ virtuales |
+| `ei.cash.10000` | USD 10,000 |
+| `ei.cash.25000` | USD 25,000 |
 
-Elige los precios reales en App Store Connect. El cliente muestra los precios localizados del producto; no hay precios hardcodeados. Importa los productos a RevenueCat y crea el offering **`virtual-cash`** con un package por producto. No necesitas un entitlement para llevar el saldo: este lo mantiene Postgres.
+Set real prices in App Store Connect. The client displays localized StoreKit prices. Import products into RevenueCat and create the `virtual-cash` offering with one package per product. PostgreSQL maintains cash balances; they do not need a RevenueCat entitlement.
 
-El SDK se configura **después** del login, usando el UUID de Supabase en minúsculas como `appUserID`. No se permite comprar con un ID anónimo de RevenueCat. La app espera el webhook antes de mostrar el nuevo saldo; nunca acredita basándose en `CustomerInfo`.
+Configure the SDK after sign-in using the lowercase Supabase UUID as `appUserID`. Anonymous RevenueCat purchases are not allowed. The client waits for the webhook and never grants cash based on CustomerInfo.
 
-Configura RevenueCat → Integrations → Webhooks:
+Configure RevenueCat → Integrations → Webhooks:
 
-- URL: `https://TU_BACKEND/api/revenuecat`.
-- Authorization: valor exacto de `REVENUECAT_WEBHOOK_AUTH`.
-- App y entorno: los mismos del backend.
-- Eventos: `NON_RENEWING_PURCHASE` y `CANCELLATION`; la V0 maneja refunds de compra única con `cancel_reason=CUSTOMER_SUPPORT`.
-- Conecta App Store Server Notifications con RevenueCat para recibir refunds de compras únicas.
+- URL: `https://YOUR_BACKEND/api/revenuecat`.
+- Authorization: exact `REVENUECAT_WEBHOOK_AUTH` value.
+- App and environment: match the backend.
+- Events: `NON_RENEWING_PURCHASE` and `CANCELLATION`; consumable refunds use `cancel_reason=CUSTOMER_SUPPORT`.
+- Connect App Store Server Notifications to RevenueCat to receive consumable refunds.
 
-Los eventos duplicados y las transacciones duplicadas no vuelven a acreditar saldo. Los fallos de DB devuelven error para que RevenueCat reintente; no se responde éxito antes del commit. Si se agotan los reintentos, reenvía el evento desde RevenueCat y comprueba `purchase_receipts` y `ledger`. La V0 no incorpora aún un worker periódico de reconciliación.
+Duplicate events and transactions do not grant cash twice. Database failures return errors so RevenueCat retries; success is returned only after commit. If retries are exhausted, resend the event and inspect `purchase_receipts` and `ledger`. There is no periodic reconciliation worker yet.
 
-Los consumibles comprados no caducan. El saldo se recupera iniciando sesión en la misma cuenta; un botón Restore Purchases no recrearía consumibles ya gastados. Un refund puede dejar saldo virtual negativo si ya se invirtió el crédito: se bloquean nuevas compras, pero se permite vender para recuperar liquidez. Eliminar la cuenta elimina también ese saldo, con confirmación explícita en la app.
+Purchased cash does not expire. Signing into the same account restores its balance; Restore Purchases does not recreate spent consumables. A refund can make cash negative after it was invested. New buys are blocked, but sells can recover liquidity. Account deletion removes the balance after explicit confirmation.
 
-## Datos reales y licencia
+## Market data
 
-Se ha elegido **Twelve Data** por su endpoint `/quote`, cobertura de acciones y ETF, timestamps y estado de mercado, y datos fundamentales opcionales. La clave demo pública permite comprobar Apple; no da acceso a todo el catálogo. La aplicación necesita tu propia clave.
+The backend uses the unofficial `yahoo-finance2` library without an API key. Quotes expose `source=Yahoo Finance`, `mode=cached` and optional `logoURL`. Logos must use HTTPS on `s.yimg.com`; missing images fall back to category icons.
 
-Se usa `close` como último precio y `last_quote_at` como timestamp preferente; `timestamp` puede representar la apertura de la vela. La API redondea precios a céntimos y conserva ambos momentos: hora del dato y hora de recepción. La caché compartida limita refrescos a uno por símbolo cada 30 segundos, incluso entre lambdas. Cada cotización caduca a los 60 segundos. Si falla el proveedor, se conserva el dato antiguo y su vencimiento: nunca se convierte en un precio nuevo.
+PostgreSQL shares quotes across users and instances for 15 minutes. The refresh lease limits concurrent requests and retries. `asOf` retains the market timestamp separately from `fetchedAt`. Provider failures return the previous quote without renewing timestamps or validity.
 
-Con mercado abierto se rechazan datos más antiguos que el retraso contratado más 120 segundos. Fuera de mercado y en modo EOD se consulta el último precio, pero no se ejecutan órdenes. No hay cola para la próxima apertura. El feed básico US es parcial (aproximadamente 5 % del volumen según el proveedor); no representa un bid/ask consolidado.
+Trades accept data no older than one hour during the regular session. Quotes expire at most 20 minutes after retrieval and never later than one hour after their market timestamp. Closed-market prices remain visible, but cannot execute trades. The interface shows the date/source and contextual explanations without exposing caching implementation details.
 
-La visualización a usuarios externos necesita los derechos correspondientes de display/redistribución. Las condiciones y add-ons dependen del plan y mercado; verifica con Twelve Data el contrato de tu app antes de publicarla. La caché reduce solicitudes por usuario, pero una sesión activa continua de cuatro símbolos puede superar las cuotas del plan de prueba. Configura el plan, alertas de consumo y límites de Vercel para tu volumen.
+AAPL/MSFT trailing-twelve-month P/E and EPS use a 24-hour cache. Missing values remain `null`, not zero. Set `ENABLE_FUNDAMENTALS=false` to disable retrieval.
 
-Fuentes verificadas durante la implementación:
+On September 6, real queries for all four catalog symbols, shared-cache write/read with stable IDs, AAPL fundamentals and AAPL/MSFT logos were verified. Yahoo returned no VTI/BND logos. The existing initial migration was applied to the previously empty Supabase project, enabling RLS and server-only quote writes.
 
-- [Quote: campos y timestamps](https://twelvedata.com/docs/llms/market-data/quote.md).
-- [Statistics: PER, BPA y período reportado](https://twelvedata.com/docs/llms/fundamentals/statistics.md).
-- [Feed US y derechos de redistribución](https://support.twelvedata.com/en/articles/9935903-us-equities-market-data).
-- [Planes empresariales](https://twelvedata.com/pricing-business).
-- [Supabase: funciones y permisos](https://supabase.com/docs/guides/database/functions), [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security).
-- [RevenueCat: consumibles](https://www.revenuecat.com/docs/platform-resources/non-subscriptions), [webhooks e idempotencia](https://www.revenuecat.com/docs/integrations/webhooks).
-- [Apple: IAP y saldo que no caduca](https://developer.apple.com/app-store/review/guidelines/#in-app-purchase).
+Commercial use and redistribution terms still require review before release. References: [library](https://github.com/gadicc/yahoo-finance2), [Yahoo terms](https://legal.yahoo.com/xw/en/yahoo/terms/otos/index.html).
 
-## Para una beta externa
+## External beta checks
 
-Probar en sandbox: comprar los dos packs, cancelar en StoreKit, reabrir la app con una compra pendiente, duplicar el webhook, reembolsar antes y después de gastar saldo, comprobar otra cuenta y borrar la cuenta. Validar la cotización en apertura/cierre de sesión con el plan real. Completar una política de privacidad propia, App Privacy en App Store Connect y los datos de contacto. Las pruebas automatizadas no sustituyen la validación de estas integraciones con credenciales reales.
+Test both packs, StoreKit cancellation, reopening with pending purchases, duplicate webhooks, refunds before/after spending, account switching and deletion. Check opening/closing session behavior. Complete the privacy policy, App Privacy declarations and contact details. Automated tests do not replace real-credential integration checks.
+
+## Run iOS against the local backend
+
+```bash
+# From the repository root: copy only the URL and public key into the ignored plist.
+node scripts/configure-ios-local.mjs apps/api/.env.production.local http://localhost:3001
+# In another terminal, from apps/api:
+PORT=3001 node --env-file=.env.production.local dev.js
+```
+
+This uses the Supabase project in the specified file (production in this example), not a local database. Rebuild and reinstall after configuration. Launch without `-maestro-scenario` to use the real backend. A physical device needs a reachable backend URL.
+
+The script reports whether Google/Apple authentication is enabled. Copying public keys does not configure OAuth providers; each needs its own credentials. Both were disabled at the September 6 check.

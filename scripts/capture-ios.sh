@@ -30,22 +30,22 @@ python3 - <<'PY'
 from pathlib import Path
 import subprocess
 revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
-Path('docs/screenshots/README.md').write_text(f'''# Capturas nativas de iPhone
+Path('docs/screenshots/README.md').write_text(f'''# Native iPhone screenshots
 
-Capturadas en el simulador de iOS después de compilar y pasar los tests.
-Código de la captura: `{revision}`.
+Captured in the iOS simulator after building and testing.
+Source revision: `{revision}`.
 
-Blanco y azul por defecto. El tema se cambia en **Perfil → Apariencia** y se conserva entre sesiones.
-Las capturas usan una cuenta sin autenticar: las cotizaciones no disponibles aparecen como `—`, sin precios ni rentabilidades inventados.
-Las pantallas de detalle y orden se abren mediante argumentos exclusivos de DEBUG para documentar también su estado sin cotización. No ejecutan compras.
+White and blue are the defaults. Appearance can be changed in the profile and persists across sessions.
+Screenshots use a guest account. Unavailable quotes appear as `—`, without fabricated prices or returns.
+Detail and trade screens use DEBUG-only launch arguments to document missing-price states. Capturing them does not execute purchases.
 
-| Pantalla | Claro (por defecto) | Oscuro |
+| Screen | Light (default) | Dark |
 |---|---|---|
-| Cartera | ![Cartera clara](iphone-light-0.png) | ![Cartera oscura](iphone-dark-0.png) |
-| Mercados | ![Mercados claros](iphone-light-1.png) | ![Mercados oscuros](iphone-dark-1.png) |
-| Perfil y apariencia | ![Perfil claro](iphone-light-profile.png) | ![Perfil oscuro](iphone-dark-profile.png) |
-| Detalle del activo | ![Activo claro](iphone-light-asset.png) | ![Activo oscuro](iphone-dark-asset.png) |
-| Compra virtual | ![Compra clara](iphone-light-trade.png) | ![Compra oscura](iphone-dark-trade.png) |
-| Aprender | ![Aprender claro](iphone-light-2.png) | ![Aprender oscuro](iphone-dark-2.png) |
+| Portfolio | ![Light portfolio](iphone-light-0.png) | ![Dark portfolio](iphone-dark-0.png) |
+| Markets | ![Light markets](iphone-light-1.png) | ![Dark markets](iphone-dark-1.png) |
+| Profile and appearance | ![Light profile](iphone-light-profile.png) | ![Dark profile](iphone-dark-profile.png) |
+| Asset detail | ![Light asset](iphone-light-asset.png) | ![Dark asset](iphone-dark-asset.png) |
+| Virtual trade | ![Light trade](iphone-light-trade.png) | ![Dark trade](iphone-dark-trade.png) |
+| Learn | ![Light lessons](iphone-light-2.png) | ![Dark lessons](iphone-dark-2.png) |
 ''')
 PY

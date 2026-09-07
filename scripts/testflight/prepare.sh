@@ -16,6 +16,9 @@ for key,file in [('APPLE_CERTIFICATE_P12_BASE64',root/'certificate.p12'),('APPLE
  file.write_bytes(base64.b64decode(os.environ[key],validate=True)); file.chmod(0o600)
 (root/'keychain-password').write_text(secrets.token_urlsafe(32)); (root/'keychain-password').chmod(0o600)
 config={k:os.environ[k] for k in ['API_BASE_URL','SUPABASE_URL','SUPABASE_ANON_KEY','REVENUECAT_PUBLIC_KEY']}
+config['FREE_PREVIEW_ENABLED']=os.environ.get('FREE_PREVIEW_ENABLED','true')
+if config['FREE_PREVIEW_ENABLED'] not in ['true','false']: raise SystemExit('Invalid FREE_PREVIEW_ENABLED')
+config['PRIVACY_POLICY_URL']=os.environ.get('PRIVACY_POLICY_URL','')
 with open('apps/ios/Empezar/Resources/Config.plist','wb') as f: plistlib.dump(config,f)
 PY
 signing_dir="$RUNNER_TEMP/empezar-signing"
@@ -34,6 +37,7 @@ root=pathlib.Path(os.environ['RUNNER_TEMP'])/'empezar-signing'
 p=plistlib.loads((root/'profile.plist').read_bytes())
 if p['TeamIdentifier'][0]!=os.environ['APPLE_TEAM_ID']: raise SystemExit('Profile team mismatch')
 if p['Entitlements']['application-identifier']!=p['ApplicationIdentifierPrefix'][0]+'.'+os.environ['IOS_BUNDLE_ID']: raise SystemExit('Profile bundle ID mismatch')
+if p['Entitlements'].get('com.apple.developer.applesignin')!=['Default']: raise SystemExit('Profile must enable Sign in with Apple')
 if p['ExpirationDate']<datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None): raise SystemExit('Provisioning profile expired')
 if p.get('ProvisionedDevices') or p.get('ProvisionsAllDevices') or p['Entitlements'].get('get-task-allow'): raise SystemExit('An App Store distribution profile is required')
 for directory in [pathlib.Path.home()/'Library/MobileDevice/Provisioning Profiles',pathlib.Path.home()/'Library/Developer/Xcode/UserData/Provisioning Profiles']:

@@ -1,6 +1,21 @@
 {
-  "name": "empezar-a-invertir", "version": "0.1.0", "private": true,
-  "workspaces": ["apps/api", "packages/contracts"],
-  "scripts": { "test": "npm test --workspace=apps/api && node scripts/check-contracts.mjs", "dev:api": "npm run dev --workspace=apps/api", "ios:prepare": "node scripts/prepare-ios.mjs", "check": "npm test" },
-  "engines": { "node": ">=22" }
+  "name": "empezar-a-invertir",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/api",
+    "packages/contracts"
+  ],
+  "scripts": {
+    "test": "npm test --workspace=apps/api && node scripts/check-contracts.mjs && node scripts/check-book.mjs",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "test:ios:e2e": "bash scripts/maestro/test.sh",
+    "ios:run": "bash scripts/run-ios-local.sh",
+    "ios:prepare": "node scripts/prepare-ios.mjs",
+    "check": "npm test",
+    "book:import": "node scripts/import-book.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
 }

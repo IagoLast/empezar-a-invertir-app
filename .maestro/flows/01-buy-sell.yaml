@@ -1,0 +1,31 @@
+appId: com.empezarainvertir.app
+name: Buy and sell update the portfolio
+---
+- launchApp:
+    clearState: true
+    arguments:
+      maestro-scenario: happy
+- runFlow: ../shared/open-buy.yaml
+- tapOn: "Confirmar compra virtual"
+- assertVisible: "Compra completada"
+- tapOn: "Listo"
+- assertVisible: "1 unidades"
+- tapOn: "Vender"
+- scrollUntilVisible:
+    element: "Revisar venta"
+    direction: DOWN
+    centerElement: true
+- tapOn: "Revisar venta"
+- tapOn: "Confirmar venta virtual"
+- assertVisible: "Venta completada"
+- tapOn: "Listo"
+- assertNotVisible: "Tu posición"
+- tapOn: "Cartera"
+- assertVisible: '9998,00.*'
+- scrollUntilVisible:
+    element: "Tu cartera empieza aquí"
+    direction: DOWN
+    centerElement: true
+- tapOn: "Movimientos"
+- assertVisible: "Compra de AAPL"
+- assertVisible: "Venta de AAPL"

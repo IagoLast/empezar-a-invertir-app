@@ -13,7 +13,10 @@ export async function authenticated(request) {
   if (response.status === 401 || response.status === 403) throw new APIError(401, 'UNAUTHORIZED', 'Vuelve a iniciar sesión.');
   if (!response.ok) throw new Error('Auth unavailable');
   const user = await response.json();
-  if (!user.id || !user.email_confirmed_at || user.is_anonymous) throw new APIError(403, 'VERIFICATION_REQUIRED', 'Verifica tu correo para continuar.');
+  const providers = user.app_metadata?.providers || [user.app_metadata?.provider].filter(Boolean);
+  if (!user.id || user.is_anonymous || !providers.some(provider => ['apple', 'google'].includes(provider))) {
+    throw new APIError(403, 'SOCIAL_LOGIN_REQUIRED', 'Inicia sesión con Apple o Google para continuar.');
+  }
   return { user, authorization };
 }
 const messages = {
@@ -24,6 +27,7 @@ const messages = {
   QUOTE_UNAVAILABLE: [503, 'No hay una cotización reciente disponible.'],
   IDEMPOTENCY_CONFLICT: [409, 'Esta operación ya existe con otros datos.'],
   INVALID_INPUT: [400, 'Datos no válidos.'],
+  SOCIAL_LOGIN_REQUIRED: [403, 'Inicia sesión con Apple o Google para continuar.'],
   UNAUTHORIZED: [401, 'Vuelve a iniciar sesión.']
 };
 export async function rpc(name, args, authorization, admin = false) {
@@ -32,9 +36,10 @@ export async function rpc(name, args, authorization, admin = false) {
     method: 'POST', headers: { apikey: key, Authorization: authorization || `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(args), signal: AbortSignal.timeout(10000)
   });
-  const data = await response.json();
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
   if (!response.ok) {
-    const match = messages[data.message];
+    const match = messages[data?.message];
     if (match) throw new APIError(match[0], data.message, match[1]);
     throw new Error('Database unavailable');
   }
