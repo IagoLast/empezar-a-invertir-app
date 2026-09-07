@@ -45,6 +45,7 @@ struct ExploreView: View {
     @State private var searchResults: [MarketSearchResult] = []
     @State private var searching = false
     @State private var searchError: String?
+    @State private var searchNotice: String?
     private var remoteResults: [MarketSearchResult] {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
         let suggestions = MarketSearchResult.suggestions.filter {
@@ -98,7 +99,7 @@ struct ExploreView: View {
                     }
                 }
                 VStack(alignment: .leading, spacing: 16) {
-                    Label("Mercado disponible: Estados Unidos", systemImage: "globe.americas")
+                    Label("EE. UU. y mercados internacionales disponibles", systemImage: "globe.americas")
                         .font(.subheadline).foregroundStyle(Theme.muted)
                     SectionHeading(title: search.isEmpty ? "Ideas para empezar" : "Resultados", detail: "Acciones y ETF")
                     VStack(spacing: 0) {
@@ -129,6 +130,7 @@ struct ExploreView: View {
                         }
                     }.padding(.horizontal, 16).dataCard()
                 }
+                if let searchNotice { Text(searchNotice).font(.caption).foregroundStyle(Theme.muted) }
                 if store.marketLoading { ProgressView("Actualizando precios…").font(.subheadline).frame(maxWidth: .infinity) }
                 if !store.signedIn {
                     HStack(alignment: .top, spacing: 12) {
@@ -141,7 +143,9 @@ struct ExploreView: View {
                     }.padding(20).dataCard()
                 }
                 VStack(alignment: .leading, spacing: 8) {
-                    Link("Fuente: Finnhub ↗", destination: URL(string: "https://finnhub.io")!).font(.caption)
+                    Link("Finnhub ↗", destination: URL(string: "https://finnhub.io")!).font(.caption)
+                    Link("Alpha Vantage ↗", destination: URL(string: "https://www.alphavantage.co")!).font(.caption)
+                    Text("La cobertura depende del activo. Algunos precios se actualizan al cierre de la sesión.").font(.caption).foregroundStyle(Theme.muted)
                     Text("Puedes comprar y vender las acciones y ETF del buscador con dinero virtual. Busca por nombre o símbolo; los filtros se aplican a los resultados de esa búsqueda.").font(.caption).foregroundStyle(Theme.muted)
                 }
             }.padding(20).padding(.top, 12)
@@ -154,16 +158,16 @@ struct ExploreView: View {
     }
     private func searchMarkets() async {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
-        searchResults = []; searchError = nil
+        searchResults = []; searchError = nil; searchNotice = nil
         guard !query.isEmpty else { searching = false; return }
         searching = true
         do {
-            try await Task.sleep(for: .milliseconds(350))
+            try await Task.sleep(for: .milliseconds(800))
             let encoded = query.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? query
             let response: MarketSearchResponse = try await store.api.request("search?q=\(encoded)", authenticated: false)
             try Task.checkCancellation()
             guard query == search.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
-            searchResults = response.results; searching = false
+            searchResults = response.results; searchNotice = response.notice; searching = false
         } catch {
             guard !Task.isCancelled, query == search.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
             searchError = "No hemos podido buscar. Comprueba tu conexión y vuelve a intentarlo."; searching = false

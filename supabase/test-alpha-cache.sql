@@ -1,0 +1,30 @@
+begin;
+do $$
+declare r jsonb; ticket uuid; count_before int;
+begin
+  if has_function_privilege('authenticated','public.reserve_alpha_request(text,integer)','execute') then raise exception 'Client can spend API budget'; end if;
+  r:=public.reserve_alpha_request('test:first',2); ticket:=(r->>'ticket')::uuid;
+  if ticket is null then raise exception 'Missing first reservation'; end if;
+  select used into count_before from public.market_provider_budget where provider='alpha_vantage';
+  r:=public.reserve_alpha_request('test:first',2);
+  if not(r ? 'waitMs') then raise exception 'Duplicate lease allowed'; end if;
+  if (select used from public.market_provider_budget where provider='alpha_vantage')<>count_before then raise exception 'Duplicate consumed quota'; end if;
+  perform public.save_alpha_response('test:first',gen_random_uuid(),'{"wrong":true}',100);
+  if (select data from public.market_provider_cache where key='test:first') is not null then raise exception 'Wrong ticket wrote cache'; end if;
+  perform public.save_alpha_response('test:first',ticket,'{"ok":true}',100);
+  r:=public.reserve_alpha_request('test:first',2);
+  if r->'data' <> '{"ok":true}'::jsonb then raise exception 'Cache missing'; end if;
+  r:=public.reserve_alpha_request('test:second',2);
+  if not(r ? 'waitMs') then raise exception 'Burst limiter missing'; end if;
+  update public.market_provider_budget set next_request_at='-infinity' where provider='alpha_vantage';
+  r:=public.reserve_alpha_request('test:second',2);
+  if not(r ? 'ticket') then raise exception 'Second reservation missing'; end if;
+  r:=public.reserve_alpha_request('test:third',2);
+  if r->>'limited' <> 'true' then raise exception 'Exceeded shared daily budget'; end if;
+  r:=public.reserve_alpha_request('test:first',2);
+  if r->'data' <> '{"ok":true}'::jsonb then raise exception 'Quota blocked cached data'; end if;
+  update public.market_provider_budget set day=day-1,next_request_at='-infinity' where provider='alpha_vantage';
+  r:=public.reserve_alpha_request('test:third',2);
+  if not(r ? 'ticket') then raise exception 'Daily reset failed'; end if;
+end $$;
+rollback;

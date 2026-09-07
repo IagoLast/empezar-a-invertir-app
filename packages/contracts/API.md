@@ -5,10 +5,10 @@ JSON, integer USD cents for wallet amounts, whole units and ISO 8601 UTC dates. 
 | Method | Route | Input | Output |
 |---|---|---|---|
 | GET | `/api/state` | — | Portfolio |
-| GET | `/api/search?q=NVDA` | Name or symbol, 1–80 characters | `{results: [{symbol, name, kind, exchange}]}` |
+| GET | `/api/search?q=NVDA` | Name or symbol, 1–80 characters | `{results: [{symbol, name, kind, exchange, source?}], partial?, notice?}` |
 | GET | `/api/market-preview?symbol=NVDA` | Yahoo symbol | `{symbol, price, currency, changePercent, asOf, source, logoURL}`; read-only, decimal price in the specified currency |
 | GET | `/api/quote?symbol=AAPL` | Provider stock/ETF symbol, including international listings | Quote |
-| GET | `/api/history?symbol=ITX.MC&range=1m` | `1w`, `1m`, `3m`, `1y`, `5y` | `{symbol, range, currency, source, points: [{date, open, high, low, close}]}` |
+| GET | `/api/history?symbol=TSCO.LON&range=1m` | `1w`, `1m`, `3m`, `1y`, `5y` | `{symbol, range, currency, source, interval, points: [{date, open, high, low, close}]}` |
 | GET | `/api/fundamentals?symbol=AAPL` | AAPL or MSFT | `{available, symbol?, pe?, eps?, period?, source?, fetchedAt?}` |
 | POST | `/api/trade` | `{requestId: UUID, symbol, side: buy\|sell, units: 1..100000, quoteId: UUID}` | Portfolio after commit |
 | POST | `/api/lesson` | `{lessonId: lesson-1..lesson-4}` | Portfolio |
@@ -46,3 +46,9 @@ Apply `supabase/migrations/202609070001_global_markets.sql` before deploying the
 A simulated order includes `id`, `symbol`, `side`, `units`, `priceCents`, optional `limitCents`, `status` (`pending`/`executed`/`cancelled`), `revision`, `createdAt`, `executeAt`, and nullable `averageDailyVolume`. Quotes also include nullable `averageDailyVolume` in units/day. Read `docs/FINNHUB-ORDERS.md` for simulation assumptions and provider coverage.
 
 `GET /api/state` never executes orders. The server's scheduled worker handles completion independently. The legacy `POST /api/trade` remains available to existing builds and respects reservations.
+
+## Multiple market providers
+
+Finnhub remains the primary US quote provider. Alpha Vantage supplements international discovery, daily/weekly history, FX and end-of-day quote fallback. Each quote/series names its actual `source`. Alpha session dates use UTC midnight and `mode=eod`; `marketOpen=false` means no live session assertion for these quotes, not confirmed current closure. Legacy `tradable` remains false for daily prices; simulated orders validate the actual stored reference age/expiry.
+
+`history.interval` describes actual candles (`1d`, `1wk`, or Finnhub's requested interval). Long Alpha ranges use weekly data; they do not claim daily/intraday resolution. Foreign candles use native major currency; USD-settled quotes expose native price and FX metadata. Query results can include `partial=true` and `notice` when only one provider is available. Alpha Vantage has a persistent server-side cache, a shared daily budget, and a burst limiter; see `docs/FINNHUB-ORDERS.md`.

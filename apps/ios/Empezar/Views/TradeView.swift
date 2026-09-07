@@ -100,7 +100,8 @@ struct TradeView: View {
                         if let quote {
                             Text("Referencia: \(Money.text(quote.priceCents)) · \(quote.source)").font(.caption).foregroundStyle(Theme.muted)
                             if let date = ISO.date(quote.asOf) { Text(date.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(Theme.muted) }
-                            if !quote.marketOpen { Text("La bolsa está cerrada. Puedes practicar con el último precio disponible.").font(.subheadline) }
+                            if quote.mode == "eod" { Text("Practicas con un precio de cierre diario, no con una cotización en tiempo real.").font(.subheadline) }
+                            else if !quote.marketOpen { Text("La bolsa está cerrada. Puedes practicar con el último precio disponible.").font(.subheadline) }
                         }
                         VStack(alignment: .leading, spacing: 10) {
                             Label("¿Cuándo se ejecutará?", systemImage: "clock").font(.headline)

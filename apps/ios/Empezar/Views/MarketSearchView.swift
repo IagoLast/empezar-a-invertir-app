@@ -13,7 +13,10 @@ struct MarketSearchResult: Decodable, Identifiable {
         .init(symbol: "SPY", name: "SPDR S&P 500 ETF", kind: "etf", exchange: "NYSE Arca"),
     ]
 }
-struct MarketSearchResponse: Decodable { let results: [MarketSearchResult] }
+struct MarketSearchResponse: Decodable {
+    let results: [MarketSearchResult]
+    var notice: String? = nil
+}
 struct MarketSearchRow: View {
     let asset: MarketSearchResult
     var body: some View {

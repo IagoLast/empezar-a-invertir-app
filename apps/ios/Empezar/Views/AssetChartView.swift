@@ -8,6 +8,7 @@ private enum ChartStyle: String, CaseIterable { case line, candles
 struct PriceHistory: Decodable {
     let currency, source: String
     let points: [HistoryPoint]
+    var interval: String? = nil
 }
 
 struct HistoryPoint: Decodable, Identifiable {
@@ -83,6 +84,7 @@ struct AssetChartView: View {
                     .chartYAxis { AxisMarks(position: .trailing, values: .automatic(desiredCount: 4)) }
                     .frame(height: 210).accessibilityIdentifier("asset-chart")
                     .accessibilityLabel("Histórico de \(symbol), \(range.title), en \(history.currency)")
+                if let interval = history.interval { Text(interval == "1wk" ? "Una vela por semana" : interval == "1d" ? "Una vela por sesión" : "Velas intradía").font(.caption).foregroundStyle(Theme.muted) }
                 Text("\(history.currency) · \(history.source) · Precios históricos, no en tiempo real")
                     .font(.caption).foregroundStyle(Theme.muted)
             } else {

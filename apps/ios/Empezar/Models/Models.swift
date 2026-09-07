@@ -43,11 +43,11 @@ struct Quote: Codable, Identifiable {
     var expired: Bool { (ISO.date(expiresAt) ?? .distantPast) <= Date() }
     var canTrade: Bool { marketOpen && tradable && !expired }
     var status: String {
-        if !marketOpen { return "Mercado cerrado · último precio" }
         if expired { return "Precio pendiente de actualizar" }
+        if mode == "eod" { return "Precio de cierre · \(source)" }
+        if !marketOpen { return "Mercado cerrado · último precio" }
         if mode == "cached" { return tradable ? "Último precio disponible" : "Precio pendiente de actualizar" }
         if mode == "delayed" { return "Diferido \(delaySeconds / 60) min" }
-        if mode == "eod" { return "Precio de cierre" }
         return tradable ? "Último precio disponible" : "Precio pendiente de actualizar"
     }
 }

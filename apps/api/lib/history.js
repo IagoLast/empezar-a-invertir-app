@@ -1,6 +1,7 @@
 import { APIError } from './http.js';
 import { cachedLoader } from './search.js';
 import { finnhubHistory } from './finnhub.js';
+import { alphaHistory, alphaEnabled } from './alpha-vantage.js';
 
 export const historyRanges = {
   '1w': { days: 7, interval: '1h' },
@@ -21,11 +22,23 @@ export function normalizeHistory(raw, symbol, range) {
     seen.add(date);
     return [{ date: new Date(date).toISOString(), open: row.open, high: row.high, low: row.low, close: row.close }];
   }).sort((a, b) => a.date.localeCompare(b.date));
-  return { symbol, range, currency: raw.meta.currency, source: 'Finnhub', points };
+  return { symbol, range, currency: raw.meta.currency, source: raw.meta.source || 'Finnhub', interval: raw.meta.interval || historyRanges[range].interval, points };
 }
 
-export const marketHistory = cachedLoader(async key => {
-  const [symbol, range] = key.split(':');
-  try { return normalizeHistory(await finnhubHistory(symbol, historyRanges[range]), symbol, range); }
-  catch (error) { if (error instanceof APIError) throw error; throw new APIError(503, 'HISTORY_UNAVAILABLE', 'No hemos podido cargar el histórico. Desliza hacia abajo para volver a intentarlo.'); }
-});
+export function createHistoryService({ primary = alphaHistory, secondary = finnhubHistory, enabled = alphaEnabled } = {}) {
+  return cachedLoader(async key => {
+    const [symbol, range] = key.split(':');
+    try {
+      let raw;
+      if (enabled()) {
+        try { raw = await primary(symbol, historyRanges[range]); }
+        catch (error) {
+          try { raw = await secondary(symbol, historyRanges[range]); } catch { throw error; }
+        }
+      } else { raw = await secondary(symbol, historyRanges[range]); }
+      return normalizeHistory(raw, symbol, range);
+    }
+    catch (error) { if (error instanceof APIError) throw error; throw new APIError(503, 'HISTORY_UNAVAILABLE', 'No hemos podido cargar el histórico. Desliza hacia abajo para volver a intentarlo.'); }
+  });
+}
+export const marketHistory = createHistoryService();
