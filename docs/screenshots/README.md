@@ -1,7 +1,7 @@
 # Native iPhone screenshots
 
 Captured in the iOS simulator after building and testing.
-Source revision: `162edafeae647ff0896bc1ebacea9785f86a1758`.
+Source revision: `d07c70ae0323d20efffb738237a4a24ad813acfa`.
 
 White and blue are the defaults. Appearance can be changed in the profile and persists across sessions.
 Screenshots use a guest account. Unavailable quotes appear as `—`, without fabricated prices or returns.
