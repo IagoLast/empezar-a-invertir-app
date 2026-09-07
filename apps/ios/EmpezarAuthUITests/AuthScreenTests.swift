@@ -1,6 +1,10 @@
 import XCTest
 
 final class AuthScreenTests: XCTestCase {
+    override func setUpWithError() throws {
+        continueAfterFailure = false
+    }
+
     private func openAuth(_ scenario: String) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["-maestro-scenario", scenario, "-has-onboarded-v0", "YES",
@@ -8,7 +12,7 @@ final class AuthScreenTests: XCTestCase {
         app.launch()
         let asset = app.descendants(matching: .any)["asset-AAPL"].firstMatch
         XCTAssertTrue(asset.waitForExistence(timeout: 10)); asset.tap()
-        let login = app.buttons["Iniciar sesión"]
+        let login = app.buttons["detail-buy"]
         XCTAssertTrue(login.waitForExistence(timeout: 5)); login.tap()
         return app
     }
@@ -43,8 +47,8 @@ final class AuthScreenTests: XCTestCase {
         let app = openAuth("auth-error")
         XCTAssertTrue(app.descendants(matching: .any)["auth-load-error"].firstMatch.waitForExistence(timeout: 5))
         app.buttons["auth-explore"].tap()
-        XCTAssertTrue(app.buttons["Iniciar sesión"].waitForExistence(timeout: 5))
-        app.buttons["Iniciar sesión"].tap()
+        XCTAssertTrue(app.buttons["detail-buy"].waitForExistence(timeout: 5))
+        app.buttons["detail-buy"].tap()
         XCTAssertTrue(app.buttons["sign-in-apple"].waitForExistence(timeout: 5))
     }
 
@@ -55,14 +59,14 @@ final class AuthScreenTests: XCTestCase {
         XCTAssertFalse(app.buttons["sign-in-google"].exists)
         capture("Auth unavailable")
         app.buttons["auth-explore"].tap()
-        XCTAssertTrue(app.buttons["Iniciar sesión"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["detail-buy"].waitForExistence(timeout: 5))
     }
 
     func testClosingWhileLoadingDoesNotBlockNextPresentation() {
         let app = openAuth("auth-timeout")
         XCTAssertTrue(app.descendants(matching: .any)["auth-loading"].firstMatch.waitForExistence(timeout: 3))
         app.buttons["Cerrar"].tap()
-        app.buttons["Iniciar sesión"].tap()
+        app.buttons["detail-buy"].tap()
         XCTAssertTrue(app.buttons["sign-in-apple"].waitForExistence(timeout: 5))
     }
 }
