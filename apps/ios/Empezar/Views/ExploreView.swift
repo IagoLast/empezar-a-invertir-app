@@ -98,9 +98,8 @@ struct ExploreView: View {
                     }
                 }
                 VStack(alignment: .leading, spacing: 16) {
-                    Picker("Mercado", selection: $region) {
-                        ForEach(MarketRegion.allCases, id: \.self) { Text($0.title).tag($0) }
-                    }.pickerStyle(.menu).accessibilityIdentifier("market-region")
+                    Label("Mercado disponible: Estados Unidos", systemImage: "globe.americas")
+                        .font(.subheadline).foregroundStyle(Theme.muted)
                     SectionHeading(title: search.isEmpty ? "Ideas para empezar" : "Resultados", detail: "Acciones y ETF")
                     VStack(spacing: 0) {
                         ForEach(filtered) { asset in

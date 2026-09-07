@@ -4,12 +4,12 @@ struct MarketSearchResult: Decodable, Identifiable {
     let symbol, name, kind, exchange: String
     var id: String { symbol }
     static let suggestions: [MarketSearchResult] = [
-        .init(symbol: "ITX.MC", name: "Inditex", kind: "stock", exchange: "Madrid"),
-        .init(symbol: "SAN.MC", name: "Banco Santander", kind: "stock", exchange: "Madrid"),
-        .init(symbol: "IBE.MC", name: "Iberdrola", kind: "stock", exchange: "Madrid"),
+        .init(symbol: "GOOGL", name: "Alphabet", kind: "stock", exchange: "NASDAQ"),
+        .init(symbol: "META", name: "Meta Platforms", kind: "stock", exchange: "NASDAQ"),
+        .init(symbol: "TSLA", name: "Tesla", kind: "stock", exchange: "NASDAQ"),
         .init(symbol: "NVDA", name: "NVIDIA", kind: "stock", exchange: "NASDAQ"),
         .init(symbol: "AMZN", name: "Amazon", kind: "stock", exchange: "NASDAQ"),
-        .init(symbol: "ASML.AS", name: "ASML", kind: "stock", exchange: "Ámsterdam"),
+        .init(symbol: "ASML", name: "ASML", kind: "stock", exchange: "NASDAQ"),
         .init(symbol: "SPY", name: "SPDR S&P 500 ETF", kind: "etf", exchange: "NYSE Arca"),
     ]
 }
