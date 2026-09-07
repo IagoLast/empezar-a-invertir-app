@@ -9,8 +9,5 @@
   "scripts": {
     "test": "node --test",
     "dev": "node dev.js"
-  },
-  "dependencies": {
-    "yahoo-finance2": "4.0.2"
   }
 }

@@ -109,3 +109,5 @@ npm test
 Runs 32 API tests and shared-resource checks. [CI](https://github.com/IagoLast/empezar-a-invertir-app/actions/workflows/ci.yml) also validates PostgreSQL wallet/RLS behavior, builds SwiftUI and runs native tests. Screenshot artifacts are produced on PRs and committed on `main` after verification.
 
 `npm run test:ios:e2e` builds the simulator app and runs 11 Maestro flows against a simulated backend. See [MAESTRO.md](docs/MAESTRO.md). Real OAuth, payments and signed uploads require separate integration verification.
+
+Market data and order execution: [Finnhub and simulated orders](docs/FINNHUB-ORDERS.md).

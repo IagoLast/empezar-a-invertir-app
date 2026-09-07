@@ -7,14 +7,16 @@ name: Expired quotes prevent trading
       maestro-scenario: quote-expired
 - runFlow: ../shared/open-trade.yaml
 - scrollUntilVisible:
-    element: "Desliza hacia abajo para obtener un precio actualizado."
+    element: "Desliza hacia abajo para actualizar el precio."
     direction: DOWN
-- assertNotVisible: "Revisar compra"
+- assertVisible:
+    text: "Revisar orden"
+    enabled: false
 - swipe:
     direction: DOWN
 - swipe:
     start: 50%, 30%
     end: 50%, 85%
     duration: 700
-- assertVisible: "Desliza hacia abajo para obtener un precio actualizado."
-- assertNotVisible: "Confirmar compra virtual"
+- assertVisible: "Desliza hacia abajo para actualizar el precio."
+- assertNotVisible: "Confirmar orden virtual"

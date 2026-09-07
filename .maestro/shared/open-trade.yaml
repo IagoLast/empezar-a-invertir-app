@@ -7,6 +7,7 @@ appId: com.empezarainvertir.app
 - inputText: "AAPL"
 - tapOn:
     id: "asset-AAPL"
-- tapOn: "Comprar"
+- tapOn:
+    id: "detail-buy"
 - assertVisible:
     id: "trade-quantity"

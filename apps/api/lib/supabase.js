@@ -20,6 +20,8 @@ export async function authenticated(request) {
   return { user, authorization };
 }
 const messages = {
+  ORDER_FINISHED: [409, 'La orden ya se está ejecutando o ha terminado. Actualiza Movimientos.'],
+  ORDER_CHANGED: [409, 'La orden ha cambiado. Ábrela de nuevo antes de editarla.'],
   INSUFFICIENT_CASH: [409, 'No tienes suficiente saldo virtual.'],
   INSUFFICIENT_UNITS: [409, 'No tienes suficientes unidades.'],
   STALE_QUOTE: [409, 'El precio ha caducado. Actualízalo y vuelve a confirmar.'],

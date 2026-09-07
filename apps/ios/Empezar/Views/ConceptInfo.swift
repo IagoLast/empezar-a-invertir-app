@@ -31,15 +31,15 @@ enum LearningConcept: String, Identifiable {
     }
     var explanation: String {
         switch self {
-        case .marketOrder: return "Eliges cuántas unidades comprar y revisas el importe antes de confirmar. En Empezar utilizamos la cotización válida que aparece en el resumen, con el mercado abierto. Si caduca, tendrás que actualizar el precio. No escoges un precio máximo: por eso conviene revisar el total y la comisión."
-        case .limitOrder: return "Eliges el precio máximo por unidad que estás dispuesto a pagar. Si el precio disponible es superior, la orden sigue pendiente. En Empezar se guarda en este dispositivo: desde Movimientos debes pulsar «Comprobar y ejecutar». Solo se realizará la compra si el mercado está abierto, el precio cumple tu límite y tienes saldo suficiente. No reserva dinero ni se ejecuta en segundo plano."
+        case .marketOrder: return "En esta práctica eliges unidades y confirmas el último precio de referencia. La orden reserva saldo o unidades y se ejecuta tras una espera simulada según el volumen, incluso con la bolsa cerrada. El precio queda fijado al confirmar. En un mercado real el precio puede variar."
+        case .limitOrder: return "En una bolsa real una orden limitada solo se ejecuta si alcanza tu precio y puede quedarse pendiente. En Empezar practicamos ese resultado: eliges un límite y simulamos que se alcanza. El precio simulado se muestra antes de confirmar. La orden reserva saldo y se ejecuta automáticamente; mientras esté pendiente puedes editarla o cancelarla en Movimientos."
         case .portfolioValue: return "Aquí ves el valor total de tu cartera: el saldo disponible más el valor de tus activos al último precio recibido. Si falta algún precio, no podemos calcular el total."
         case .investedValue: return "Es el valor actual de tus activos, calculado multiplicando sus unidades por el último precio disponible. No es necesariamente lo que pagaste por ellos."
         case .positions: return "Cada posición reúne las unidades que tienes de un activo. El resultado compara su valor actual con el coste de compra, incluidas las comisiones."
         case .allocation: return "Muestra qué porcentaje del valor total corresponde a cada activo y al efectivo disponible. Cambia cuando operas o cambian los precios."
         case .activity: return "Aquí aparecen las compras y ventas realizadas, con fecha, unidades, importe y comisión. Las órdenes locales pendientes se muestran por separado y aún no cambian tu saldo."
         case .chart: return "La línea une precios de cierre; cada vela muestra apertura, máximo, mínimo y cierre del intervalo. Los datos proceden del histórico del proveedor y se muestran en la moneda de cotización. No garantizan resultados futuros."
-        case .orderType: return "La compra a mercado utiliza una cotización válida al confirmar. La orden limitada local guarda el precio máximo que quieres pagar. Desde Movimientos puedes comprobarla y ejecutarla si la cotización cumple el límite. Solo se guarda en este dispositivo; no se ejecuta en segundo plano ni reserva saldo."
+        case .orderType: return "Puedes practicar con el último precio disponible o elegir un precio. Revisa unidades, total y comisión; después confirma. Todas las órdenes de esta simulación se ejecutan automáticamente tras una espera según el volumen. Puedes editarlas o cancelarlas mientras estén pendientes."
         case .asset: return "Esta ficha explica a qué empresa o fondo corresponde el activo. Consulta su actividad y sus riesgos para entender qué puede afectar a su valor."
         case .risk: return "El valor de un activo puede bajar. Lee los riesgos específicos y considera cómo afectaría una caída a tu cartera virtual."
         case .learning: return "Relaciona esta explicación con los datos de la ficha y prueba tus ideas con dinero virtual."
@@ -56,7 +56,7 @@ enum LearningConcept: String, Identifiable {
     var example: String {
         switch self {
         case .marketOrder: return "Si compras 2 unidades a 100 US$, el importe es 200 US$. Con la comisión virtual de 1 US$, se descuentan 201 US$ de tu saldo. Antes de confirmar puedes volver y cambiar las unidades."
-        case .limitOrder: return "Con un límite de 95 US$, un precio de 100 US$ no permite comprar. Si al comprobar la orden el precio válido es de 94 US$, dos unidades cuestan 188 US$ más 1 US$ de comisión. Puedes cancelar la orden mientras siga pendiente."
+        case .limitOrder: return "Si la referencia es 100 US$ y eliges 95 US$, en esta simulación dos unidades cuestan 190 US$ más 1 US$ de comisión. Reservamos 191 US$ y simulamos la ejecución a 95 US$. En una bolsa real el precio podría no llegar a 95 US$ y la orden no ejecutarse."
         case .portfolioValue: return "Con 800 US$ disponibles y activos valorados en 200 US$, tu cartera vale 1.000 US$."
         case .investedValue: return "Dos acciones a 120 US$ representan 240 US$ en inversiones."
         case .positions: return "Si pagaste 201 US$ con comisión y ahora vale 220 US$, el resultado es +19 US$."

@@ -76,18 +76,32 @@ import RevenueCat
     }
     private func upsert(_ q: Quote) { portfolio.quotes.removeAll { $0.symbol == q.symbol }; portfolio.quotes.append(q) }
     func trade(_ request: TradeRequest) async throws {
-        guard !busy else { return }
+        guard !busy else { throw AppError.message("Espera a que termine la operación en curso.") }
         busy = true; defer { busy = false }
         pendingTrade = request
         UserDefaults.standard.set(try JSONEncoder().encode(request), forKey: tradeKey)
         do {
-            portfolio = try await api.request("trade", method: "POST", body: JSONEncoder().encode(request))
+            portfolio = try await api.request("orders", method: "POST", body: JSONEncoder().encode(request))
             clearPendingTrade()
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } catch let problem as APIProblem {
-            if ["STALE_QUOTE", "INSUFFICIENT_CASH", "INSUFFICIENT_UNITS", "MARKET_CLOSED", "QUOTE_UNAVAILABLE", "INVALID_INPUT"].contains(problem.error) { clearPendingTrade() }
+            if ["STALE_QUOTE", "INSUFFICIENT_CASH", "INSUFFICIENT_UNITS", "MARKET_CLOSED", "QUOTE_UNAVAILABLE", "INVALID_INPUT", "ORDER_CHANGED", "ORDER_FINISHED"].contains(problem.error) { clearPendingTrade() }
             throw problem
         }
+    }
+    func refreshOrderState() async {
+        guard signedIn, !busy else { return }
+        do { portfolio = try await api.request("state"); reconcilePending() }
+        catch { self.error = UserMessage.describe(error) }
+    }
+    func cancelOrder(_ order: SimulatedOrder) async {
+        guard !busy else { return }
+        busy = true; defer { busy = false }
+        do {
+            let data = try JSONSerialization.data(withJSONObject: ["requestId": order.id, "revision": order.revision])
+            portfolio = try await api.request("orders", method: "DELETE", body: data)
+            notice = "Orden cancelada. La reserva se ha liberado."
+        } catch { self.error = UserMessage.describe(error) }
     }
     func saveLimitOrder(symbol: String, units: Int, limitCents: Int64) throws {
         guard signedIn, !busy, units > 0, units <= 100000, limitCents > 0, limitCents <= 1_000_000_000,
@@ -117,7 +131,8 @@ import RevenueCat
             }
             try await trade(TradeRequest(requestId: order.id, symbol: order.symbol, side: "buy", units: order.units, quoteId: quote.id))
             reconcilePending()
-            notice = "Orden limitada ejecutada. Tu cartera está actualizada."
+            limitOrders.removeAll { $0.id == order.id }; persistLimitOrders()
+            notice = "Orden enviada. Se ejecutará automáticamente en la simulación."
         } catch { self.error = UserMessage.describe(error) }
     }
     func retryTrade() async {

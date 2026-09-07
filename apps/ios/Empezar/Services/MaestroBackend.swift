@@ -117,44 +117,56 @@ final class MaestroURLProtocol: URLProtocol {
                 Self.portfolio.completedLessons.append(input.lessonId)
             }
             return try json(Self.portfolio)
-        case ("POST", "/api/trade"):
+        case ("DELETE", "/api/orders"):
+            struct Cancellation: Decodable { let requestId: String; let revision: Int }
+            let input = try JSONDecoder().decode(Cancellation.self, from: body())
+            Self.portfolio.simulatedOrders?.removeAll { $0.id == input.requestId }
+            Self.updateReservations()
+            return try json(Self.portfolio)
+        case ("POST", "/api/orders"):
             let trade = try JSONDecoder().decode(TradeRequest.self, from: body())
-            if Self.portfolio.orders.contains(where: { $0.requestId == trade.requestId }) {
-                return try json(Self.portfolio)
+            if Self.portfolio.orders.contains(where: { $0.requestId == trade.requestId }) { return try json(Self.portfolio) }
+            guard let quote = Self.portfolio.quotes.first(where: { $0.id == trade.quoteId }), trade.units > 0 else { return try problem("INVALID_INPUT", "Revisa la orden.") }
+            if MaestroEnvironment.scenario == "trade-rejected" { return try problem("INSUFFICIENT_CASH", "Saldo insuficiente según el servidor.") }
+            let old = Self.portfolio.simulatedOrders?.first { $0.id == trade.requestId }
+            let price = trade.limitCents.map { trade.side == "buy" ? min($0, quote.priceCents) : max($0, quote.priceCents) } ?? quote.priceCents
+            let order = SimulatedOrder(id: trade.requestId, symbol: trade.symbol, side: trade.side, units: trade.units,
+                priceCents: price, limitCents: trade.limitCents, status: "pending", revision: (old?.revision ?? 0) + 1,
+                createdAt: old?.createdAt ?? ISO8601DateFormatter().string(from: .now),
+                executeAt: old?.executeAt ?? ISO8601DateFormatter().string(from: Date().addingTimeInterval(30)), averageDailyVolume: 1000000)
+            if Self.portfolio.simulatedOrders == nil { Self.portfolio.simulatedOrders = [] }
+            Self.portfolio.simulatedOrders?.removeAll { $0.id == order.id }
+            Self.portfolio.simulatedOrders?.append(order)
+            Self.updateReservations()
+            if old == nil {
+                DispatchQueue.global().asyncAfter(deadline: .now() + 30) {
+                    Self.lock.lock(); defer { Self.lock.unlock() }
+                    Self.fill(order.id)
+                }
             }
-            guard trade.units > 0, trade.units <= 100000, ["buy", "sell"].contains(trade.side),
-                  let quote = Self.portfolio.quotes.first(where: { $0.id == trade.quoteId && $0.symbol == trade.symbol }) else {
-                return try problem("INVALID_INPUT", "Operación no válida.")
-            }
-            if MaestroEnvironment.scenario == "trade-rejected" {
-                return try problem("INSUFFICIENT_CASH", "Saldo insuficiente según el servidor.")
-            }
-            let old = Self.portfolio.positions.first { $0.symbol == trade.symbol }
-            let amount = Int64(trade.units) * quote.priceCents
-            let buying = trade.side == "buy"
-            guard !buying || Self.portfolio.cashCents >= amount + 100 else {
-                return try problem("INSUFFICIENT_CASH", "Saldo insuficiente según el servidor.")
-            }
-            guard buying || (old?.units ?? 0) >= trade.units else {
-                return try problem("INSUFFICIENT_UNITS", "No tienes tantas unidades para vender.")
-            }
-            let units = (old?.units ?? 0) + (buying ? trade.units : -trade.units)
-            let cost = buying ? (old?.costCents ?? 0) + amount + 100 :
-                Int64((Double(old?.costCents ?? 0) * Double(units) / Double(old!.units)).rounded())
-            Self.portfolio.cashCents += buying ? -amount - 100 : amount - 100
-            Self.portfolio.positions.removeAll { $0.symbol == trade.symbol }
-            if units > 0 { Self.portfolio.positions.append(Position(symbol: trade.symbol, units: units, costCents: cost)) }
-            Self.portfolio.orders.insert(Order(id: UUID().uuidString, requestId: trade.requestId,
-                symbol: trade.symbol, side: trade.side, units: trade.units, priceCents: quote.priceCents,
-                feeCents: 100, createdAt: ISO8601DateFormatter().string(from: Date())), at: 0)
-            if MaestroEnvironment.scenario == "trade-response-lost" {
-                // The server committed the order, but the client never received its state.
-                return try problem("UNAVAILABLE", "No se recibió la confirmación. Comprueba la operación pendiente.", status: 503)
-            }
+            if MaestroEnvironment.scenario == "trade-response-lost" && old == nil { return try problem("UNAVAILABLE", "No se recibió la confirmación.", status: 503) }
             return try json(Self.portfolio)
         default:
             return try problem("UNMOCKED_REQUEST", "Endpoint sin fixture: \(request.httpMethod ?? "") \(request.url!.path)", status: 500)
         }
     }
+    private static func updateReservations() {
+        portfolio.reservedCashCents = portfolio.queuedOrders.filter { $0.side == "buy" }.reduce(0) { $0 + $1.totalCents }
+    }
+    private static func fill(_ id: String) {
+        guard let order = portfolio.queuedOrders.first(where: { $0.id == id }) else { return }
+        let old = portfolio.positions.first { $0.symbol == order.symbol }
+        let buying = order.side == "buy"
+        let units = (old?.units ?? 0) + (buying ? order.units : -order.units)
+        let amount = order.priceCents * Int64(order.units)
+        let cost = buying ? (old?.costCents ?? 0) + amount + 100 : Int64((Double(old?.costCents ?? 0) * Double(units) / Double(max(1, old?.units ?? 1))).rounded())
+        portfolio.cashCents += buying ? -amount - 100 : amount - 100
+        portfolio.positions.removeAll { $0.symbol == order.symbol }
+        if units > 0 { portfolio.positions.append(Position(symbol: order.symbol, units: units, costCents: cost)) }
+        portfolio.orders.insert(Order(id: UUID().uuidString, requestId: id, symbol: order.symbol, side: order.side, units: order.units, priceCents: order.priceCents, feeCents: 100, createdAt: ISO8601DateFormatter().string(from: .now)), at: 0)
+        portfolio.simulatedOrders?.removeAll { $0.id == id }
+        updateReservations()
+    }
+
 }
 #endif

@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { APIError } from './http.js';
 import { rpc } from './supabase.js';
-import { yahooQuote, logoURL } from './yahoo.js';
+import { finnhubQuote, logoURL } from './finnhub.js';
 export const QUOTE_CACHE_MS = 15 * 60 * 1000;
 const MAX_TRADE_AGE_MS = 60 * 60 * 1000;
 export const symbols = new Set(['AAPL', 'MSFT', 'VTI', 'BND']);
@@ -9,7 +9,7 @@ export const validSymbol = symbol => typeof symbol === 'string' && /^[A-Z0-9][A-
 const MAX_FX_AGE_MS = 4 * 86400000;
 
 // Wallets settle in USD. Preserve the exchange's native price alongside the execution price.
-export async function settlementQuote(raw, symbol, loadQuote = yahooQuote, now = Date.now()) {
+export async function settlementQuote(raw, symbol, loadQuote = finnhubQuote, now = Date.now()) {
   if (!raw || raw.symbol !== symbol || !['EQUITY', 'ETF'].includes(raw.quoteType)) {
     throw new APIError(422, 'ASSET_UNSUPPORTED', 'Solo se puede operar con acciones y ETF que tengan una cotización disponible.');
   }
@@ -58,20 +58,20 @@ export function normalizeQuote(raw, symbol, now = Date.now()) {
   return { id: randomUUID(), symbol, priceCents: priceCents(String(raw.regularMarketPrice)), currency: 'USD', changePercent: change,
     asOf: new Date(stamp).toISOString(), fetchedAt: new Date(now).toISOString(), expiresAt: new Date(expiry).toISOString(),
     marketOpen, tradable, mode: 'cached', delaySeconds: Math.max(0, Math.floor((now - stamp) / 1000)),
-    source: 'Yahoo Finance', logoURL: logoURL(raw.logoUrl) };
+    source: 'Finnhub', averageDailyVolume: raw.averageDailyVolume ?? null, logoURL: logoURL(raw.logoUrl) };
 }
 export function normalizeFundamentals(raw, symbol, now = Date.now()) {
   if (!raw || raw.symbol !== symbol || raw.currency !== 'USD') throw new Error('Invalid fundamentals');
   const number = value => typeof value === 'number' && Number.isFinite(value) ? value : null;
   const pe = number(raw.trailingPE), eps = number(raw.epsTrailingTwelveMonths);
-  return { available: pe !== null || eps !== null, symbol, pe, eps, period: 'TTM', source: 'Yahoo Finance', fetchedAt: new Date(now).toISOString() };
+  return { available: pe !== null || eps !== null, symbol, pe, eps, period: 'TTM', source: 'Finnhub', fetchedAt: new Date(now).toISOString() };
 }
-export function createQuoteService({ database = rpc, loadQuote = yahooQuote, clock = Date.now } = {}) {
+export function createQuoteService({ database = rpc, loadQuote = finnhubQuote, clock = Date.now } = {}) {
   return async function getQuote(symbol) {
     const cached = await database('quote_cache', { p_symbol: symbol }, null, true);
-    if (cached.quote && cached.quote.source === 'Yahoo Finance' && Date.parse(cached.quote.fetchedAt) > clock() - QUOTE_CACHE_MS && Date.parse(cached.quote.expiresAt) > clock()) return cached.quote;
+    if (cached.quote && cached.quote.source === 'Finnhub' && Date.parse(cached.quote.fetchedAt) > clock() - QUOTE_CACHE_MS && Date.parse(cached.quote.expiresAt) > clock()) return cached.quote;
     if (!cached.refresh) {
-      if (cached.quote) return cached.quote; // Expiry still enforced by Postgres, no new execution lifetime.
+      if (cached.quote?.source === 'Finnhub') return { ...cached.quote, tradable: false }; // Expiry still enforced by Postgres, no new execution lifetime.
       throw new APIError(503, 'QUOTE_LOADING', 'Estamos actualizando el precio. Inténtalo en unos segundos.');
     }
     try {
@@ -80,7 +80,7 @@ export function createQuoteService({ database = rpc, loadQuote = yahooQuote, clo
       return quote;
     } catch (error) {
       // Retain original timestamps; never turn stale data into a fresh executable quote.
-      if (cached.quote) return cached.quote;
+      if (cached.quote?.source === 'Finnhub') return { ...cached.quote, tradable: false };
       if (error instanceof APIError) throw error;
       throw new APIError(503, 'MARKET_UNAVAILABLE', 'No hay una cotización disponible. No se puede operar sin un precio real.');
     }

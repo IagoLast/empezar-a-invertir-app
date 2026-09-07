@@ -4,12 +4,12 @@ import { cachedLoader, normalizeSearch } from '../lib/search.js';
 import { GET as search } from '../api/search.js';
 import { GET as preview } from '../api/market-preview.js';
 
-test('search returns distinct Yahoo stocks and ETFs with their names and exchanges', () => {
-  const nvidia = { isYahooFinance: true, quoteType: 'EQUITY', symbol: 'NVDA', longname: 'NVIDIA Corporation', exchDisp: 'NASDAQ' };
-  assert.deepEqual(normalizeSearch({ quotes: [nvidia, nvidia,
-    { isYahooFinance: true, quoteType: 'ETF', symbol: 'SPY', shortname: 'SPDR', exchange: 'PCX' },
-    { ...nvidia, symbol: '../bad' }, { ...nvidia, isYahooFinance: false }, { ...nvidia, symbol: 'BTC-USD', quoteType: 'CRYPTOCURRENCY' }] }),
-    [{ symbol: 'NVDA', name: 'NVIDIA Corporation', kind: 'stock', exchange: 'NASDAQ' }, { symbol: 'SPY', name: 'SPDR', kind: 'etf', exchange: 'PCX' }]);
+test('search shows distinct US stocks and ETFs and excludes unsupported foreign symbols', () => {
+  const stock = { type: 'Common Stock', symbol: 'NVDA', description: 'NVIDIA Corporation' };
+  assert.deepEqual(normalizeSearch({ result: [stock, stock,
+    { type: 'ETP', symbol: 'SPY', description: 'SPDR' },
+    { ...stock, symbol: '../bad' }, { ...stock, symbol: 'ITX.MC' }, { ...stock, type: 'Crypto', symbol: 'BTC' }] }),
+    [{ symbol: 'NVDA', name: 'NVIDIA Corporation', kind: 'stock', exchange: 'US' }, { symbol: 'SPY', name: 'SPDR', kind: 'etf', exchange: 'US' }]);
 });
 test('cache shares concurrent requests and reloads after expiry', async () => {
   let calls = 0, now = 0;

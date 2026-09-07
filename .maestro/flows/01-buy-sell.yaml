@@ -6,20 +6,31 @@ name: Buy and sell update the portfolio
     arguments:
       maestro-scenario: happy
 - runFlow: ../shared/open-buy.yaml
-- tapOn: "Confirmar compra virtual"
-- assertVisible: "Compra completada"
+- tapOn: "Confirmar orden virtual"
+- assertVisible: "Orden en marcha"
 - tapOn: "Listo"
-- assertVisible: "1 unidades"
+- extendedWaitUntil:
+    visible:
+      id: "detail-sell"
+      enabled: true
+    timeout: 45000
+- assertVisible:
+    id: "detail-sell"
+    enabled: true
 - tapOn: "Vender"
 - scrollUntilVisible:
-    element: "Revisar venta"
+    element: "Revisar orden"
     direction: DOWN
     centerElement: true
-- tapOn: "Revisar venta"
-- tapOn: "Confirmar venta virtual"
-- assertVisible: "Venta completada"
+- tapOn: "Revisar orden"
+- tapOn: "Confirmar orden virtual"
+- assertVisible: "Orden en marcha"
 - tapOn: "Listo"
-- assertNotVisible: "Tu posición"
+- extendedWaitUntil:
+    visible:
+      id: "detail-sell"
+      enabled: false
+    timeout: 45000
 - tapOn: "Cartera"
 - assertVisible: '9998,00.*'
 - scrollUntilVisible:

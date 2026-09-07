@@ -59,7 +59,7 @@ private struct OrderTypeExplanation: View {
                 }.padding(20).dataCard()
                 VStack(alignment: .leading, spacing: 12) {
                     Text(type == .market ? "Antes de confirmar" : "Mientras está pendiente").font(.headline)
-                    Text(type == .market ? "Revisa las unidades, la fecha del precio y el total con comisión. Deslizar para actualizar solo consulta un precio nuevo; no realiza ninguna compra." : "Encontrarás la orden en Movimientos. Allí puedes comprobarla o cancelarla. Guardarla no descuenta saldo y actualizar una pantalla no la ejecuta automáticamente.")
+                    Text(type == .market ? "Revisa las unidades, la fecha del precio y el total con comisión. Deslizar para actualizar solo consulta un precio nuevo; no realiza ninguna compra." : "Encontrarás la orden en Movimientos. Se reserva saldo o unidades y se ejecuta automáticamente en el servidor. Puedes editarla o cancelarla mientras esté pendiente; actualizar solo consulta su estado.")
                         .foregroundStyle(Theme.muted).lineSpacing(5)
                 }
             }.padding(20)

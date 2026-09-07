@@ -6,8 +6,8 @@ name: Sign out clears account state
     arguments:
       maestro-scenario: happy
 - runFlow: ../shared/open-buy.yaml
-- tapOn: "Confirmar compra virtual"
-- assertVisible: "Compra completada"
+- tapOn: "Confirmar orden virtual"
+- assertVisible: "Orden en marcha"
 - tapOn: "Listo"
 - tapOn: "Cartera"
 - tapOn:
@@ -29,5 +29,5 @@ name: Sign out clears account state
 - inputText: "AAPL"
 - tapOn:
     id: "asset-AAPL"
-- assertVisible: "Iniciar sesión"
+- assertVisible: "Iniciar sesión para comprar"
 - assertNotVisible: "Comprar"

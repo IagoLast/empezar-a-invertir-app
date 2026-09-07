@@ -142,18 +142,18 @@ struct ExploreView: View {
                     }.padding(20).dataCard()
                 }
                 VStack(alignment: .leading, spacing: 8) {
-                    Link("Fuente: Yahoo Finance ↗", destination: URL(string: "https://finance.yahoo.com")!).font(.caption)
+                    Link("Fuente: Finnhub ↗", destination: URL(string: "https://finnhub.io")!).font(.caption)
                     Text("Puedes comprar y vender las acciones y ETF del buscador con dinero virtual. Busca por nombre o símbolo; los filtros se aplican a los resultados de esa búsqueda.").font(.caption).foregroundStyle(Theme.muted)
                 }
             }.padding(20).padding(.top, 12)
         }.appCanvas().scrollDismissesKeyboard(.interactively)
             .refreshable {
                 await store.refresh()
-                if !search.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { await searchYahoo() }
+                if !search.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { await searchMarkets() }
             }
-            .task(id: search) { await searchYahoo() }
+            .task(id: search) { await searchMarkets() }
     }
-    private func searchYahoo() async {
+    private func searchMarkets() async {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
         searchResults = []; searchError = nil
         guard !query.isEmpty else { searching = false; return }

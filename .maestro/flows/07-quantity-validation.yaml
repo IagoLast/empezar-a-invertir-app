@@ -12,10 +12,10 @@ name: Quantity validation and maximum
 - inputText: "0"
 - tapOn: "Listo"
 - scrollUntilVisible:
-    element: "Introduce entre 1 y 100.000 unidades enteras."
+    element: "Introduce entre 1 y 100.000 unidades."
     direction: DOWN
 - assertVisible:
-    text: "Revisar compra"
+    text: "Revisar orden"
     enabled: false
 - scrollUntilVisible:
     element:
@@ -27,22 +27,24 @@ name: Quantity validation and maximum
 - inputText: "100"
 - tapOn: "Listo"
 - scrollUntilVisible:
-    element: "Saldo insuficiente. Prueba con menos unidades."
+    element: "Saldo disponible insuficiente. Reduce la cantidad."
     direction: DOWN
 - assertVisible:
-    text: "Revisar compra"
+    text: "Revisar orden"
     enabled: false
 - scrollUntilVisible:
-    element: "Usar máximo: 99 unidades"
+    element: "Usar máximo · 99 unidades"
     direction: UP
-- tapOn: "Usar máximo: 99 unidades"
+- tapOn: "Usar máximo · 99 unidades"
 - scrollUntilVisible:
-    element: "Revisar compra"
+    element: "Revisar orden"
     direction: DOWN
-- tapOn: "Revisar compra"
-- tapOn: "Confirmar compra virtual"
-- assertVisible: "Compra completada"
+- tapOn: "Revisar orden"
+- tapOn: "Confirmar orden virtual"
+- assertVisible: "Orden en marcha"
 - tapOn: "Listo"
-- assertVisible: "99 unidades"
+- extendedWaitUntil:
+    visible: "Tu inversión · 99 unidades"
+    timeout: 45000
 - tapOn: "Cartera"
 - assertVisible: '99,00.*'

@@ -80,7 +80,7 @@ struct PortfolioView: View {
     }
     @ViewBuilder private var balanceMetrics: some View {
         metric("En inversiones", value: store.portfolio.investedCents.map(Money.text) ?? "—", icon: "chart.pie", concept: .investedValue)
-        metric("Disponible", value: Money.text(store.portfolio.cashCents), icon: "wallet.bifold", concept: .virtualCash)
+        metric("Disponible", value: Money.text(store.portfolio.availableCashCents), icon: "wallet.bifold", concept: .virtualCash)
     }
     private func metric(_ title: String, value: String, icon: String, concept: LearningConcept? = nil) -> some View {
         VStack(alignment: .leading, spacing: 7) {
@@ -261,6 +261,7 @@ struct OrderHistory: View {
 
 struct ActivityView: View {
     @EnvironmentObject var store: AppStore
+    @State private var editing: SimulatedOrder?
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -268,8 +269,27 @@ struct ActivityView: View {
                 if store.pendingTrade != nil {
                     PrimaryButton(title: "Comprobar operación pendiente", loading: store.busy) { Task { await store.retryTrade() } }
                 }
+                if !store.portfolio.queuedOrders.isEmpty {
+                    Text("En marcha").font(.title2.bold())
+                    Text("Se ejecutan automáticamente, también con la app cerrada.").font(.subheadline).foregroundStyle(Theme.muted)
+                    ForEach(store.portfolio.queuedOrders) { order in
+                        TimelineView(.periodic(from: .now, by: 1)) { _ in
+                            VStack(alignment: .leading, spacing: 12) {
+                                Label("\(order.side == "buy" ? "Compra" : "Venta") de \(order.symbol)", systemImage: "clock").font(.headline)
+                                Text("\(order.units) unidades · \(Money.text(order.priceCents)) por unidad").font(.subheadline)
+                                Text(order.editable ? "Pendiente · ejecución prevista a las \((ISO.date(order.executeAt) ?? .now).formatted(date: .omitted, time: .standard))" : "Procesando la ejecución…").font(.caption).foregroundStyle(Theme.muted)
+                                Text(order.side == "buy" ? "Reservado: \(Money.text(order.totalCents))" : "Unidades reservadas: \(order.units)").font(.caption)
+                                HStack {
+                                    Button("Editar orden") { editing = order }.accessibilityIdentifier("edit-pending-order")
+                                    Spacer()
+                                    Button("Cancelar orden", role: .destructive) { Task { await store.cancelOrder(order) } }
+                                }.frame(minHeight: 44).disabled(store.busy || !order.editable)
+                            }.padding(20).dataCard()
+                        }
+                    }
+                }
                 if !store.limitOrders.isEmpty {
-                    ConceptLabel(title: "Órdenes limitadas en este dispositivo", concept: .orderType).font(.headline)
+                    ConceptLabel(title: "Órdenes antiguas guardadas en este dispositivo", concept: .orderType).font(.headline)
                     ForEach(store.limitOrders) { order in
                         VStack(alignment: .leading, spacing: 12) {
                             ConceptLabel(title: "Compra de \(order.symbol)", concept: .orderType).font(.headline)
@@ -283,10 +303,20 @@ struct ActivityView: View {
                         }.padding(20).dataCard()
                     }
                 }
+                if let orders = store.portfolio.simulatedOrders, orders.contains(where: { $0.status == "cancelled" }) {
+                    Text("Canceladas").font(.headline)
+                    ForEach(orders.filter { $0.status == "cancelled" }) { order in
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("\(order.side == "buy" ? "Compra" : "Venta") de \(order.symbol) · \(order.units) unidades").font(.subheadline)
+                            Text("Cancelada · reserva liberada, sin comisión").font(.caption).foregroundStyle(Theme.muted)
+                        }.padding(16).dataCard()
+                    }
+                }
                 OrderHistory()
             }.padding(20)
         }
             .appCanvas().navigationTitle("Movimientos").navigationBarTitleDisplayMode(.inline)
             .refreshable { await store.refresh() }
+            .sheet(item: $editing) { order in TradeView(instrument: store.instrument(order.symbol), side: order.side, editing: order) }
     }
 }

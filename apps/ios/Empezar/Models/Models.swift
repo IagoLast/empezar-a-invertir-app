@@ -10,7 +10,7 @@ struct Instrument: Codable, Identifiable, Hashable {
                           summary: kind == "stock" ? "Una acción representa una parte de una empresa. Conoce su negocio y sus riesgos antes de invertir." : "Un ETF reúne una cesta de activos. Consulta su composición, costes y riesgos antes de invertir.",
                           question: "¿Por qué invertirías en este activo?", risk: "El precio puede bajar y puedes perder parte o todo lo invertido. Las divisas también afectan al resultado.",
                           learn: "Practica con una cantidad pequeña y revisa cómo cambia el valor de tu inversión.",
-                          source: "https://finance.yahoo.com/quote/\(symbol)")
+                          source: "https://finnhub.io")
     }
 }
 struct Lesson: Codable, Identifiable, Hashable {
@@ -30,6 +30,7 @@ struct Quote: Codable, Identifiable {
     let mode: String
     let delaySeconds: Int
     let source: String
+    var averageDailyVolume: Int64? = nil
     var logoURL: String? = nil
     var nativePrice: Double? = nil
     var nativeCurrency: String? = nil
@@ -78,6 +79,10 @@ struct Portfolio: Codable {
     var orders: [Order]
     var completedLessons: [String]
     var purchases: [PurchaseReceipt]
+    var simulatedOrders: [SimulatedOrder]? = nil
+    var reservedCashCents: Int64? = nil
+    var availableCashCents: Int64 { max(0, cashCents - (reservedCashCents ?? 0)) }
+    var queuedOrders: [SimulatedOrder] { (simulatedOrders ?? []).filter { $0.status == "pending" } }
     static let empty = Portfolio(userId: "", cashCents: 1_000_000, contributedCents: 1_000_000, currency: "USD", positions: [], quotes: [], orders: [], completedLessons: [], purchases: [])
     func quote(_ symbol: String) -> Quote? { quotes.first { $0.symbol == symbol } }
     var equityCents: Int64? {
@@ -96,6 +101,8 @@ struct TradeRequest: Codable {
     let requestId, symbol, side: String
     let units: Int
     let quoteId: String
+    var limitCents: Int64? = nil
+    var revision: Int? = nil
 }
 struct Fundamentals: Decodable {
     let available: Bool
@@ -137,4 +144,17 @@ struct LocalLimitOrder: Codable, Identifiable {
     func accepts(_ quote: Quote) -> Bool {
         quote.symbol == symbol && quote.canTrade && quote.priceCents <= limitCents
     }
+}
+
+struct SimulatedOrder: Codable, Identifiable {
+    let id, symbol, side: String
+    let units: Int
+    let priceCents: Int64
+    let limitCents: Int64?
+    let status: String
+    let revision: Int
+    let createdAt, executeAt: String
+    let averageDailyVolume: Int64?
+    var editable: Bool { status == "pending" && (ISO.date(executeAt) ?? .distantPast) > Date() }
+    var totalCents: Int64 { priceCents * Int64(units) + (side == "buy" ? 100 : -100) }
 }

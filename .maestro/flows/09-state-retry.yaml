@@ -12,5 +12,5 @@ name: Recover after a portfolio load error
     end: 50%, 85%
     duration: 700
 - runFlow: ../shared/open-buy.yaml
-- tapOn: "Confirmar compra virtual"
-- assertVisible: "Compra completada"
+- tapOn: "Confirmar orden virtual"
+- assertVisible: "Orden en marcha"

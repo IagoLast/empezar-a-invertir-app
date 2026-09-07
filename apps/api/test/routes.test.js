@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { GET as state } from '../api/state.js';
-import { POST as trade } from '../api/trade.js';
+import { POST as trade } from '../api/orders.js';
 import { POST as webhook } from '../api/revenuecat.js';
 const user = '11111111-1111-4111-8111-111111111111';
 const requestId = '22222222-2222-4222-8222-222222222222';
@@ -32,7 +32,7 @@ test('trade only passes identity from JWT and uses quote ID, not client price', 
     rpcBody = JSON.parse(options.body); assert.equal(options.headers.Authorization, 'Bearer test-token'); return Response.json({ cashCents: 500000 });
   });
   const result = await trade(req({ requestId, quoteId, symbol: 'AAPL', side: 'buy', units: 2, userId: 'attacker', priceCents: 1 }));
-  assert.equal(result.status, 200); assert.deepEqual(rpcBody, { p_request: requestId, p_symbol: 'AAPL', p_side: 'buy', p_units: 2, p_quote: quoteId });
+  assert.equal(result.status, 200); assert.deepEqual(rpcBody, { p_request: requestId, p_symbol: 'AAPL', p_side: 'buy', p_units: 2, p_quote: quoteId, p_limit: null, p_revision: null });
 });
 test('database rejects stale quote with recoverable conflict', async t => {
   env(); t.mock.method(globalThis, 'fetch', async url => url.endsWith('/auth/v1/user') ? Response.json(socialUser) : Response.json({ message: 'STALE_QUOTE' }, { status: 400 }));
@@ -62,7 +62,7 @@ test('void database writes accept the empty response returned by PostgREST', asy
 test('guests can read cached market prices without an auth request', async t => {
   const { GET: quote } = await import('../api/quote.js');
   env(); process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-server';
-  const cached = { id: quoteId, symbol: 'AAPL', source: 'Yahoo Finance', priceCents: 31997,
+  const cached = { id: quoteId, symbol: 'AAPL', source: 'Finnhub', priceCents: 31997,
     fetchedAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 900000).toISOString() };
   t.mock.method(globalThis, 'fetch', async (url, options) => {
     assert.ok(url.endsWith('/rest/v1/rpc/quote_cache'));

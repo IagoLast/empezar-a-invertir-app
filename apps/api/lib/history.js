@@ -1,6 +1,6 @@
 import { APIError } from './http.js';
 import { cachedLoader } from './search.js';
-import { yahooHistory } from './yahoo.js';
+import { finnhubHistory } from './finnhub.js';
 
 export const historyRanges = {
   '1w': { days: 7, interval: '1h' },
@@ -21,11 +21,11 @@ export function normalizeHistory(raw, symbol, range) {
     seen.add(date);
     return [{ date: new Date(date).toISOString(), open: row.open, high: row.high, low: row.low, close: row.close }];
   }).sort((a, b) => a.date.localeCompare(b.date));
-  return { symbol, range, currency: raw.meta.currency, source: 'Yahoo Finance', points };
+  return { symbol, range, currency: raw.meta.currency, source: 'Finnhub', points };
 }
 
 export const marketHistory = cachedLoader(async key => {
   const [symbol, range] = key.split(':');
-  try { return normalizeHistory(await yahooHistory(symbol, historyRanges[range]), symbol, range); }
-  catch { throw new APIError(503, 'HISTORY_UNAVAILABLE', 'No hemos podido cargar el histórico. Desliza hacia abajo para volver a intentarlo.'); }
+  try { return normalizeHistory(await finnhubHistory(symbol, historyRanges[range]), symbol, range); }
+  catch (error) { if (error instanceof APIError) throw error; throw new APIError(503, 'HISTORY_UNAVAILABLE', 'No hemos podido cargar el histórico. Desliza hacia abajo para volver a intentarlo.'); }
 });

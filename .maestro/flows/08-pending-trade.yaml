@@ -6,15 +6,17 @@ name: Recover a pending trade without duplication
     arguments:
       maestro-scenario: trade-response-lost
 - runFlow: ../shared/open-buy.yaml
-- tapOn: "Confirmar compra virtual"
-- assertVisible: "No se recibió la confirmación. Comprueba la operación pendiente."
-- assertNotVisible: "Compra completada"
+- tapOn: "Confirmar orden virtual"
+- assertVisible: "No se recibió la confirmación."
+- assertNotVisible: "Orden en marcha"
 - tapOn: "Cerrar"
 - tapOn: "Cartera"
 - tapOn: "Comprobar operación pendiente"
 - assertVisible: "Operación confirmada. Tu cartera está actualizada."
 - assertNotVisible: "Comprobar operación pendiente"
-- assertVisible: '9899,00.*'
+- extendedWaitUntil:
+    visible: '9899,00.*'
+    timeout: 45000
 - scrollUntilVisible:
     element: "AAPL · 1 unidades"
     direction: DOWN

@@ -6,9 +6,9 @@ name: Rejected trades preserve cash
     arguments:
       maestro-scenario: trade-rejected
 - runFlow: ../shared/open-buy.yaml
-- tapOn: "Confirmar compra virtual"
+- tapOn: "Confirmar orden virtual"
 - assertVisible: "Saldo insuficiente según el servidor."
-- assertNotVisible: "Compra completada"
+- assertNotVisible: "Orden en marcha"
 - tapOn: "Cerrar"
 - assertNotVisible: "Tu posición"
 - tapOn: "Cartera"

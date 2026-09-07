@@ -10,3 +10,4 @@ apps/ios/.derived-data/
 *.xcuserstate
 xcuserdata/
 artifacts/
+supabase/.temp/

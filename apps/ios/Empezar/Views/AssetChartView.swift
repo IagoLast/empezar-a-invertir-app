@@ -100,7 +100,7 @@ struct AssetChartView: View {
             history = result; loading = false
         } catch {
             guard !Task.isCancelled else { return }
-            issue = "No hemos podido cargar el histórico. Desliza hacia abajo para volver a intentarlo."; loading = false
+            issue = UserMessage.describe(error); loading = false
         }
     }
 }

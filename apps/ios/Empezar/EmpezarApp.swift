@@ -49,6 +49,15 @@ struct RootView: View {
             Button("Entendido", role: .cancel) { store.error = nil }
         } message: { Text(store.error ?? "") }
         .task { await store.start() }
+        .onReceive(NotificationCenter.default.publisher(for: .showOrders)) { _ in selected = 3 }
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(3))
+                if Task.isCancelled { break }
+                if !store.portfolio.queuedOrders.isEmpty { await store.refreshOrderState() }
+            }
+        }
         .onChange(of: scenePhase) { _, phase in if phase == .active { Task { await store.preparePurchases(); await store.refresh() } } }
     }
     @ViewBuilder private var portfolioRoot: some View {
