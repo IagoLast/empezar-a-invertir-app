@@ -35,3 +35,9 @@ test('public discovery rejects empty queries and unsafe symbols', async () => {
   for (const q of ['', 'a'.repeat(81)]) assert.equal((await search(new Request('https://app.example/api/search?q=' + q))).status, 400);
   assert.equal((await preview(new Request('https://app.example/api/market-preview?symbol=../../bad'))).status, 400);
 });
+test('equal company matches preserve source relevance without a preferred country', () => {
+  const london={symbol:'EX.LON',name:'Example PLC'}, madrid={symbol:'EX.MC',name:'Example PLC'};
+  assert.deepEqual(rankSearchResults([london,madrid],'example'),[london,madrid]);
+  assert.deepEqual(rankSearchResults([madrid,london],'example'),[madrid,london]);
+  assert.equal(rankSearchResults([madrid,london],'EX.LON')[0].symbol,'EX.LON');
+});

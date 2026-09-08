@@ -1,4 +1,4 @@
-import { APIError } from './http.js';
+import { firstValidProvider } from './provider-fallback.js';
 import { cachedLoader } from './search.js';
 import { finnhubHistory } from './finnhub.js';
 import { alphaHistory, alphaEnabled } from './alpha-vantage.js';
@@ -12,7 +12,7 @@ export const historyRanges = {
 };
 
 export function normalizeHistory(raw, symbol, range) {
-  if (raw?.meta?.symbol !== symbol || typeof raw.meta.currency !== 'string' || !Array.isArray(raw.quotes)) throw Error('Invalid history');
+  if (raw?.meta?.symbol !== symbol || !/^[A-Z]{3}$/.test(raw.meta.currency || '') || !Array.isArray(raw.quotes)) throw Error('Invalid history');
   const seen = new Set();
   const points = raw.quotes.flatMap(row => {
     const date = row.date instanceof Date ? row.date.getTime() : NaN;
@@ -28,17 +28,14 @@ export function normalizeHistory(raw, symbol, range) {
 export function createHistoryService({ primary = alphaHistory, secondary = finnhubHistory, enabled = alphaEnabled } = {}) {
   return cachedLoader(async key => {
     const [symbol, range] = key.split(':');
-    try {
-      let raw;
-      if (enabled()) {
-        try { raw = await primary(symbol, historyRanges[range]); }
-        catch (error) {
-          try { raw = await secondary(symbol, historyRanges[range]); } catch { throw error; }
-        }
-      } else { raw = await secondary(symbol, historyRanges[range]); }
-      return normalizeHistory(raw, symbol, range);
-    }
-    catch (error) { if (error instanceof APIError) throw error; throw new APIError(503, 'HISTORY_UNAVAILABLE', 'No hemos podido cargar el histórico. Desliza hacia abajo para volver a intentarlo.'); }
+    const attempts = [];
+    if (enabled()) attempts.push(() => primary(symbol, historyRanges[range]));
+    attempts.push(() => secondary(symbol, historyRanges[range]));
+    return firstValidProvider(attempts, raw => {
+      const result = normalizeHistory(raw, symbol, range);
+      if (!result.points.length) throw Error('Empty history');
+      return result;
+    }, 'No hemos podido obtener el histórico de las fuentes disponibles para este activo. Desliza hacia abajo para volver a intentarlo.');
   });
 }
 export const marketHistory = createHistoryService();

@@ -5,6 +5,25 @@ struct MarketSearchResult: Decodable, Identifiable {
     var quoteAvailability: String? = nil
     var id: String { symbol }
     var category: SearchCategory { kind == "stock" ? .stocks : kind == "bond_etf" ? .bonds : .funds }
+    static func ranked(_ results: [MarketSearchResult], query: String) -> [MarketSearchResult] {
+        func normalized(_ value: String) -> String {
+            value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "en_US_POSIX"))
+        }
+        let term = normalized(query.trimmingCharacters(in: .whitespacesAndNewlines))
+        guard !term.isEmpty else { return results }
+        func score(_ row: MarketSearchResult) -> Int {
+            let symbol = normalized(row.symbol), name = normalized(row.name)
+            if symbol == term { return 0 }
+            if symbol.split(separator: ".").first.map(String.init) == term { return 1 }
+            if name == term { return 2 }
+            if name.hasPrefix(term) { return 3 }
+            return 4
+        }
+        return results.enumerated().sorted {
+            let left = score($0.element), right = score($1.element)
+            return left == right ? $0.offset < $1.offset : left < right
+        }.map(\.element)
+    }
     static let suggestions: [MarketSearchResult] = [
         .init(symbol: "GOOGL", name: "Alphabet", kind: "stock", exchange: "NASDAQ"),
         .init(symbol: "META", name: "Meta Platforms", kind: "stock", exchange: "NASDAQ"),

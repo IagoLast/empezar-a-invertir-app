@@ -33,14 +33,13 @@ export function normalizeSearch(raw) {
     });
 }
 export function rankSearchResults(results, query) {
-  const term = query.toLowerCase();
-  const alias = searchAliases[term]?.toLowerCase();
-  const score = row => row.symbol.toLowerCase() === term ? 0
-    : row.symbol.toLowerCase().split('.')[0] === term ? 1
-    : alias && (row.name || row.symbol).toLowerCase().startsWith(alias) ? 2
-    : (row.name || row.symbol).toLowerCase() === term ? 2
-    : (row.name || row.symbol).toLowerCase().startsWith(term) ? 3 : 4;
-  return [...results].sort((a,b) => score(a)-score(b) || (a.name || a.symbol).localeCompare(b.name || b.symbol) || a.symbol.localeCompare(b.symbol));
+  const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const term = normalize(query.trim());
+  const score = row => normalize(row.symbol) === term ? 0
+    : normalize(row.symbol).split('.')[0] === term ? 1
+    : normalize(row.name || row.symbol) === term ? 2
+    : normalize(row.name || row.symbol).startsWith(term) ? 3 : 4;
+  return [...results].sort((a,b) => score(a)-score(b));
 }
 export function createSearchService({ primary = finnhubSearch, secondary = alphaSearch, enabled = alphaEnabled } = {}) {
   return cachedLoader(async query => {

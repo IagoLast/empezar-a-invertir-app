@@ -2,6 +2,15 @@ import XCTest
 @testable import Empezar
 
 final class TradingExperienceTests: XCTestCase {
+    func testSearchRanksMergedResultsByRelevanceAcrossMarkets() {
+        let london = MarketSearchResult(symbol: "EX.LON", name: "Example PLC", kind: "stock", exchange: "Londres")
+        let madrid = MarketSearchResult(symbol: "EX.MC", name: "Example PLC", kind: "stock", exchange: "Madrid")
+        let unrelated = MarketSearchResult(symbol: "OTHER", name: "Other Holdings", kind: "stock", exchange: "NASDAQ")
+        XCTAssertEqual(MarketSearchResult.ranked([unrelated, london, madrid], query: "example").map(\.symbol), ["EX.LON", "EX.MC", "OTHER"])
+        XCTAssertEqual(MarketSearchResult.ranked([madrid, london], query: "EX.LON").first?.symbol, "EX.LON")
+        XCTAssertEqual(MarketSearchResult.ranked([london, madrid], query: "EX.MC").first?.symbol, "EX.MC")
+        XCTAssertEqual(MarketSearchResult.ranked([madrid, london], query: "example").first?.symbol, "EX.MC")
+    }
     func testExistingSessionWithoutMetadataStillDecodes() throws {
         let user = try JSONDecoder().decode(AuthSession.User.self, from: Data(#"{"id":"user"}"#.utf8))
         XCTAssertNil(user.avatarURL)

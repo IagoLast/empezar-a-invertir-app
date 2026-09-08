@@ -60,10 +60,10 @@ test('long history uses weekly data and labels the actual resolution',async()=>{
   const result=await market.history('AAPL',{days:366});assert.equal(used,'TIME_SERIES_WEEKLY');assert.equal(result.meta.interval,'1wk');
 });
 test('Finnhub remains first choice and only failure invokes the fallback',async()=>{
-  let fallback=0;const first={regularMarketPrice:100,regularMarketTime:new Date(now)};
+  let fallback=0;const first={symbol:'AAPL',currency:'USD',quoteType:'EQUITY',marketState:'CLOSED',regularMarketChangePercent:1,regularMarketPrice:100,regularMarketTime:new Date(now)};
   const good=createMarketQuote({clock:()=>now,primary:async()=>first,secondary:async()=>{fallback++;},enabled:()=>true});
   assert.equal((await good('AAPL')).source,'Finnhub');assert.equal(fallback,0);
-  const bad=createMarketQuote({clock:()=>now,primary:async()=>({...first,regularMarketPrice:0}),secondary:async()=>({source:'Alpha Vantage'}),enabled:()=>true});
+  const bad=createMarketQuote({clock:()=>now,primary:async()=>({...first,regularMarketPrice:0}),secondary:async()=>({...first,source:'Alpha Vantage'}),enabled:()=>true});
   assert.equal((await bad('AAPL')).source,'Alpha Vantage');
 });
 test('search merges providers without duplicate tickers and survives one source failing',async()=>{

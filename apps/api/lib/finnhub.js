@@ -41,16 +41,20 @@ export async function finnhubQuote(symbol) {
       finnhubRequest('quote', { symbol }),
       cached(`profile:${symbol}`, 86400000, () => finnhubRequest('stock/profile2', { symbol })).catch(() => ({})),
       finnhubSearch(symbol),
-      cached('status:US', 60000, () => finnhubRequest('stock/market-status', { exchange: 'US' })),
+      cached('status:US', 60000, () => finnhubRequest('stock/market-status', { exchange: 'US' })).catch(() => ({})),
       finnhubMetrics(symbol).catch(() => ({})),
     ]);
     const asset = search.result?.find(row => row.symbol === symbol);
     if (!asset || !['Common Stock', 'ETP', 'ADR', 'REIT'].includes(asset.type)) throw new APIError(422, 'ASSET_UNSUPPORTED', 'Solo puedes practicar con acciones y ETF disponibles.');
-    // This subscription supplies US quotes. Never infer FX rates or rename foreign symbols.
-    if ((symbol.includes('.') && !/\.[AB]$/.test(symbol)) || (profile.currency && profile.currency !== 'USD')) throw new APIError(422, 'MARKET_NOT_COVERED', 'Este mercado no está incluido. Busca una acción o ETF de Estados Unidos.');
+    const foreign = symbol.includes('.') && !/\.[AB]$/.test(symbol);
+    // Foreign quotes require exact profile identity and an explicit currency, never a USD default.
+    if (foreign && (profile.ticker !== symbol || !/^(?:[A-Z]{3}|GBp|ZAc)$/.test(profile.currency || ''))) {
+      throw new APIError(422, 'MARKET_NOT_COVERED', 'No podemos verificar la moneda de esta cotización.');
+    }
+    const currency = profile.currency || 'USD';
     const average = financials.metric?.['10DayAverageTradingVolume'] ?? financials.metric?.['3MonthAverageTradingVolume'];
-    return { symbol, currency: 'USD', regularMarketPrice: quote.c, regularMarketChangePercent: quote.dp,
-      regularMarketTime: new Date(quote.t * 1000), marketState: status.isOpen === true ? 'REGULAR' : 'CLOSED',
+    return { symbol, currency, regularMarketPrice: quote.c, regularMarketChangePercent: quote.dp,
+      regularMarketTime: new Date(quote.t * 1000), marketState: !foreign && status.isOpen === true ? 'REGULAR' : 'CLOSED',
       quoteType: asset.type === 'ETP' ? 'ETF' : 'EQUITY', longName: profile.name || asset.description,
       logoUrl: logoURL(profile.logo), averageDailyVolume: Number.isFinite(average) && average > 0 ? Math.round(average * 1e6) : null };
   });
@@ -59,5 +63,8 @@ export async function finnhubHistory(symbol, { days, interval }) {
   const to = Math.floor(Date.now() / 1000);
   const result = await finnhubRequest('stock/candle', { symbol, resolution: { '1h': '60', '1d': 'D', '1wk': 'W' }[interval], from: to - days * 86400, to });
   if (result.s !== 'ok' || !Array.isArray(result.t)) throw new APIError(422, 'HISTORY_UNAVAILABLE', 'No hay histórico disponible para este activo.');
-  return { meta: { symbol, currency: 'USD' }, quotes: result.t.map((t, i) => ({ date: new Date(t * 1000), open: result.o?.[i], high: result.h?.[i], low: result.l?.[i], close: result.c?.[i] })) };
+  const quote = await finnhubQuote(symbol);
+  const minor = { GBp: 'GBP', GBX: 'GBP', ILA: 'ILS', ZAc: 'ZAR' };
+  const scale = minor[quote.currency] ? 0.01 : 1;
+  return { meta: { symbol, currency: minor[quote.currency] || quote.currency, source: 'Finnhub', interval }, quotes: result.t.map((t, i) => ({ date: new Date(t * 1000), open: result.o?.[i] * scale, high: result.h?.[i] * scale, low: result.l?.[i] * scale, close: result.c?.[i] * scale })) };
 }

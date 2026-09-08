@@ -62,7 +62,7 @@ struct ExploreView: View {
             }
             if !combined.contains(where: { $0.symbol == asset.symbol }) { combined.append(asset) }
         }
-        return combined.filter {
+        return MarketSearchResult.ranked(combined, query: query).filter {
             filter == .all || (filter == .stocks && $0.category == .stocks) ||
             (filter == .etfs && $0.category != .stocks) || (filter == .bonds && $0.category == .bonds)
         }
