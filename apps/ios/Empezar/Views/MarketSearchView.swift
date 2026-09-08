@@ -24,17 +24,7 @@ struct MarketSearchResult: Decodable, Identifiable {
             return left == right ? $0.offset < $1.offset : left < right
         }.map(\.element)
     }
-    static let suggestions: [MarketSearchResult] = [
-        .init(symbol: "GOOGL", name: "Alphabet", kind: "stock", exchange: "NASDAQ"),
-        .init(symbol: "META", name: "Meta Platforms", kind: "stock", exchange: "NASDAQ"),
-        .init(symbol: "TSLA", name: "Tesla", kind: "stock", exchange: "NASDAQ"),
-        .init(symbol: "NVDA", name: "NVIDIA", kind: "stock", exchange: "NASDAQ"),
-        .init(symbol: "AMZN", name: "Amazon", kind: "stock", exchange: "NASDAQ"),
-        .init(symbol: "ASML", name: "ASML", kind: "stock", exchange: "NASDAQ"),
-        .init(symbol: "SPY", name: "SPDR S&P 500 ETF", kind: "etf", exchange: "NYSE Arca"),
-        .init(symbol: "TSCO.LON", name: "Tesco", kind: "stock", exchange: "Londres"),
-        .init(symbol: "ITX.MC", name: "Inditex · Industria de Diseño Textil", kind: "stock", exchange: "Madrid", quoteAvailability: "check_on_open"),
-    ]
+
 }
 enum SearchCategory: String, CaseIterable, Identifiable {
     case stocks, funds, bonds
@@ -56,8 +46,7 @@ struct MarketSearchRow: View {
     var quote: Quote? = nil
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: asset.kind != "stock" ? "square.stack.3d.up" : "building.2")
-                .foregroundStyle(Theme.accent).frame(width: 46, height: 46).background(Theme.pale, in: RoundedRectangle(cornerRadius: 15))
+            AssetMark(instrument: .market(symbol: asset.symbol, name: asset.name, kind: asset.kind), logoURL: quote?.logoURL)
             VStack(alignment: .leading, spacing: 5) {
                 Text(asset.name).font(.body.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
                 Text("\(asset.symbol) · \(asset.exchange)").font(.caption).foregroundStyle(Theme.muted)

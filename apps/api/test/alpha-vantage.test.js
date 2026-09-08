@@ -79,3 +79,12 @@ test('history preserves provider attribution and falls back without merging cand
   const fallback=createHistoryService({enabled:()=>true,primary:async()=>{throw Error();},secondary:async()=>({...raw,meta:{...raw.meta,source:'Finnhub'}})});
   assert.equal((await fallback('AAPL:1m')).source,'Finnhub');
 });
+
+test('canonical London symbols translate to Alpha listings and keep canonical output identity', async()=>{
+  const market=createAlphaMarket({clock:()=>now,request:async p=>{
+    if(p.function==='SYMBOL_SEARCH'){assert.equal(p.keywords,'TSCO.LON');return {bestMatches:[match('TSCO.LON','GBX')]};}
+    assert.equal(p.symbol,'TSCO.LON');return series('TSCO.LON');
+  }});
+  const quote=await market.quote('TSCO.L');assert.equal(quote.symbol,'TSCO.L');assert.equal(quote.currency,'GBX');
+  const history=await market.history('TSCO.L',{days:31});assert.equal(history.meta.symbol,'TSCO.L');
+});

@@ -94,12 +94,20 @@ struct SectionHeading: View {
 }
 
 struct AssetMark: View {
+    @EnvironmentObject private var store: AppStore
+    @State private var fetchedLogo: String?
+    private struct LogoResponse: Decodable { let symbol: String; let logoURL: String? }
+    private func trustedURL(_ value: String?) -> URL? {
+        guard let value, let url = URL(string: value), url.scheme == "https",
+              ["static.finnhub.io", "static2.finnhub.io"].contains(url.host ?? "") else { return nil }
+        return url
+    }
     let instrument: Instrument
     var large = false
     var logoURL: String? = nil
     var body: some View {
         Group {
-            if let logoURL, let url = URL(string: logoURL), url.scheme == "https", url.host == "s.yimg.com" {
+            if let url = trustedURL(logoURL) ?? trustedURL(fetchedLogo) {
                 AsyncImage(url: url) { phase in
                     if let image = phase.image {
                         image.resizable().scaledToFit().padding(large ? 12 : 8)
@@ -110,13 +118,17 @@ struct AssetMark: View {
             .background(Theme.pale, in: RoundedRectangle(cornerRadius: large ? 24 : 15))
             .overlay { RoundedRectangle(cornerRadius: large ? 24 : 15).strokeBorder(Theme.accent.opacity(0.08)) }
             .accessibilityHidden(true)
+            .task(id: instrument.symbol) {
+                fetchedLogo = nil
+                guard trustedURL(logoURL) == nil else { return }
+                let encoded = instrument.symbol.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? instrument.symbol
+                if let result: LogoResponse = try? await store.api.request("company-logo?symbol=\(encoded)", authenticated: false),
+                   !Task.isCancelled, result.symbol == instrument.symbol { fetchedLogo = result.logoURL }
+            }
     }
     @ViewBuilder private var fallback: some View {
-        if instrument.symbol == "AAPL" {
-            Image(systemName: "apple.logo").font(.system(size: large ? 34 : 23, weight: .medium))
-        } else {
-            Image(systemName: instrument.kind == "bond_etf" ? "doc.text" : instrument.kind == "stock" ? "building.2" : "square.stack.3d.up").font(.system(size: large ? 28 : 20, weight: .medium))
-        }
+        Image(systemName: instrument.kind == "bond_etf" ? "doc.text" : instrument.kind == "stock" ? "building.2" : "square.stack.3d.up")
+            .font(.system(size: large ? 28 : 20, weight: .medium))
     }
 
 }

@@ -11,3 +11,5 @@ apps/ios/.derived-data/
 xcuserdata/
 artifacts/
 supabase/.temp/
+
+.env.*.local

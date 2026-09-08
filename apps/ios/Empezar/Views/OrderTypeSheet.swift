@@ -5,7 +5,7 @@ enum PurchaseOrderType: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var title: String { self == .market ? "Compra a mercado" : "Orden de compra limitada" }
     var subtitle: String {
-        self == .market ? "Compra al precio disponible después de revisar y confirmar." : "Tú eliges el precio máximo. La compra puede quedarse pendiente."
+        self == .market ? "Compra al precio disponible después de revisar y confirmar." : "Tú eliges el precio máximo. En el mercado real puede quedarse pendiente; aquí simulamos que se alcanza."
     }
     var icon: String { self == .market ? "bolt.fill" : "slider.horizontal.3" }
     var concept: LearningConcept { self == .market ? .marketOrder : .limitOrder }
@@ -58,8 +58,8 @@ private struct OrderTypeExplanation: View {
                     Text(type.concept.example).lineSpacing(5)
                 }.padding(20).dataCard()
                 VStack(alignment: .leading, spacing: 12) {
-                    Text(type == .market ? "Antes de confirmar" : "Mientras está pendiente").font(.headline)
-                    Text(type == .market ? "Revisa las unidades, la fecha del precio y el total con comisión. Deslizar para actualizar solo consulta un precio nuevo; no realiza ninguna compra." : "Encontrarás la orden en Movimientos. Se reserva saldo o unidades y se ejecuta automáticamente en el servidor. Puedes editarla o cancelarla mientras esté pendiente; actualizar solo consulta su estado.")
+                    Text(type == .market ? "Antes de confirmar" : "En esta simulación").font(.headline)
+                    Text(type == .market ? "Revisa las unidades, la fecha del precio y el total con comisión. Deslizar para actualizar solo consulta un precio nuevo; no realiza ninguna compra." : "Simulamos alcanzar tu límite y ejecutamos al confirmar. Encontrarás la operación en Operaciones. En el mercado real podría no ejecutarse.")
                         .foregroundStyle(Theme.muted).lineSpacing(5)
                 }
             }.padding(20)

@@ -1,10 +1,12 @@
+import { eodhdQuote, eodhdEnabled } from './eodhd.js';
 import { finnhubQuote } from './finnhub.js';
 import { alphaQuote, alphaEnabled } from './alpha-vantage.js';
 import { firstValidProvider } from './provider-fallback.js';
 
-export function createMarketQuote({ primary = finnhubQuote, secondary = alphaQuote, enabled = alphaEnabled, clock = Date.now } = {}) {
+export function createMarketQuote({ primary = finnhubQuote, secondary = alphaQuote, enabled = alphaEnabled, clock = Date.now, additional = eodhdQuote, additionalEnabled = eodhdEnabled } = {}) {
   return async symbol => {
     const attempts = [async () => ({ ...await primary(symbol), source: 'Finnhub' })];
+    if (additionalEnabled()) attempts.push(async () => ({ ...await additional(symbol), source: 'EODHD' }));
     if (enabled()) attempts.push(async () => ({ ...await secondary(symbol), source: 'Alpha Vantage' }));
     return firstValidProvider(attempts, quote => {
       const stamp = quote?.regularMarketTime instanceof Date ? quote.regularMarketTime.getTime() : NaN;

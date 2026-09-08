@@ -8,6 +8,7 @@ struct TradeView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var quantity = "1"
     @State private var orderType = PurchaseOrderType.market
+    @State private var explainingOrder = false
     @State private var limitPrice = ""
     @State private var quote: Quote?
     @State private var reviewing = false
@@ -16,6 +17,11 @@ struct TradeView: View {
     @State private var issue: String?
     @State private var request: TradeRequest?
     @FocusState private var fieldFocused: Bool
+    private var executed: Bool {
+        guard let request else { return false }
+        return store.portfolio.orders.contains { $0.requestId == request.requestId }
+            || store.portfolio.simulatedOrders?.contains { $0.id == request.requestId && $0.status == "executed" } == true
+    }
     private var isLimit: Bool { orderType == .limit }
     private var units: Int { Int(quantity) ?? 0 }
     private var limitCents: Int64 {
@@ -37,8 +43,8 @@ struct TradeView: View {
     }
     private var maximum: Int { side == "sell" ? availableUnits : (price > 0 ? Int(min(100000, max(0, availableCash - 100) / price)) : 0) }
     private var validation: String? {
-        if let editing, !editing.editable { return "Esta orden ya está en ejecución. Consulta Movimientos." }
-        if store.pendingTrade != nil && request == nil { return "Comprueba primero la operación pendiente desde Movimientos." }
+        if let editing, !editing.editable { return "Esta orden ya está en ejecución. Consulta Operaciones." }
+        if store.pendingTrade != nil && request == nil { return "Comprueba primero la operación pendiente desde Operaciones." }
         guard let quote else { return "Estamos consultando el precio de referencia." }
         if quote.expired { return "Desliza hacia abajo para actualizar el precio." }
         if units < 1 || units > 100000 { return "Introduce entre 1 y 100.000 unidades." }
@@ -59,11 +65,10 @@ struct TradeView: View {
                         Spacer(); Pill(text: "Simulación", icon: "sparkles")
                     }
                     if sent {
-                        Label("Orden en marcha", systemImage: "clock.arrow.circlepath").font(.title.bold())
-                        Text("Se ejecutará automáticamente. Puedes verla, editarla o cancelarla en Movimientos mientras esté pendiente.").foregroundStyle(Theme.muted)
-                        Text("La ejecución continúa aunque cierres la app.").font(.subheadline)
-                        PrimaryButton(title: "Ver mi orden", icon: "list.bullet") { dismiss(); NotificationCenter.default.post(name: .showOrders, object: nil) }
-                        PrimaryButton(title: "Listo", icon: "checkmark") { dismiss() }
+                        Label(executed ? "Operación completada" : "Orden recibida", systemImage: executed ? "checkmark.circle.fill" : "clock").font(.title.bold())
+                        Text(executed ? "Tu saldo y tus inversiones ya están actualizados." : "Puedes consultar el estado en Operaciones.").foregroundStyle(Theme.muted)
+                        PrimaryButton(title: "Ver operaciones", icon: "list.bullet") { dismiss(); NotificationCenter.default.post(name: .showOrders, object: nil) }
+                        Button("Listo") { dismiss() }.frame(maxWidth: .infinity, minHeight: 44)
                     } else {
                         Text(reviewing ? "Revisa tu orden" : editing == nil ? "Prepara tu \(side == "buy" ? "compra" : "venta")" : "Editar orden").font(.title.bold())
                         if !reviewing {
@@ -78,10 +83,19 @@ struct TradeView: View {
                                 Text(side == "buy" ? "Disponible: \(Money.text(availableCash))" : "Disponibles: \(availableUnits) unidades").font(.caption).foregroundStyle(Theme.muted)
                                 Button("Usar máximo · \(maximum) unidades") { quantity = String(maximum) }.disabled(maximum == 0)
                             }.padding(20).dataCard()
-                            Picker("Precio de la simulación", selection: $orderType) {
-                                Text("Último precio").tag(PurchaseOrderType.market)
-                                Text("Elegir precio").tag(PurchaseOrderType.limit)
-                            }.pickerStyle(.segmented).accessibilityIdentifier("purchase-order-type")
+                            VStack(alignment: .leading, spacing: 10) {
+                                Picker("Tipo de orden", selection: $orderType) {
+                                    Text("A mercado").tag(PurchaseOrderType.market)
+                                    Text("Limitada").tag(PurchaseOrderType.limit)
+                                }.pickerStyle(.segmented).accessibilityIdentifier("purchase-order-type")
+                                Text(isLimit
+                                     ? (side == "buy" ? "Fijas el precio máximo que aceptarías pagar." : "Fijas el precio mínimo que aceptarías recibir.")
+                                     : "Operas al precio disponible. En el mercado real puede cambiar antes de ejecutarse.")
+                                    .font(.subheadline).foregroundStyle(Theme.muted)
+                                Button("¿Cómo funciona?") { explainingOrder = true }
+                                    .font(.subheadline.weight(.semibold)).frame(minHeight: 44)
+                                    .accessibilityIdentifier("explain-order-type")
+                            }
                             if isLimit {
                                 VStack(alignment: .leading, spacing: 10) {
                                     Text(side == "buy" ? "Precio máximo por unidad (USD)" : "Precio mínimo por unidad (USD)").font(.subheadline.bold())
@@ -91,25 +105,22 @@ struct TradeView: View {
                             }
                         }
                         VStack(spacing: 12) {
+                            summaryLine("Tipo de orden", isLimit ? "Limitada" : "A mercado")
                             summaryLine("Unidades", "\(units)")
                             summaryLine("Precio simulado por unidad", price > 0 ? Money.text(price) : "—")
                             summaryLine("Comisión", "1,00 US$")
                             Divider()
-                            summaryLine(side == "buy" ? "Total a reservar" : "Total a recibir", price > 0 ? Money.text(total) : "—")
+                            summaryLine(side == "buy" ? "Total a pagar" : "Total a recibir", price > 0 ? Money.text(total) : "—")
                         }.padding(20).dataCard()
                         if let quote {
                             Text("Referencia: \(Money.text(quote.priceCents)) · \(quote.source)").font(.caption).foregroundStyle(Theme.muted)
                             if let date = ISO.date(quote.asOf) { Text(date.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(Theme.muted) }
                             if quote.mode == "eod" { Text("Practicas con un precio de cierre diario, no con una cotización en tiempo real.").font(.subheadline) }
-                            else if !quote.marketOpen { Text("La bolsa está cerrada. Puedes practicar con el último precio disponible.").font(.subheadline) }
+                            else if !quote.marketOpen { Text("Puedes practicar con el último precio disponible.").font(.subheadline) }
                         }
-                        VStack(alignment: .leading, spacing: 10) {
-                            Label("¿Cuándo se ejecutará?", systemImage: "clock").font(.headline)
-                            Text("Entre unos segundos y aproximadamente un minuto. Los activos con mayor volumen suelen ejecutarse antes. El precio simulado queda fijado al confirmar.").font(.subheadline)
-                            if let volume = quote?.averageDailyVolume { Text("Volumen medio: \(volume.formatted()) unidades al día.").font(.caption).foregroundStyle(Theme.muted) }
-                            else { Text("Sin dato de volumen: usaremos una espera intermedia.").font(.caption).foregroundStyle(Theme.muted) }
-                            Text("Solo dinero ficticio. La ejecución garantizada pertenece a esta simulación, no al mercado real.").font(.caption).foregroundStyle(Theme.muted)
-                        }.padding(20).dataCard()
+                        Text("Al confirmar se ejecuta tu operación virtual al precio mostrado. Incluye una comisión simulada de 1 US$.")
+                            .font(.caption).foregroundStyle(Theme.muted)
+
 
                     }
                 }.padding(20).id("trade-top")
@@ -125,7 +136,7 @@ struct TradeView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 if let message = issue ?? validation { Text(message).font(.caption).foregroundStyle(Theme.muted) }
                                 if reviewing { Button("Editar orden") { reviewing = false; request = nil }.frame(minHeight: 44).accessibilityIdentifier("edit-order") }
-                                PrimaryButton(title: reviewing ? (editing == nil ? "Confirmar orden virtual" : "Guardar cambios") : "Revisar orden", disabled: validation != nil, loading: loading || store.busy) {
+                                PrimaryButton(title: reviewing ? (editing == nil ? "Confirmar operación" : "Guardar cambios") : "Revisar orden", disabled: validation != nil, loading: loading || store.busy) {
                                     if reviewing { Task { await submit() } } else { fieldFocused = false; reviewing = true }
                                 }
                             }.padding(20).background(.bar)
@@ -133,6 +144,9 @@ struct TradeView: View {
                     }
                 }
                 .onChange(of: reviewing) { _, _ in withAnimation { proxy.scrollTo("trade-top", anchor: .top) } }
+                .sheet(isPresented: $explainingOrder) {
+                    ConceptInfoSheet(concept: isLimit ? .limitOrder : .marketOrder)
+                }
                 .interactiveDismissDisabled(store.busy)
                 .refreshable { if !sent && !store.busy && request == nil { await refresh() } }
                 .task {

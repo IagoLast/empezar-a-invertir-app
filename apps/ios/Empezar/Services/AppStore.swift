@@ -57,7 +57,7 @@ import RevenueCat
             catch { self.error = UserMessage.describe(error) }
         }
         var quoteError: Error?
-        let symbols = Set(Content.instruments.map(\.symbol) + portfolio.positions.map(\.symbol))
+        let symbols = Set(portfolio.positions.map(\.symbol))
         for symbol in symbols.sorted() {
             do { let _: Quote = try await refreshQuote(symbol) }
             catch { quoteError = error }

@@ -45,7 +45,7 @@ struct Quote: Codable, Identifiable {
     var status: String {
         if expired { return "Precio pendiente de actualizar" }
         if mode == "eod" { return "Precio de cierre · \(source)" }
-        if !marketOpen { return "Mercado cerrado · último precio" }
+        if !marketOpen { return "Último precio disponible" }
         if mode == "cached" { return tradable ? "Último precio disponible" : "Precio pendiente de actualizar" }
         if mode == "delayed" { return "Diferido \(delaySeconds / 60) min" }
         return tradable ? "Último precio disponible" : "Precio pendiente de actualizar"

@@ -1,3 +1,4 @@
+import { eodhdHistory, eodhdEnabled } from './eodhd.js';
 import { firstValidProvider } from './provider-fallback.js';
 import { cachedLoader } from './search.js';
 import { finnhubHistory } from './finnhub.js';
@@ -25,10 +26,11 @@ export function normalizeHistory(raw, symbol, range) {
   return { symbol, range, currency: raw.meta.currency, source: raw.meta.source || 'Finnhub', interval: raw.meta.interval || historyRanges[range].interval, points };
 }
 
-export function createHistoryService({ primary = alphaHistory, secondary = finnhubHistory, enabled = alphaEnabled } = {}) {
+export function createHistoryService({ primary = alphaHistory, secondary = finnhubHistory, enabled = alphaEnabled, additional = eodhdHistory, additionalEnabled = eodhdEnabled } = {}) {
   return cachedLoader(async key => {
     const [symbol, range] = key.split(':');
     const attempts = [];
+    if (additionalEnabled()) attempts.push(() => additional(symbol, historyRanges[range]));
     if (enabled()) attempts.push(() => primary(symbol, historyRanges[range]));
     attempts.push(() => secondary(symbol, historyRanges[range]));
     return firstValidProvider(attempts, raw => {

@@ -6,7 +6,10 @@ final class GlobalTradingTests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = ["-maestro-scenario", scenario, "-has-onboarded-v0", "YES", "-preview-tab", "1", "-preview-profile", "NO", "-preview-screen", "main"]
         app.launch()
-        let asset = app.descendants(matching: .any)["asset-AAPL"].firstMatch
+        let search = app.textFields["asset-search"]
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.tap(); search.typeText("AAPL\n")
+        let asset = app.descendants(matching: .any)["search-result-AAPL"].firstMatch
         XCTAssertTrue(asset.waitForExistence(timeout: 10)); asset.tap()
         app.buttons["detail-buy"].tap()
         XCTAssertTrue(app.buttons["Revisar orden"].waitForExistence(timeout: 5))
@@ -14,48 +17,58 @@ final class GlobalTradingTests: XCTestCase {
     }
     private func confirm(_ app: XCUIApplication) {
         app.buttons["Revisar orden"].tap()
-        app.buttons["Confirmar orden virtual"].tap()
-        XCTAssertTrue(app.staticTexts["Orden en marcha"].waitForExistence(timeout: 5))
+        app.buttons["Confirmar operación"].tap()
+        XCTAssertTrue(app.staticTexts["Operación completada"].waitForExistence(timeout: 5))
     }
-    func testReviewAllowsEditingBeforeSubmissionAndPendingOrderCanBeCancelled() {
+    func testReviewCanBeEditedAndPurchaseImmediatelyAppearsInHistory() {
         let app = launch()
+        XCTAssertTrue(app.segmentedControls["purchase-order-type"].exists)
         app.buttons["Revisar orden"].tap()
-        let edit = app.buttons["edit-order"]
-        for _ in 0..<3 where !edit.isHittable { app.swipeUp() }
-        edit.tap()
+        app.buttons["edit-order"].tap()
         let quantity = app.textFields["trade-quantity"]
-        for _ in 0..<3 where !quantity.isHittable { app.swipeDown() }
         XCTAssertTrue(quantity.waitForExistence(timeout: 3))
         app.buttons["Añadir una unidad"].tap()
         confirm(app)
-        app.buttons["Ver mi orden"].tap()
-        XCTAssertTrue(app.buttons["edit-pending-order"].waitForExistence(timeout: 5))
-        app.buttons["Cancelar orden"].tap()
-        XCTAssertTrue(app.staticTexts["Orden cancelada. La reserva se ha liberado."].waitForExistence(timeout: 5))
+        app.buttons["Ver operaciones"].tap()
+        XCTAssertTrue(app.staticTexts["Compra de AAPL"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@ AND label CONTAINS %@", "2 unidades", "1,00")).firstMatch.exists)
         XCTAssertFalse(app.buttons["edit-pending-order"].exists)
-    }
-    func testPendingOrderCanBeEditedAndExecutesWithoutManualAction() {
-        let app = launch()
-        confirm(app)
-        app.buttons["Ver mi orden"].tap()
-        XCTAssertTrue(app.buttons["edit-pending-order"].waitForExistence(timeout: 5))
-        app.buttons["edit-pending-order"].tap()
-        XCTAssertTrue(app.textFields["trade-quantity"].waitForExistence(timeout: 5))
-        app.buttons["Añadir una unidad"].tap()
-        app.buttons["Revisar orden"].tap()
-        app.buttons["Guardar cambios"].tap()
-        XCTAssertTrue(app.staticTexts["Orden en marcha"].waitForExistence(timeout: 5))
-        app.buttons["Listo"].tap()
-        XCTAssertTrue(app.staticTexts["Compra de AAPL"].firstMatch.waitForExistence(timeout: 40))
-        let pending = app.buttons["edit-pending-order"]
-        XCTAssertTrue(NSPredicate(format: "exists == false").evaluate(with: pending) || XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: pending)], timeout: 40) == .completed)
+        app.tabBars.buttons["Inicio"].tap()
+        XCTAssertTrue(app.staticTexts["AAPL · 2 unidades"].waitForExistence(timeout: 5))
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
-        attachment.name = "Executed simulation order"; attachment.lifetime = .keepAlways; add(attachment)
+        attachment.name = "Portfolio after immediate purchase"; attachment.lifetime = .keepAlways; add(attachment)
+    }
+    func testLimitOrderExplainsSimulationAndUsesChosenPrice() {
+        let app = launch()
+        let picker = app.segmentedControls["purchase-order-type"]
+        for _ in 0..<3 where !picker.isHittable { app.swipeUp() }
+        picker.buttons["Limitada"].tap()
+        app.buttons["explain-order-type"].tap()
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "sin esperar a que cambie la cotización real")).firstMatch.waitForExistence(timeout: 3))
+        app.buttons["Entendido"].tap()
+        let limit = app.textFields["limit-price"]
+        for _ in 0..<3 where !limit.isHittable { app.swipeUp() }
+        limit.tap(); limit.typeText("95")
+        app.toolbars.buttons["Listo"].tap()
+        confirm(app)
+        app.buttons["Ver operaciones"].tap()
+        XCTAssertTrue(app.staticTexts["Compra de AAPL"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "95,00")).firstMatch.exists)
     }
     func testClosedMarketAllowsClearlyLabelledSimulation() {
         let app = launch("market-closed")
         XCTAssertTrue(app.buttons["Revisar orden"].isEnabled)
         confirm(app)
-        XCTAssertTrue(app.staticTexts["La ejecución continúa aunque cierres la app."].exists)
+        XCTAssertTrue(app.staticTexts["Tu saldo y tus inversiones ya están actualizados."].exists)
+    }
+    func testLostResponseIsResolvedWithoutADuplicatePurchase() {
+        let app = launch("trade-response-lost")
+        app.buttons["Revisar orden"].tap()
+        app.buttons["Confirmar operación"].tap()
+        XCTAssertTrue(app.staticTexts["No se recibió la confirmación."].waitForExistence(timeout: 5))
+        app.buttons["Confirmar operación"].tap()
+        XCTAssertTrue(app.staticTexts["Operación completada"].waitForExistence(timeout: 5))
+        app.buttons["Ver operaciones"].tap()
+        XCTAssertEqual(app.staticTexts.matching(identifier: "Compra de AAPL").count, 1)
     }
 }

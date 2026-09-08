@@ -16,19 +16,22 @@ final class PortfolioNavigationTests: XCTestCase {
     }
     func testHomeHelpActivityAndChartNavigationWithTabs() {
         let app = launch()
-        XCTAssertTrue(app.tabBars.buttons["Cartera"].exists)
-        XCTAssertTrue(app.tabBars.buttons["Mercados"].exists)
-        XCTAssertTrue(app.tabBars.buttons["Movimientos"].exists)
+        XCTAssertTrue(app.tabBars.buttons["Inicio"].exists)
+        XCTAssertTrue(app.tabBars.buttons["Invertir"].exists)
+        XCTAssertTrue(app.tabBars.buttons["Operaciones"].exists)
         XCTAssertTrue(app.tabBars.buttons["Aprender"].exists)
         app.buttons["info-portfolioValue"].tap()
         XCTAssertTrue(app.staticTexts["Valor de mi cartera"].waitForExistence(timeout: 3))
         capture("Portfolio value explanation")
         app.buttons["Entendido"].tap()
-        app.tabBars.buttons["Movimientos"].tap()
+        app.tabBars.buttons["Operaciones"].tap()
         XCTAssertTrue(app.buttons["info-activity"].firstMatch.waitForExistence(timeout: 3))
-        app.tabBars.buttons["Cartera"].tap()
-        app.buttons["Comprar activos"].tap()
-        let asset = app.descendants(matching: .any)["asset-AAPL"].firstMatch
+        app.tabBars.buttons["Inicio"].tap()
+        app.buttons["home-invest"].tap()
+        let search = app.textFields["asset-search"]
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.tap(); search.typeText("AAPL\n")
+        let asset = app.descendants(matching: .any)["search-result-AAPL"].firstMatch
         XCTAssertTrue(asset.waitForExistence(timeout: 3))
         asset.tap()
         app.swipeUp()

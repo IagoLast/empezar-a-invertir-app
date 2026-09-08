@@ -3,7 +3,7 @@ import { APIError } from './http.js';
 import { rpc } from './supabase.js';
 import { logoURL } from './finnhub.js';
 import { providerQuote } from './providers.js';
-const supportedSource = source => ['Finnhub', 'Alpha Vantage'].includes(source);
+const supportedSource = source => ['Finnhub', 'Alpha Vantage', 'EODHD'].includes(source);
 export const QUOTE_CACHE_MS = 15 * 60 * 1000;
 const MAX_TRADE_AGE_MS = 60 * 60 * 1000;
 export const symbols = new Set(['AAPL', 'MSFT', 'VTI', 'BND']);
@@ -60,7 +60,7 @@ export function normalizeQuote(raw, symbol, now = Date.now()) {
   return { id: randomUUID(), symbol, priceCents: priceCents(String(raw.regularMarketPrice)), currency: 'USD', changePercent: change,
     asOf: new Date(stamp).toISOString(), fetchedAt: new Date(now).toISOString(), expiresAt: new Date(expiry).toISOString(),
     marketOpen, tradable, mode: raw.mode === 'eod' ? 'eod' : 'cached', delaySeconds: Math.max(0, Math.floor((now - stamp) / 1000)),
-    source: raw.source === 'Alpha Vantage' ? 'Alpha Vantage' : 'Finnhub', averageDailyVolume: raw.averageDailyVolume ?? null, logoURL: logoURL(raw.logoUrl) };
+    source: supportedSource(raw.source) ? raw.source : 'Finnhub', averageDailyVolume: raw.averageDailyVolume ?? null, logoURL: logoURL(raw.logoUrl) };
 }
 export function normalizeFundamentals(raw, symbol, now = Date.now()) {
   if (!raw || raw.symbol !== symbol || raw.currency !== 'USD') throw new Error('Invalid fundamentals');

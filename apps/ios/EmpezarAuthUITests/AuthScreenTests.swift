@@ -10,7 +10,10 @@ final class AuthScreenTests: XCTestCase {
         app.launchArguments = ["-maestro-scenario", scenario, "-has-onboarded-v0", "YES",
                                "-preview-tab", "1", "-preview-profile", "NO", "-preview-screen", "main"]
         app.launch()
-        let asset = app.descendants(matching: .any)["asset-AAPL"].firstMatch
+        let search = app.textFields["asset-search"]
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.tap(); search.typeText("AAPL\n")
+        let asset = app.descendants(matching: .any)["search-result-AAPL"].firstMatch
         XCTAssertTrue(asset.waitForExistence(timeout: 10)); asset.tap()
         let login = app.buttons["detail-buy"]
         XCTAssertTrue(login.waitForExistence(timeout: 5)); login.tap()

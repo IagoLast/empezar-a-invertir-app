@@ -23,7 +23,7 @@ Copy values from `apps/api/.env.example` into Vercel environment variables:
 | `SUPABASE_URL` | Project URL |
 | `SUPABASE_ANON_KEY` | Public publishable/anon key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Secret server key for data/payment RPCs and account deletion |
-| `ENABLE_FUNDAMENTALS` | `true` enables Yahoo P/E and EPS with a 24-hour cache; `false` disables them |
+| `ENABLE_FUNDAMENTALS` | `true` enables Finnhub P/E and EPS with a 24-hour cache; `false` disables them |
 | `REVENUECAT_WEBHOOK_AUTH` | Long random value RevenueCat sends exactly in Authorization |
 | `REVENUECAT_APP_ID` | RevenueCat iOS app ID; currently `app899c976007` |
 | `REVENUECAT_ENVIRONMENT` | `SANDBOX` for development/TestFlight or `PRODUCTION` |
@@ -80,17 +80,7 @@ Purchased cash does not expire. Signing into the same account restores its balan
 
 ## Market data
 
-The backend uses the unofficial `yahoo-finance2` library without an API key. Quotes expose `source=Yahoo Finance`, `mode=cached` and optional `logoURL`. Logos must use HTTPS on `s.yimg.com`; missing images fall back to category icons.
-
-PostgreSQL shares quotes across users and instances for 15 minutes. The refresh lease limits concurrent requests and retries. `asOf` retains the market timestamp separately from `fetchedAt`. Provider failures return the previous quote without renewing timestamps or validity.
-
-Trades accept data no older than one hour during the regular session. Quotes expire at most 20 minutes after retrieval and never later than one hour after their market timestamp. Closed-market prices remain visible, but cannot execute trades. The interface shows the date/source and contextual explanations without exposing caching implementation details.
-
-AAPL/MSFT trailing-twelve-month P/E and EPS use a 24-hour cache. Missing values remain `null`, not zero. Set `ENABLE_FUNDAMENTALS=false` to disable retrieval.
-
-On September 6, real queries for all four catalog symbols, shared-cache write/read with stable IDs, AAPL fundamentals and AAPL/MSFT logos were verified. Yahoo returned no VTI/BND logos. The existing initial migration was applied to the previously empty Supabase project, enabling RLS and server-only quote writes.
-
-Commercial use and redistribution terms still require review before release. References: [library](https://github.com/gadicc/yahoo-finance2), [Yahoo terms](https://legal.yahoo.com/xw/en/yahoo/terms/otos/index.html).
+Finnhub, EODHD and Alpha Vantage are normalized by the backend. Configure their server-only keys and apply every migration in `supabase/migrations` in filename order. See [market providers and execution](MARKET-PROVIDERS.md) for the current setup, caching and immediate virtual orders.
 
 ## External beta checks
 

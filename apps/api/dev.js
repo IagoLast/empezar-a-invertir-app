@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 const port = Number(process.env.PORT || 3000);
-const routes = new Set(['orders', 'search', 'market-preview', 'history', 'state', 'trade', 'quote', 'fundamentals', 'lesson', 'revenuecat', 'account']);
+const routes = new Set(['company-logo', 'orders', 'search', 'market-preview', 'history', 'state', 'trade', 'quote', 'fundamentals', 'lesson', 'revenuecat', 'account']);
 createServer(async (req, res) => {
   const path = new URL(req.url, 'http://localhost').pathname.split('/').pop();
   if (!routes.has(path)) { res.writeHead(404); res.end(); return; }

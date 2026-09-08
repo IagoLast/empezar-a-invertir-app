@@ -8,6 +8,6 @@
   },
   "scripts": {
     "test": "node --test",
-    "dev": "node dev.js"
+    "dev": "node --env-file-if-exists=.env.local dev.js"
   }
 }

@@ -7,7 +7,7 @@ final class BookReaderTests: XCTestCase {
         app.launchArguments = arguments + ["-reset-book-progress", "YES"]
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Aprender"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.tabBars.buttons["Movimientos"].exists)
+        XCTAssertTrue(app.tabBars.buttons["Operaciones"].exists)
         XCTAssertTrue(app.staticTexts["0 de 20"].exists)
         let library = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         library.name = "Book library and native tabs"; library.lifetime = .keepAlways; add(library)
@@ -34,7 +34,7 @@ final class BookReaderTests: XCTestCase {
         app.buttons["book-resume"].tap()
         XCTAssertTrue(app.staticTexts["El oro"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.staticTexts["El oro"].isHittable)
-        app.tabBars.buttons["Cartera"].tap()
+        app.tabBars.buttons["Inicio"].tap()
         XCTAssertTrue(app.buttons["open-profile"].waitForExistence(timeout: 3))
         app.tabBars.buttons["Aprender"].tap()
         XCTAssertTrue(app.staticTexts["El oro"].isHittable)

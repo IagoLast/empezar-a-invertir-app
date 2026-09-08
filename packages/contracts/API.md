@@ -52,3 +52,9 @@ A simulated order includes `id`, `symbol`, `side`, `units`, `priceCents`, option
 Finnhub remains the primary US quote provider. Alpha Vantage supplements international discovery, daily/weekly history, FX and end-of-day quote fallback. Each quote/series names its actual `source`. Alpha session dates use UTC midnight and `mode=eod`; `marketOpen=false` means no live session assertion for these quotes, not confirmed current closure. Legacy `tradable` remains false for daily prices; simulated orders validate the actual stored reference age/expiry.
 
 `history.interval` describes actual candles (`1d`, `1wk`, or Finnhub's requested interval). Long Alpha ranges use weekly data; they do not claim daily/intraday resolution. Foreign candles use native major currency; USD-settled quotes expose native price and FX metadata. Query results can include `partial=true` and `notice` when only one provider is available. Alpha Vantage has a persistent server-side cache, a shared daily budget, and a burst limiter; see `docs/FINNHUB-ORDERS.md`.
+
+## Simple investing and EODHD
+
+`POST /api/orders` now returns the updated portfolio after immediate virtual execution. Request IDs remain idempotent. Search, quotes and history can report `source=EODHD`; the source is preserved through USD settlement. Symbols use the existing canonical listing format (for example `ITX.MC`, `TSCO.L`, `AAPL`), not EODHD-specific suffixes. No client provider selection is needed. See [market providers](../../docs/MARKET-PROVIDERS.md) for mapping, cache lifetimes, migration and legacy order compatibility.
+
+`GET /api/company-logo?symbol=AAPL` is public and returns `{symbol, logoURL: string | null}`. The optional image URL belongs to a validated Finnhub HTTPS host; absence of a logo does not affect quote availability.

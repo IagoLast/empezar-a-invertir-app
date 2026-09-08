@@ -1,3 +1,5 @@
+import { canonicalAlphaSymbol } from './market-symbols.js';
+import { eodhdSearch, eodhdEnabled } from './eodhd.js';
 import { APIError } from './http.js';
 import { alphaSearch, alphaEnabled } from './alpha-vantage.js';
 import { providerQuote } from './providers.js';
@@ -41,15 +43,25 @@ export function rankSearchResults(results, query) {
     : normalize(row.name || row.symbol).startsWith(term) ? 3 : 4;
   return [...results].sort((a,b) => score(a)-score(b));
 }
-export function createSearchService({ primary = finnhubSearch, secondary = alphaSearch, enabled = alphaEnabled } = {}) {
+export function createSearchService({ primary = finnhubSearch, secondary = alphaSearch, enabled = alphaEnabled,
+  additional = eodhdSearch, additionalEnabled = eodhdEnabled } = {}) {
   return cachedLoader(async query => {
-    const useAlpha = enabled() && query.length >= 3;
-    const [first, second] = await Promise.allSettled([primary(searchAliases[query.toLowerCase()] || query), useAlpha ? secondary(searchAliases[query.toLowerCase()] || query) : Promise.resolve([])]);
-    if (first.status === 'rejected' && (!useAlpha || second.status === 'rejected')) throw first.reason instanceof APIError ? first.reason : new APIError(503, 'SEARCH_UNAVAILABLE', 'No podemos buscar ahora. Vuelve a intentarlo.');
-    const results = first.status === 'fulfilled' ? normalizeSearch(first.value).map(row => ({...row, source:'Finnhub'})) : [];
-    if (second.status === 'fulfilled') for (const row of second.value) if (!results.some(existing => existing.symbol === row.symbol)) results.push(row);
-    return { results: rankSearchResults(results, query), partial: first.status === 'rejected' || (useAlpha && second.status === 'rejected'),
-      notice: first.status === 'rejected' || (useAlpha && second.status === 'rejected') ? 'La búsqueda puede estar incompleta: una fuente no está disponible temporalmente. Puedes abrir los resultados encontrados.' : null };
+    const term = searchAliases[query.toLowerCase()] || query;
+    const attempts = [async () => normalizeSearch(await primary(term)).map(row => ({ ...row, source: 'Finnhub' }))];
+    if (additionalEnabled()) attempts.push(() => additional(term));
+    if (enabled() && query.length >= 3) attempts.push(() => secondary(term));
+    const responses = await Promise.allSettled(attempts.map(load => Promise.resolve().then(load)));
+    if (responses.every(row => row.status === 'rejected')) throw new APIError(503, 'SEARCH_UNAVAILABLE', 'No podemos buscar ahora. Vuelve a intentarlo.');
+    const results = new Map();
+    for (const response of responses) if (response.status === 'fulfilled') {
+      for (const row of response.value) {
+        const symbol = row.source === 'Alpha Vantage' ? canonicalAlphaSymbol(row.symbol) : row.symbol;
+        if (!results.has(symbol)) results.set(symbol, { ...row, symbol });
+      }
+    }
+    const partial = responses.some(row => row.status === 'rejected');
+    return { results: rankSearchResults([...results.values()], query), partial,
+      notice: partial ? 'Algunos resultados no están disponibles ahora.' : null };
   });
 }
 export const searchMarkets = createSearchService();

@@ -15,7 +15,6 @@ struct PortfolioView: View {
                 actions
                 notices
                 positions
-                if !store.portfolio.positions.isEmpty { AllocationView() }
                 Text("Dinero virtual · Cuenta en USD").font(.caption).foregroundStyle(Theme.muted)
                     .frame(maxWidth: .infinity).padding(.vertical, 8)
             }.padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 24)
@@ -33,7 +32,7 @@ struct PortfolioView: View {
     private var header: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Mi cartera").font(.largeTitle.weight(.bold))
+                Text("Mi resumen").font(.largeTitle.weight(.bold))
             }
             Spacer()
             Button { profile = true } label: {
@@ -101,7 +100,7 @@ struct PortfolioView: View {
         }
     }
     @ViewBuilder private var actionButtons: some View {
-        PrimaryButton(title: "Comprar activos", icon: "plus", action: explore)
+        PrimaryButton(title: "Invertir", icon: "plus", action: explore).accessibilityIdentifier("home-invest")
         Button { wallet = true } label: {
             Label("Añadir saldo", systemImage: "wallet.bifold").font(.body.weight(.semibold))
                 .frame(maxWidth: .infinity).padding(.horizontal, 18).padding(.vertical, 18).flatControl(radius: 16)
@@ -125,7 +124,7 @@ struct PortfolioView: View {
     }
     private var positions: some View {
         VStack(alignment: .leading, spacing: 16) {
-            ConceptLabel(title: "Tus activos · \(store.portfolio.positions.count) posiciones", concept: .positions).font(.headline)
+            Text("Mis inversiones").font(.headline)
             if store.portfolio.positions.isEmpty {
                 VStack(spacing: 16) {
                     Image(systemName: "chart.pie").font(.largeTitle).foregroundStyle(Theme.accent)
@@ -143,11 +142,6 @@ struct PortfolioView: View {
                             NavigationLink { InstrumentView(instrument: instrument) } label: {
                                 PositionRow(instrument: instrument, position: position, quote: store.portfolio.quote(position.symbol))
                             }.buttonStyle(.plain)
-                            Button { selling = instrument } label: {
-                                Label("Vender \(instrument.name)", systemImage: "arrow.up.right")
-                                    .font(.subheadline.weight(.semibold)).frame(maxWidth: .infinity, minHeight: 48)
-                            }.buttonStyle(.bordered).padding(.bottom, 16)
-                                .accessibilityIdentifier("sell-position-\(position.symbol)")
                             if position.id != store.portfolio.positions.last?.id { Divider().overlay(Theme.line) }
                         }
                     }
@@ -315,7 +309,7 @@ struct ActivityView: View {
                 OrderHistory()
             }.padding(20)
         }
-            .appCanvas().navigationTitle("Movimientos").navigationBarTitleDisplayMode(.inline)
+            .appCanvas().navigationTitle("Operaciones").navigationBarTitleDisplayMode(.inline)
             .refreshable { await store.refresh() }
             .sheet(item: $editing) { order in TradeView(instrument: store.instrument(order.symbol), side: order.side, editing: order) }
     }

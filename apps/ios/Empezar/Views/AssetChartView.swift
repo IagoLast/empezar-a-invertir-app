@@ -38,8 +38,9 @@ struct AssetChartView: View {
     @State private var style = ChartStyle.line
     @State private var range = HistoryRange.month
     @State private var history: PriceHistory?
-    @State private var loading = false
+    @State private var loading = true
     @State private var issue: String?
+    @ScaledMetric(relativeTo: .caption) private var metadataHeight = 52
     private var domain: ClosedRange<Double> {
         let low = history?.points.map(\.low).min() ?? 0
         let high = history?.points.map(\.high).max() ?? 1
@@ -64,8 +65,13 @@ struct AssetChartView: View {
             Picker("Tipo de gráfica", selection: $style) {
                 ForEach(ChartStyle.allCases, id: \.self) { Text($0.title).tag($0) }
             }.pickerStyle(.segmented)
-            if loading { ProgressView("Cargando histórico…").frame(maxWidth: .infinity, minHeight: 210) }
-            else if let issue { Text(issue).font(.subheadline).foregroundStyle(Theme.muted).frame(minHeight: 120) }
+            Group {
+            if loading {
+                RoundedRectangle(cornerRadius: 12).fill(Theme.pale)
+                    .overlay { ProgressView("Cargando histórico…") }
+                    .accessibilityIdentifier("history-placeholder")
+            }
+            else if let issue { Text(issue).font(.subheadline).foregroundStyle(Theme.muted).frame(maxWidth: .infinity) }
             else if let history, !history.points.isEmpty {
                 Chart(history.points) { point in
                     if style == .line {
@@ -84,13 +90,21 @@ struct AssetChartView: View {
                     .chartYAxis { AxisMarks(position: .trailing, values: .automatic(desiredCount: 4)) }
                     .frame(height: 210).accessibilityIdentifier("asset-chart")
                     .accessibilityLabel("Histórico de \(symbol), \(range.title), en \(history.currency)")
-                if let interval = history.interval { Text(interval == "1wk" ? "Una vela por semana" : interval == "1d" ? "Una vela por sesión" : "Velas intradía").font(.caption).foregroundStyle(Theme.muted) }
-                Text("\(history.currency) · \(history.source) · Precios históricos, no en tiempo real")
-                    .font(.caption).foregroundStyle(Theme.muted)
             } else {
                 ContentUnavailableView("Sin histórico disponible", systemImage: "chart.xyaxis.line", description: Text("Prueba con otro periodo."))
             }
-        }.padding(20).dataCard()
+            }.frame(height: 210)
+            VStack(alignment: .leading, spacing: 6) {
+                Text(history?.interval == "1wk" ? "Una vela por semana" : history?.interval == "1d" ? "Una vela por sesión" : "Histórico de precios")
+                Text(history.map { "\($0.currency) · \($0.source) · Precios históricos, no en tiempo real" } ?? "Moneda y fuente del histórico")
+                    .lineLimit(2)
+            }.font(.caption).foregroundStyle(Theme.muted)
+                .frame(maxWidth: .infinity, minHeight: metadataHeight, alignment: .topLeading)
+                .redacted(reason: loading ? .placeholder : [])
+                .opacity(history != nil || loading ? 1 : 0).accessibilityHidden(history == nil)
+        }.padding(20).frame(maxWidth: .infinity, alignment: .leading).dataCard()
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("detail-history-card")
             .task(id: "\(symbol):\(range.rawValue):\(reloadID)") { await load() }
     }
     private func load() async {

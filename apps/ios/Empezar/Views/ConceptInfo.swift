@@ -31,8 +31,8 @@ enum LearningConcept: String, Identifiable {
     }
     var explanation: String {
         switch self {
-        case .marketOrder: return "En esta práctica eliges unidades y confirmas el último precio de referencia. La orden reserva saldo o unidades y se ejecuta tras una espera simulada según el volumen, incluso con la bolsa cerrada. El precio queda fijado al confirmar. En un mercado real el precio puede variar."
-        case .limitOrder: return "En una bolsa real una orden limitada solo se ejecuta si alcanza tu precio y puede quedarse pendiente. En Empezar practicamos ese resultado: eliges un límite y simulamos que se alcanza. El precio simulado se muestra antes de confirmar. La orden reserva saldo y se ejecuta automáticamente; mientras esté pendiente puedes editarla o cancelarla en Movimientos."
+        case .marketOrder: return "En esta práctica eliges unidades y confirmas el último precio de referencia. La operación virtual se ejecuta al confirmar, incluso con la bolsa cerrada. El precio queda fijado al confirmar. En un mercado real el precio puede variar."
+        case .limitOrder: return "En una bolsa real una orden limitada solo se ejecuta si alcanza tu precio y puede quedarse pendiente. En Empezar practicamos ese resultado: eliges un límite y simulamos que se alcanza. El precio simulado se muestra antes de confirmar. En esta práctica se ejecuta al confirmar, sin esperar a que cambie la cotización real."
         case .portfolioValue: return "Aquí ves el valor total de tu cartera: el saldo disponible más el valor de tus activos al último precio recibido. Si falta algún precio, no podemos calcular el total."
         case .investedValue: return "Es el valor actual de tus activos, calculado multiplicando sus unidades por el último precio disponible. No es necesariamente lo que pagaste por ellos."
         case .positions: return "Cada posición reúne las unidades que tienes de un activo. El resultado compara su valor actual con el coste de compra, incluidas las comisiones."
@@ -56,7 +56,7 @@ enum LearningConcept: String, Identifiable {
     var example: String {
         switch self {
         case .marketOrder: return "Si compras 2 unidades a 100 US$, el importe es 200 US$. Con la comisión virtual de 1 US$, se descuentan 201 US$ de tu saldo. Antes de confirmar puedes volver y cambiar las unidades."
-        case .limitOrder: return "Si la referencia es 100 US$ y eliges 95 US$, en esta simulación dos unidades cuestan 190 US$ más 1 US$ de comisión. Reservamos 191 US$ y simulamos la ejecución a 95 US$. En una bolsa real el precio podría no llegar a 95 US$ y la orden no ejecutarse."
+        case .limitOrder: return "Si la referencia es 100 US$ y eliges 95 US$, en esta simulación dos unidades cuestan 190 US$ más 1 US$ de comisión. Descontamos 191 US$ y simulamos la ejecución a 95 US$. En una bolsa real el precio podría no llegar a 95 US$ y la orden no ejecutarse."
         case .portfolioValue: return "Con 800 US$ disponibles y activos valorados en 200 US$, tu cartera vale 1.000 US$."
         case .investedValue: return "Dos acciones a 120 US$ representan 240 US$ en inversiones."
         case .positions: return "Si pagaste 201 US$ con comisión y ahora vale 220 US$, el resultado es +19 US$."

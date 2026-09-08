@@ -29,11 +29,11 @@ struct RootView: View {
             } else if onboarded || store.signedIn {
                 TabView(selection: $selected) {
                     NavigationStack { portfolioRoot }
-                        .tabItem { Label("Cartera", systemImage: "chart.pie.fill") }.tag(0)
+                        .tabItem { Label("Inicio", systemImage: "chart.pie.fill") }.tag(0)
                     NavigationStack { ExploreView() }
-                        .tabItem { Label("Mercados", systemImage: "magnifyingglass") }.tag(1)
+                        .tabItem { Label("Invertir", systemImage: "magnifyingglass") }.tag(1)
                     NavigationStack { ActivityView() }
-                        .tabItem { Label("Movimientos", systemImage: "arrow.left.arrow.right") }.tag(3)
+                        .tabItem { Label("Operaciones", systemImage: "arrow.left.arrow.right") }.tag(3)
                     NavigationStack { LearnView() }
                         .tabItem { Label("Aprender", systemImage: "book.closed") }.tag(2)
                 }

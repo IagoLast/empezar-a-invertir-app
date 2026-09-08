@@ -1,3 +1,4 @@
+import { alphaSymbol } from './market-symbols.js';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { APIError } from './http.js';
 import { rpc } from './supabase.js';
@@ -61,6 +62,7 @@ export function normalizeAlphaSearch(data) {
 }
 export const alphaSearch = async query => normalizeAlphaSearch(await alphaRequest({ function: 'SYMBOL_SEARCH', keywords: query.toUpperCase() }, 604800));
 async function assetInfo(symbol, request) {
+  symbol = alphaSymbol(symbol);
   const results = normalizeAlphaSearch(await request({ function: 'SYMBOL_SEARCH', keywords: symbol }, 604800));
   const asset = results.find(row => row.symbol === symbol);
   if (!asset) throw failure('MARKET_NOT_COVERED');
@@ -81,7 +83,10 @@ function rows(data, symbol, weekly = false) {
 }
 // Daily dates are session dates, represented at UTC midnight, never as live timestamps.
 export function createAlphaMarket({ request = alphaRequest, clock = Date.now } = {}) {
-  const daily = async symbol => rows(await request({ function: 'TIME_SERIES_DAILY', symbol }, 86400), symbol);
+  const daily = async symbol => {
+    symbol = alphaSymbol(symbol);
+    return rows(await request({ function: 'TIME_SERIES_DAILY', symbol }, 86400), symbol);
+  };
   return {
     async quote(symbol) {
       if (/^[A-Z]{3}USD=X$/.test(symbol)) {
@@ -106,7 +111,7 @@ export function createAlphaMarket({ request = alphaRequest, clock = Date.now } =
       const asset = await assetInfo(symbol, request);
       // Compact daily data covers 100 trading sessions. Long ranges use the free weekly endpoint.
       const weekly = days > 100;
-      const points = weekly ? rows(await request({ function: 'TIME_SERIES_WEEKLY', symbol },86400),symbol,true) : await daily(symbol);
+      const points = weekly ? rows(await request({ function: 'TIME_SERIES_WEEKLY', symbol: alphaSymbol(symbol) },86400),alphaSymbol(symbol),true) : await daily(symbol);
       const minor = { GBX: 'GBP', GBp: 'GBP', ILA: 'ILS', ZAc: 'ZAR' };
       const scale = minor[asset.currency] ? 0.01 : 1;
       return { meta: { symbol, currency: minor[asset.currency] || asset.currency, source: 'Alpha Vantage', interval: weekly ? '1wk' : '1d' },

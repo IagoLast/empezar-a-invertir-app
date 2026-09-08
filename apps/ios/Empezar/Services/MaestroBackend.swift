@@ -57,25 +57,32 @@ final class MaestroURLProtocol: URLProtocol {
         func problem(_ code: String, _ message: String, status: Int = 409) throws -> (Int, Data) {
             (status, try JSONSerialization.data(withJSONObject: ["error": code, "message": message]))
         }
-        guard ["happy", "guest", "trade-rejected", "trade-response-lost", "market-closed", "quote-expired", "state-retry", "lesson-retry", "auth-timeout", "auth-error", "auth-unavailable"].contains(MaestroEnvironment.scenario ?? "") else {
+        guard ["happy", "slow-market", "guest", "trade-rejected", "trade-response-lost", "market-closed", "quote-expired", "state-retry", "lesson-retry", "auth-timeout", "auth-error", "auth-unavailable"].contains(MaestroEnvironment.scenario ?? "") else {
             return try problem("UNKNOWN_SCENARIO", "Escenario Maestro desconocido.", status: 500)
         }
-        let publicQuote = request.httpMethod == "GET" && ["/api/quote", "/api/search", "/api/history"].contains(request.url?.path ?? "")
+        let publicQuote = request.httpMethod == "GET" && ["/api/quote", "/api/search", "/api/history", "/api/company-logo"].contains(request.url?.path ?? "")
         guard request.url?.host == "maestro.invalid",
               publicQuote || request.value(forHTTPHeaderField: "Authorization") == "Bearer maestro-token" else {
             return try problem("UNEXPECTED_REQUEST", "Petición Maestro inesperada.", status: 500)
         }
         let symbol = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)?
             .queryItems?.first(where: { $0.name == "symbol" })?.value ?? ""
+        if MaestroEnvironment.scenario == "slow-market" && ["/api/quote", "/api/history"].contains(request.url!.path) {
+            Thread.sleep(forTimeInterval: 3)
+        }
         switch (request.httpMethod ?? "GET", request.url!.path) {
+        case ("GET", "/api/company-logo"):
+            return try json(["symbol": symbol, "logoURL": nil] as [String: String?])
         case ("GET", "/api/search"):
             let query = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)?
                 .queryItems?.first(where: { $0.name == "q" })?.value?.lowercased() ?? ""
             let results = Content.instruments.filter { query.isEmpty || $0.symbol.lowercased().contains(query) || $0.name.lowercased().contains(query) }
             let international = query == "world" ? [
-                ["symbol": "TSCO.LON", "name": "Tesco", "kind": "stock", "exchange": "Londres"],
+                ["symbol": "TSCO.L", "name": "Tesco", "kind": "stock", "exchange": "Londres"],
                 ["symbol": "ITX.MC", "name": "Inditex · Industria de Diseño Textil", "kind": "stock", "exchange": "Madrid", "quoteAvailability": "check_on_open"],
                 ["symbol": "VWRL.L", "name": "Vanguard FTSE All-World", "kind": "etf", "exchange": "Londres"]
+            ] : query == "inditex" ? [
+                ["symbol": "ITX.MC", "name": "Inditex", "kind": "stock", "exchange": "Madrid", "quoteAvailability": "check_on_open"]
             ] : []
             return try json(["results": results.map { ["symbol": $0.symbol, "name": $0.name, "kind": $0.kind, "exchange": "US"] } + international])
         case ("GET", "/api/history"):
@@ -146,12 +153,7 @@ final class MaestroURLProtocol: URLProtocol {
             Self.portfolio.simulatedOrders?.removeAll { $0.id == order.id }
             Self.portfolio.simulatedOrders?.append(order)
             Self.updateReservations()
-            if old == nil {
-                DispatchQueue.global().asyncAfter(deadline: .now() + 30) {
-                    Self.lock.lock(); defer { Self.lock.unlock() }
-                    Self.fill(order.id)
-                }
-            }
+            Self.fill(order.id)
             if MaestroEnvironment.scenario == "trade-response-lost" && old == nil { return try problem("UNAVAILABLE", "No se recibió la confirmación.", status: 503) }
             return try json(Self.portfolio)
         default:
