@@ -72,7 +72,12 @@ final class MaestroURLProtocol: URLProtocol {
             let query = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)?
                 .queryItems?.first(where: { $0.name == "q" })?.value?.lowercased() ?? ""
             let results = Content.instruments.filter { query.isEmpty || $0.symbol.lowercased().contains(query) || $0.name.lowercased().contains(query) }
-            return try json(["results": results.map { ["symbol": $0.symbol, "name": $0.name, "kind": $0.kind, "exchange": "US"] }])
+            let international = query == "world" ? [
+                ["symbol": "TSCO.LON", "name": "Tesco", "kind": "stock", "exchange": "Londres"],
+                ["symbol": "ITX.MC", "name": "Inditex · Industria de Diseño Textil", "kind": "stock", "exchange": "Madrid", "quoteAvailability": "check_on_open"],
+                ["symbol": "VWRL.L", "name": "Vanguard FTSE All-World", "kind": "etf", "exchange": "Londres"]
+            ] : []
+            return try json(["results": results.map { ["symbol": $0.symbol, "name": $0.name, "kind": $0.kind, "exchange": "US"] } + international])
         case ("GET", "/api/history"):
             let points: [[String: Any]] = (0..<20).map { index -> [String: Any] in
                 let value = Double(index)

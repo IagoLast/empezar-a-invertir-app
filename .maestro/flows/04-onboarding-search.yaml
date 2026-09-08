@@ -37,6 +37,11 @@ name: Onboarding and guest search
 - tapOn: "ETF"
 - assertVisible: "Sin resultados"
 - tapOn: "Acciones"
+- scrollUntilVisible:
+    element:
+      id: "asset-AAPL"
+    direction: DOWN
+    centerElement: true
 - assertVisible:
     id: "asset-AAPL"
 - tapOn:

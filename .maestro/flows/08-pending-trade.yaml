@@ -20,4 +20,5 @@ name: Recover a pending trade without duplication
 - scrollUntilVisible:
     element: "AAPL · 1 unidades"
     direction: DOWN
+    timeout: 60000
 - assertVisible: "AAPL · 1 unidades"

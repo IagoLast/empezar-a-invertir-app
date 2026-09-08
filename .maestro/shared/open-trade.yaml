@@ -5,6 +5,12 @@ appId: com.empezarainvertir.app
 - tapOn:
     id: "asset-search"
 - inputText: "AAPL"
+- pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: "asset-AAPL"
+    direction: DOWN
+    centerElement: true
 - tapOn:
     id: "asset-AAPL"
 - tapOn:

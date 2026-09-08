@@ -4,7 +4,7 @@ The API combines Finnhub and Alpha Vantage. Finnhub remains the primary source f
 
 ## Verified coverage
 
-The supplied subscription returned US equity/ETF quotes, company profiles, search results, market status and average trading volumes. AAPL, VTI and BND were verified. `stock/candle` and the Madrid symbol `ITX.MC` returned HTTP 403. The app reports unavailable historical data rather than fabricating a chart. Finnhub discovery filters to supported US symbol forms, including A/B share classes. Alpha Vantage adds exact provider symbols such as `TSCO.LON`; suffixes are never guessed or rewritten. The adapter preserves quote timestamps, identifies closed markets, and uses the original source date in the UI.
+The supplied subscription returned US equity/ETF quotes, company profiles, search results, market status and average trading volumes. AAPL, VTI and BND were verified. `stock/candle` and the Madrid symbol `ITX.MC` returned HTTP 403. The app reports unavailable historical data rather than fabricating a chart. Finnhub discovery preserves international symbols and exchange labels, including A/B share classes. Discovery does not imply quote entitlement. Alpha Vantage adds exact provider symbols such as `TSCO.LON`; suffixes are never guessed or rewritten. The adapter preserves quote timestamps, identifies closed markets, and uses the original source date in the UI.
 
 Finnhub reports average trading volumes in millions of units; the adapter converts these to units/day. Missing volume stays null and uses the middle waiting-time band. This is volume, not measured volatility.
 
@@ -49,3 +49,9 @@ Foreign assets require exact search metadata (type/currency), actual daily candl
 Short history ranges use compact daily data (up to 100 sessions). One/five-year ranges use weekly data and return `interval=1wk`; the iOS chart labels the resolution. A chart uses one provider's complete series and never splices price levels between providers. Search combines and deduplicates both sources for queries of at least three characters; shorter queries use Finnhub. If one source fails, available results remain visible with a partial-results notice.
 
 Initial live verification: AAPL daily candles succeeded; Tesco search returned `TSCO.LON` in GBX; Inditex search returned no matches. Global coverage is selective, not every exchange or ticker. The key reported the free 25/day and 1/second limits. Endpoint availability and educational/display licensing remain independent of API-key validity.
+
+## Worldwide discovery and categorized results
+
+Finnhub search results are no longer restricted to US symbols. International exchange suffixes remain provider identifiers, with readable exchange labels. The verified brand alias `inditex` searches `Industria de Diseno Textil`; live Finnhub search returns `ITX.MC` for that legal name. Exact symbols and company-name matches rank before fuzzy results. Finding a listing does not imply that the current subscriptions include its prices; foreign Finnhub-only listings explicitly say that quotes depend on coverage.
+
+The iOS search groups results into stocks, ETFs/ETPs and bond ETFs, highlights the first ranked match, and expands categories beyond five results. It preserves separate listings on different exchanges and only shows prices already present in the portfolio cache. It never fetches or fabricates prices for every search row. Search errors/partial provider coverage remain visible. Native tests cover international grouping, exchange labels, the Inditex brand and navigation, alongside the trading regression suite.

@@ -44,9 +44,9 @@ Paste into the corresponding secret; repeat for `.p12` and `.mobileprovision`. U
 2. To start another build manually, open [Actions → Upload to TestFlight](https://github.com/IagoLast/empezar-a-invertir-app/actions/workflows/testflight.yml) and select **Run workflow** on `main`.
 3. The job validates configuration, imports the certificate into a temporary keychain, checks the profile, tests iOS, archives, exports and uploads using `altool` and the API key.
 4. Cleanup removes the keychain, profiles, `.p8`, IPA and runner configuration.
-5. Verify processing in App Store Connect → TestFlight, then add the build to internal testers. An accepted upload does not mean processing is complete. External distribution may require Beta App Review.
+5. `distribute.mjs` waits for the exact uploaded build to become VALID, verifies the target group belongs to this app, assigns the build to EAI Internal and reads back IN_BETA_TESTING. External distribution may require Beta App Review.
 
-Build numbers use `GITHUB_RUN_NUMBER.GITHUB_RUN_ATTEMPT`, giving each run and retry a new build number while preserving the marketing version in `apps/ios/project.yml`. Adjust this before uploading to an app with higher existing build numbers. There is no automatic tester distribution or App Store review submission.
+Build numbers use `GITHUB_RUN_NUMBER.GITHUB_RUN_ATTEMPT`, giving each run and retry a new build number while preserving the marketing version in `apps/ios/project.yml`. Adjust this before uploading to an app with higher existing build numbers. Internal tester distribution is automatic after Apple processing. There is no App Store review submission.
 
 ## Validation status
 

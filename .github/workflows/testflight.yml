@@ -14,7 +14,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: macos-26
     environment: testflight
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
       IOS_BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID || 'com.empezarainvertir.app' }}
@@ -61,6 +61,12 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
         run: bash scripts/testflight/upload.sh
+      - name: Distribute processed build to internal testers
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          TESTFLIGHT_GROUP_ID: 205b61f6-1d98-4fc4-89d9-5a6c798d3243
+        run: node scripts/testflight/distribute.mjs
       - name: Remove signing material
         if: always()
         run: bash scripts/testflight/cleanup.sh

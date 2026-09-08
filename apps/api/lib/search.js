@@ -16,24 +16,41 @@ export function cachedLoader(load, { ttl = 15 * 60000, limit = 100, clock = Date
     catch (error) { if (entries.get(key) === entry) entries.delete(key); throw error; }
   };
 }
+const exchangeNames = { MC: 'Madrid', L: 'Londres', DE: 'Xetra', F: 'Fráncfort', PA: 'París', AS: 'Ámsterdam',
+  MI: 'Milán', SW: 'Suiza', VI: 'Viena', WA: 'Varsovia', T: 'Tokio', HK: 'Hong Kong', KS: 'Corea del Sur', KQ: 'Corea del Sur',
+  TO: 'Toronto', V: 'TSX Venture', AX: 'Australia', SS: 'Shanghái', SZ: 'Shenzhen', NS: 'India', BO: 'Bombay',
+  ST: 'Estocolmo', HE: 'Helsinki', CO: 'Copenhague', OL: 'Oslo', LS: 'Lisboa', BR: 'Bruselas' };
+const searchAliases = { inditex: 'Industria de Diseno Textil' };
 export function normalizeSearch(raw) {
   const seen = new Set();
   return (raw.result || []).filter(q => ['Common Stock', 'ETP', 'ADR', 'REIT'].includes(q.type)
-    && typeof q.symbol === 'string' && /^[A-Z0-9][A-Z0-9-]{0,17}(?:\.[AB])?$/.test(q.symbol)
-    && !seen.has(q.symbol) && seen.add(q.symbol)).map(q => ({
-      symbol: q.symbol, name: q.description || q.symbol,
-      kind: q.type === 'ETP' ? 'etf' : 'stock', exchange: 'US',
-    }));
+    && typeof q.symbol === 'string' && /^[A-Z0-9][A-Z0-9.-]{0,19}$/.test(q.symbol)
+    && !seen.has(q.symbol) && seen.add(q.symbol)).map(q => {
+      const suffix = q.symbol.includes('.') && !/\.[AB]$/.test(q.symbol) ? q.symbol.split('.').at(-1) : null;
+      return { symbol: q.symbol, name: q.description || q.symbol, kind: q.type === 'ETP' ? 'etf' : 'stock',
+        exchange: suffix ? exchangeNames[suffix] || `Mercado internacional (${suffix})` : 'EE. UU.',
+        quoteAvailability: suffix ? 'check_on_open' : 'unknown' };
+    });
+}
+export function rankSearchResults(results, query) {
+  const term = query.toLowerCase();
+  const alias = searchAliases[term]?.toLowerCase();
+  const score = row => row.symbol.toLowerCase() === term ? 0
+    : row.symbol.toLowerCase().split('.')[0] === term ? 1
+    : alias && (row.name || row.symbol).toLowerCase().startsWith(alias) ? 2
+    : (row.name || row.symbol).toLowerCase() === term ? 2
+    : (row.name || row.symbol).toLowerCase().startsWith(term) ? 3 : 4;
+  return [...results].sort((a,b) => score(a)-score(b) || (a.name || a.symbol).localeCompare(b.name || b.symbol) || a.symbol.localeCompare(b.symbol));
 }
 export function createSearchService({ primary = finnhubSearch, secondary = alphaSearch, enabled = alphaEnabled } = {}) {
   return cachedLoader(async query => {
     const useAlpha = enabled() && query.length >= 3;
-    const [first, second] = await Promise.allSettled([primary(query), useAlpha ? secondary(query) : Promise.resolve([])]);
+    const [first, second] = await Promise.allSettled([primary(searchAliases[query.toLowerCase()] || query), useAlpha ? secondary(searchAliases[query.toLowerCase()] || query) : Promise.resolve([])]);
     if (first.status === 'rejected' && (!useAlpha || second.status === 'rejected')) throw first.reason instanceof APIError ? first.reason : new APIError(503, 'SEARCH_UNAVAILABLE', 'No podemos buscar ahora. Vuelve a intentarlo.');
     const results = first.status === 'fulfilled' ? normalizeSearch(first.value).map(row => ({...row, source:'Finnhub'})) : [];
     if (second.status === 'fulfilled') for (const row of second.value) if (!results.some(existing => existing.symbol === row.symbol)) results.push(row);
-    return { results, partial: first.status === 'rejected' || (useAlpha && second.status === 'rejected'),
-      notice: first.status === 'rejected' || (useAlpha && second.status === 'rejected') ? 'Una fuente no está disponible temporalmente. Mostramos los resultados de la otra.' : null };
+    return { results: rankSearchResults(results, query), partial: first.status === 'rejected' || (useAlpha && second.status === 'rejected'),
+      notice: first.status === 'rejected' || (useAlpha && second.status === 'rejected') ? 'La búsqueda puede estar incompleta: una fuente no está disponible temporalmente. Puedes abrir los resultados encontrados.' : null };
   });
 }
 export const searchMarkets = createSearchService();

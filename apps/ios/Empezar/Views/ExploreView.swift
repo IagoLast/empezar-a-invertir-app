@@ -41,40 +41,71 @@ struct ExploreView: View {
     @State private var search = ""
     @FocusState private var searchFocused: Bool
     @State private var filter = MarketFilter.all
-    @State private var region = MarketRegion.all
+    @State private var expandedCategories: Set<SearchCategory> = []
     @State private var searchResults: [MarketSearchResult] = []
     @State private var searching = false
     @State private var searchError: String?
     @State private var searchNotice: String?
-    private var remoteResults: [MarketSearchResult] {
+    private let filters = MarketFilter.allCases
+    private var results: [MarketSearchResult] {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
+        let local = Content.instruments.filter {
+            query.isEmpty || $0.name.localizedStandardContains(query) || $0.symbol.localizedStandardContains(query)
+        }.map { MarketSearchResult(symbol: $0.symbol, name: $0.name, kind: $0.kind, exchange: "EE. UU.") }
         let suggestions = MarketSearchResult.suggestions.filter {
-            query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) || $0.symbol.localizedCaseInsensitiveContains(query)
+            query.isEmpty || $0.name.localizedStandardContains(query) || $0.symbol.localizedStandardContains(query)
         }
-        let combined = suggestions + searchResults.filter { result in !suggestions.contains { $0.symbol == result.symbol } }
-        return combined.filter { asset in
-            region.includes(asset.symbol) &&
-            !Content.instruments.contains(where: { $0.symbol == asset.symbol }) &&
-            (filter == .all || (filter == .stocks && asset.kind == "stock") || (filter == .etfs && asset.kind == "etf"))
+        var combined: [MarketSearchResult] = []
+        for var asset in searchResults + local + suggestions {
+            if let bundled = Content.instruments.first(where: { $0.symbol == asset.symbol }) {
+                asset = MarketSearchResult(symbol: asset.symbol, name: asset.name, kind: bundled.kind, exchange: asset.exchange)
+            }
+            if !combined.contains(where: { $0.symbol == asset.symbol }) { combined.append(asset) }
+        }
+        return combined.filter {
+            filter == .all || (filter == .stocks && $0.category == .stocks) ||
+            (filter == .etfs && $0.category != .stocks) || (filter == .bonds && $0.category == .bonds)
         }
     }
-    private let filters = MarketFilter.allCases
-    var filtered: [Instrument] {
-        Content.instruments.filter { asset in
-            region.includes(asset.symbol) &&
-            (search.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || asset.name.localizedCaseInsensitiveContains(search.trimmingCharacters(in: .whitespacesAndNewlines)) || asset.symbol.localizedCaseInsensitiveContains(search.trimmingCharacters(in: .whitespacesAndNewlines))) &&
-            (filter == .all || (filter == .stocks && asset.kind == "stock") || (filter == .etfs && asset.kind != "stock") || (filter == .bonds && asset.kind == "bond_etf"))
+    private func resultLink(_ asset: MarketSearchResult) -> some View {
+        NavigationLink { MarketSearchDetail(asset: asset) } label: {
+            MarketSearchRow(asset: asset, quote: store.portfolio.quote(asset.symbol))
+        }.buttonStyle(.plain)
+            .accessibilityIdentifier(Content.instruments.contains(where: { $0.symbol == asset.symbol }) ? "asset-\(asset.symbol)" : "search-result-\(asset.symbol)")
+    }
+    private func categorySection(_ category: SearchCategory) -> some View {
+        let assets = results.filter { $0.category == category }
+        let visible = expandedCategories.contains(category) ? assets : Array(assets.prefix(5))
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text(category.title).font(.title3.weight(.semibold)).accessibilityIdentifier("search-category-\(category.rawValue)")
+                Spacer()
+                if assets.count > 5 {
+                    Button(expandedCategories.contains(category) ? "Mostrar menos" : "Mostrar más") {
+                        if expandedCategories.contains(category) { expandedCategories.remove(category) }
+                        else { expandedCategories.insert(category) }
+                    }.font(.subheadline).accessibilityIdentifier("expand-search-\(category.rawValue)")
+                }
+            }
+            VStack(spacing: 0) {
+                ForEach(visible) { asset in
+                    resultLink(asset)
+                    if asset.id != visible.last?.id { Divider().overlay(Theme.line) }
+                }
+            }.padding(.horizontal, 16).dataCard()
         }
     }
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
+                if search.isEmpty {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Mercados").font(.largeTitle.weight(.bold))
-                        Text("Busca un activo y pulsa Comprar en su ficha").font(.subheadline).foregroundStyle(Theme.muted)
+                        Text("Busca una empresa, un fondo o su símbolo").font(.subheadline).foregroundStyle(Theme.muted)
                     }
                     Spacer(minLength: 0)
+                }
                 }
                 HStack(spacing: 12) {
                     Image(systemName: "magnifyingglass").foregroundStyle(Theme.accent)
@@ -98,39 +129,36 @@ struct ExploreView: View {
                         }
                     }
                 }
-                VStack(alignment: .leading, spacing: 16) {
-                    Label("EE. UU. y mercados internacionales disponibles", systemImage: "globe.americas")
+                if search.isEmpty {
+                    Label("Buscar en mercados de todo el mundo", systemImage: "globe")
                         .font(.subheadline).foregroundStyle(Theme.muted)
-                    SectionHeading(title: search.isEmpty ? "Ideas para empezar" : "Resultados", detail: "Acciones y ETF")
-                    VStack(spacing: 0) {
-                        ForEach(filtered) { asset in
-                            NavigationLink { InstrumentView(instrument: asset) } label: {
-                                AssetRow(instrument: asset, quote: store.portfolio.quote(asset.symbol))
-                            }.buttonStyle(.plain).accessibilityIdentifier("asset-\(asset.symbol)")
-                            if asset.id != filtered.last?.id { Divider().overlay(Theme.line) }
-                        }
-                        ForEach(remoteResults) { asset in
-                            NavigationLink { MarketSearchDetail(asset: asset) } label: { MarketSearchRow(asset: asset) }
-                                .buttonStyle(.plain).accessibilityIdentifier("search-result-\(asset.symbol)")
-                            if asset.id != remoteResults.last?.id { Divider().overlay(Theme.line) }
-                        }
-                        if searching { ProgressView("Buscando activos…").padding(20) }
-                        if let searchError {
-                            Text(searchError).font(.subheadline).foregroundStyle(Theme.loss).padding(.vertical, 12)
-                            Text("Desliza hacia abajo para volver a buscar.").font(.caption).foregroundStyle(Theme.muted)
-                        }
-                        if filtered.isEmpty && remoteResults.isEmpty && !searching && searchError == nil {
-                            ContentUnavailableView {
-                                Label("Sin resultados", systemImage: "magnifyingglass")
-                            } description: {
-                                Text("Prueba con el nombre de una empresa, su símbolo (por ejemplo, AAPL) o un filtro diferente.")
-                            } actions: {
-                                Button("Ver todos los activos") { search = ""; filter = .all; region = .all }
-                            }
-                        }
-                    }.padding(.horizontal, 16).dataCard()
                 }
-                if let searchNotice { Text(searchNotice).font(.caption).foregroundStyle(Theme.muted) }
+                if !search.isEmpty, let best = results.first {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Mejor coincidencia").font(.caption.weight(.semibold)).foregroundStyle(Theme.muted)
+                        NavigationLink { MarketSearchDetail(asset: best) } label: {
+                            MarketSearchRow(asset: best, quote: store.portfolio.quote(best.symbol))
+                        }.buttonStyle(.plain).accessibilityIdentifier("search-best-match")
+                    }.padding(.horizontal, 18).padding(.top, 16).dataCard()
+                }
+                if searching { ProgressView("Buscando en los mercados…").font(.subheadline) }
+                if let searchNotice { Text(searchNotice).font(.subheadline).foregroundStyle(Theme.muted) }
+                if let searchError {
+                    Text(searchError).font(.subheadline).foregroundStyle(Theme.loss)
+                    Text("Desliza hacia abajo para volver a buscar.").font(.caption).foregroundStyle(Theme.muted)
+                }
+                ForEach(SearchCategory.allCases.filter { category in results.contains { $0.category == category } }) { category in
+                    categorySection(category)
+                }
+                if results.isEmpty && !searching && searchError == nil {
+                    ContentUnavailableView {
+                        Label("Sin resultados", systemImage: "magnifyingglass")
+                    } description: {
+                        Text("Prueba con el nombre legal de la empresa, su símbolo o un filtro diferente. La cobertura varía según el mercado.")
+                    } actions: {
+                        Button("Ver todos los activos") { search = ""; filter = .all }
+                    }
+                }
                 if store.marketLoading { ProgressView("Actualizando precios…").font(.subheadline).frame(maxWidth: .infinity) }
                 if !store.signedIn {
                     HStack(alignment: .top, spacing: 12) {
@@ -158,7 +186,7 @@ struct ExploreView: View {
     }
     private func searchMarkets() async {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
-        searchResults = []; searchError = nil; searchNotice = nil
+        searchResults = []; searchError = nil; searchNotice = nil; expandedCategories = []
         guard !query.isEmpty else { searching = false; return }
         searching = true
         do {
