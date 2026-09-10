@@ -1,0 +1,10 @@
+{
+  "name": "empezar-web-gpu",
+  "private": true,
+  "type": "module",
+  "description": "Shader sources for the site background. Installed on demand to rebuild apps/web/js/webgpu-effect.js",
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "vgpu": "0.4.1"
+  }
+}

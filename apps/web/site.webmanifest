@@ -1,0 +1,28 @@
+{
+  "name": "Empezar a invertir",
+  "short_name": "Empezar",
+  "description": "Aprende a invertir desde cero con una guía clara y una app para practicar con una cartera de dinero ficticio. Sin jerga, sin promesas y sin arriesgar un euro.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F6F8",
+  "theme_color": "#1757E0",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/img/logo/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/logo/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/logo/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

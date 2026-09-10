@@ -7,13 +7,18 @@
     "packages/contracts"
   ],
   "scripts": {
-    "test": "npm test --workspace=apps/api && node scripts/check-contracts.mjs && node scripts/check-book.mjs",
+    "test": "npm test --workspace=apps/api && node scripts/check-contracts.mjs && node scripts/check-book.mjs && node scripts/check-web.mjs",
     "dev:api": "npm run dev --workspace=apps/api",
     "test:ios:e2e": "bash scripts/maestro/test.sh",
     "ios:run": "bash scripts/run-ios-local.sh",
     "ios:prepare": "node scripts/prepare-ios.mjs",
     "check": "npm test",
-    "book:import": "node scripts/import-book.mjs"
+    "book:import": "node scripts/import-book.mjs",
+    "web:build": "node scripts/build-web.mjs",
+    "web:assets": "bash scripts/build-web-assets.sh",
+    "web:gpu": "node scripts/build-web-gpu.mjs",
+    "web:art": "bash scripts/build-web-art.sh",
+    "web:serve": "node scripts/serve-web.mjs"
   },
   "engines": {
     "node": ">=22"

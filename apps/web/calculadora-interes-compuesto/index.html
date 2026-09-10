@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculadora de interés compuesto — Simula tu inversión mensual</title>
+  <meta name="description" content="Calcula cuánto crecería tu dinero con aportaciones periódicas y interés compuesto. Introduce capital inicial, aportación mensual, rentabilidad y años para ver el resultado.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Empezar a invertir">
+  <meta name="theme-color" content="#F5F6F8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0C1017" media="(prefers-color-scheme: dark)">
+  <link rel="canonical" href="https://www.empezar-a-invertir.com/calculadora-interes-compuesto/">
+  
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Empezar a invertir">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:url" content="https://www.empezar-a-invertir.com/calculadora-interes-compuesto/">
+  <meta property="og:title" content="Calculadora de interés compuesto">
+  <meta property="og:description" content="Calcula cuánto crecería tu dinero con aportaciones periódicas y interés compuesto. Introduce capital inicial, aportación mensual, rentabilidad y años para ver el resultado.">
+  <meta property="og:image" content="https://www.empezar-a-invertir.com/img/og/calculadora.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Calculadora de interés compuesto">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Calculadora de interés compuesto">
+  <meta name="twitter:description" content="Calcula cuánto crecería tu dinero con aportaciones periódicas y interés compuesto. Introduce capital inicial, aportación mensual, rentabilidad y años para ver el resultado.">
+  <meta name="twitter:image" content="https://www.empezar-a-invertir.com/img/og/calculadora.jpg">
+
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/img/logo/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="alternate" type="application/rss+xml" title="Empezar a invertir" href="/feed.xml">
+  <link rel="stylesheet" href="/style.css">
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Calculadora de interés compuesto",
+  "url": "https://www.empezar-a-invertir.com/calculadora-interes-compuesto/",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Cualquier navegador",
+  "inLanguage": "es",
+  "description": "Calculadora gratuita de interés compuesto con aportaciones periódicas: capital inicial, aportación mensual, rentabilidad anual y años.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Empezar a invertir",
+    "url": "https://www.empezar-a-invertir.com/"
+  }
+}</script>
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Qué es el interés compuesto?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Es el efecto de reinvertir los rendimientos que genera tu dinero: los intereses producen nuevos intereses. Con el tiempo, el crecimiento deja de ser lineal y se acelera."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Esta calculadora garantiza la rentabilidad que muestra?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Es una simulación aritmética con una rentabilidad anual constante. En la realidad los mercados suben y bajan cada año, y la rentabilidad pasada no asegura la futura."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué rentabilidad anual tiene sentido usar?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Depende del activo y del periodo. Para una cartera global diversificada se suelen usar escenarios conservadores de entre el 4 % y el 7 % anual nominal, sabiendo que ningún año será igual a la media."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿La inflación está incluida en el cálculo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El resultado se muestra en euros nominales. Para ver el poder adquisitivo real, resta la inflación media anual a la rentabilidad que introduzcas."
+      }
+    }
+  ]
+}</script>
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-MQBDL6HW');</script>
+</head>
+<body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MQBDL6HW" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="/">
+        <picture>
+      <source srcset="/img/logo/mark-white-128.png" media="(prefers-color-scheme: dark)">
+      <img src="/img/logo/mark-ink-128.png" alt="" width="32" height="26" decoding="async">
+    </picture>
+        <span class="nav__brand-text">Empezar a invertir<small>Guía + app de inversión</small></span>
+      </a>
+      <nav class="nav__links" aria-label="Navegación principal"><a href="/app/">La app</a><a href="/libro/">El libro</a><a href="/articles/">Artículos</a><a href="/glosario/">Glosario</a><a href="/calculadora-interes-compuesto/" aria-current="page">Calculadora</a></nav>
+      <a class="button button--small nav__cta" href="/app/">Probar la app</a>
+      <details class="nav__menu">
+        <summary>Menú <svg class="" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="nav__menu-panel">
+          <a href="/app/">La app</a><a href="/libro/">El libro</a><a href="/articles/">Artículos</a><a href="/glosario/">Glosario</a><a href="/calculadora-interes-compuesto/">Calculadora</a>
+          <a href="/sobre/">Sobre el proyecto</a>
+        </div>
+      </details>
+    </div>
+  </header>
+  <main id="contenido">
+
+    <section class="section section--tight">
+      <div class="container">
+        <div class="section__head">
+          <h1>Calculadora de interés compuesto</h1>
+          <p class="lead">Introduce tus números y observa cómo el tiempo y las aportaciones periódicas cambian el resultado. Sin registro y sin dejar tus datos en ningún sitio: todo se calcula en tu navegador.</p>
+        </div>
+
+        <div class="calculator" style="margin-top:40px">
+          <form class="card" id="calculadora" novalidate>
+            <h2 style="font-size:1.25rem">Tus datos</h2>
+            <div class="field">
+              <label for="inicial">Capital inicial (€)</label>
+              <input id="inicial" name="inicial" type="number" min="0" step="100" value="1000" inputmode="decimal">
+            </div>
+            <div class="field">
+              <label for="mensual">Aportación mensual (€)</label>
+              <input id="mensual" name="mensual" type="number" min="0" step="10" value="150" inputmode="decimal">
+            </div>
+            <div class="field">
+              <label for="rentabilidad">Rentabilidad anual estimada (%)</label>
+              <input id="rentabilidad" name="rentabilidad" type="number" min="0" max="20" step="0.1" value="6" inputmode="decimal">
+              <small>Un escenario habitual para una cartera global diversificada está entre el 4 % y el 7 % anual, aunque ningún año se parece a la media.</small>
+            </div>
+            <div class="field">
+              <label for="anios">Años invertidos</label>
+              <input id="anios" name="anios" type="number" min="1" max="50" step="1" value="25" inputmode="numeric">
+            </div>
+          </form>
+
+          <div class="card" aria-live="polite">
+            <h2 style="font-size:1.25rem">Resultado</h2>
+            <div class="result">
+              <span class="result__label">Valor final estimado</span>
+              <span class="result__value" id="resultado-final">—</span>
+            </div>
+            <div class="grid grid--2" style="margin-top:12px">
+              <div class="result">
+                <span class="result__label">Has aportado</span>
+                <span class="result__value" id="resultado-aportado" style="font-size:1.5rem">—</span>
+              </div>
+              <div class="result">
+                <span class="result__label">Intereses generados</span>
+                <span class="result__value" id="resultado-intereses" style="font-size:1.5rem">—</span>
+              </div>
+            </div>
+            <div class="bar-chart" id="grafico" aria-hidden="true"></div>
+            <p class="muted" style="font-size:.8125rem">Cada barra es un año. El crecimiento no es lineal: las últimas barras crecen mucho más porque los intereses también generan intereses.</p>
+          </div>
+        </div>
+
+        <div class="card card--flat" style="margin-top:32px">
+          <h2 style="font-size:1.25rem">Detalle por años</h2>
+          <div style="overflow-x:auto">
+            <table class="data-table" style="min-width:520px">
+              <thead>
+                <tr><th>Año</th><th>Has aportado</th><th>Intereses</th><th>Valor final</th></tr>
+              </thead>
+              <tbody id="tabla-detalle">
+                <tr><td>10</td><td>12.000 €</td><td>4470 €</td><td>16.470 €</td></tr><tr><td>20</td><td>24.000 €</td><td>22.204 €</td><td>46.204 €</td></tr><tr><td>30</td><td>36.000 €</td><td>64.452 €</td><td>100.452 €</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="muted" style="font-size:.8125rem">Ejemplo estático con 100 € al mes al 6 % anual. La tabla se recalcula con tus datos en cuanto cambias un valor.</p>
+        </div>
+
+        <noscript>
+          <p class="disclaimer" style="margin-top:24px">Activa JavaScript para calcular con tus propios datos. La tabla de ejemplo funciona sin JavaScript.</p>
+        </noscript>
+      </div>
+    </section>
+
+    <section class="section section--surface">
+      <div class="container grid grid--split">
+        <div class="stack stack--lg">
+          <div class="section__head">
+    <span class="eyebrow">Cómo leerlo</span>
+    <h2>El tiempo pesa más que la cantidad</h2>
+    <p class="lead">La fórmula del interés compuesto premia dos cosas: aportar de forma constante y no interrumpir el proceso.</p>
+  </div>
+          <ul class="prose" style="font-size:1.0625rem">
+            <li><strong>Aportación periódica:</strong> sumar cada mes tiene más efecto que esperar a tener una cantidad grande.</li>
+            <li><strong>Horizonte:</strong> pasar de 10 a 30 años no triplica el resultado, lo multiplica.</li>
+            <li><strong>Costes:</strong> una comisión del 1 % anual puede llevarse una parte enorme del resultado a 30 años.</li>
+            <li><strong>Inflación:</strong> resta la inflación media a la rentabilidad para ver el poder adquisitivo real.</li>
+          </ul>
+          <aside class="callout"><span class="eyebrow">Importante</span><p>Esta calculadora hace aritmética con una rentabilidad constante. La realidad incluye años malos, impuestos y comisiones. Úsala para entender el mecanismo, no como una promesa.</p></aside>
+        </div>
+        <figure class="illustration"><img src="/img/illustrations/compound.png" alt="Una curva creciente con monedas cada vez más grandes" width="1100" height="616" loading="lazy" decoding="async"></figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container container--narrow">
+        <div class="section__head section__head--center">
+    <span class="eyebrow">Preguntas frecuentes</span>
+    <h2>Dudas sobre el interés compuesto</h2>
+    
+  </div>
+        <div class="accordion"><details>
+        <summary>¿Qué es el interés compuesto?</summary>
+        <div class="accordion__content"><p>Es el efecto de reinvertir los rendimientos que genera tu dinero: los intereses producen nuevos intereses. Con el tiempo, el crecimiento deja de ser lineal y se acelera.</p></div>
+      </details><details>
+        <summary>¿Esta calculadora garantiza la rentabilidad que muestra?</summary>
+        <div class="accordion__content"><p>No. Es una simulación aritmética con una rentabilidad anual constante. En la realidad los mercados suben y bajan cada año, y la rentabilidad pasada no asegura la futura.</p></div>
+      </details><details>
+        <summary>¿Qué rentabilidad anual tiene sentido usar?</summary>
+        <div class="accordion__content"><p>Depende del activo y del periodo. Para una cartera global diversificada se suelen usar escenarios conservadores de entre el 4 % y el 7 % anual nominal, sabiendo que ningún año será igual a la media.</p></div>
+      </details><details>
+        <summary>¿La inflación está incluida en el cálculo?</summary>
+        <div class="accordion__content"><p>El resultado se muestra en euros nominales. Para ver el poder adquisitivo real, resta la inflación media anual a la rentabilidad que introduzcas.</p></div>
+      </details></div>
+      </div>
+    </section>
+
+    <section class="section section--ink">
+      <div class="container container--narrow center">
+        <h2>Pon a prueba tu plan sin arriesgar nada</h2>
+        <p class="lead" style="margin-top:16px">La app parte de 10.000 USD virtuales para que veas cómo se comporta una cartera mes a mes antes de invertir tu dinero.</p>
+        <div class="actions actions--center" style="margin-top:28px">
+          <a class="button" href="/app/"><span>Descubrir la app</span><svg class="button__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="button button--secondary" href="/articles/que-es-el-interes-compuesto.html"><span>Leer la guía completa</span></a>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      (function () {
+        var form = document.getElementById('calculadora');
+        if (!form) return;
+        var fields = ['inicial', 'mensual', 'rentabilidad', 'anios'].map(function (id) {
+          return document.getElementById(id);
+        });
+        var final = document.getElementById('resultado-final');
+        var aportado = document.getElementById('resultado-aportado');
+        var intereses = document.getElementById('resultado-intereses');
+        var grafico = document.getElementById('grafico');
+        var tabla = document.getElementById('tabla-detalle');
+        var money = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+        var milestones = [1, 5, 10, 15, 20, 25, 30, 40, 50];
+
+        function calcular() {
+          var inicial = Math.max(0, Number(document.getElementById('inicial').value) || 0);
+          var mensual = Math.max(0, Number(document.getElementById('mensual').value) || 0);
+          var tasa = Math.max(0, Number(document.getElementById('rentabilidad').value) || 0) / 100;
+          var anios = Math.min(60, Math.max(1, Math.round(Number(document.getElementById('anios').value) || 1)));
+          var meses = anios * 12;
+          var mensualTasa = Math.pow(1 + tasa, 1 / 12) - 1;
+          var valor = inicial;
+          var aportadoTotal = inicial;
+          var serie = [];
+          for (var mes = 1; mes <= meses; mes++) {
+            valor = valor * (1 + mensualTasa) + mensual;
+            aportadoTotal += mensual;
+            if (mes % 12 === 0) serie.push(valor);
+          }
+          final.textContent = money.format(valor);
+          aportado.textContent = money.format(aportadoTotal);
+          intereses.textContent = money.format(valor - aportadoTotal);
+
+          var max = Math.max.apply(null, serie.concat([1]));
+          grafico.innerHTML = serie
+            .map(function (value) {
+              return '<span style="height:' + Math.max(2, (value / max) * 100).toFixed(1) + '%"></span>';
+            })
+            .join('');
+
+          var filas = '';
+          var valorFila = inicial;
+          var aportadoFila = inicial;
+          for (var anio = 1; anio <= anios; anio++) {
+            aportadoFila += mensual * 12;
+            for (var m = 0; m < 12; m++) valorFila = valorFila * (1 + mensualTasa) + mensual;
+            if (milestones.indexOf(anio) !== -1 || anio === anios) {
+              filas +=
+                '<tr><td>' + anio + '</td><td>' + money.format(aportadoFila) + '</td><td>' +
+                money.format(valorFila - aportadoFila) + '</td><td>' + money.format(valorFila) + '</td></tr>';
+            }
+          }
+          tabla.innerHTML = filas;
+        }
+
+        fields.forEach(function (field) {
+          field.addEventListener('input', calcular);
+        });
+        calcular();
+      })();
+    </script>
+  
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand"><picture>
+      <source srcset="/img/logo/mark-white-128.png" media="(prefers-color-scheme: dark)">
+      <img src="/img/logo/mark-ink-128.png" alt="" width="34" height="28" decoding="async">
+    </picture><span>Empezar a invertir</span></div>
+          <p class="muted" style="margin-top:16px;max-width:34ch">Aprende a invertir y practícalo sin arriesgar dinero. Material educativo en español, sin promesas de rentabilidad.</p>
+        </div>
+        <div>
+          <h3>Producto</h3>
+          <ul><li><a href="/app/">La app</a></li><li><a href="/libro/">El libro</a></li><li><a href="/calculadora-interes-compuesto/">Calculadora de interés compuesto</a></li></ul>
+        </div><div>
+          <h3>Aprender</h3>
+          <ul><li><a href="/articles/">Todos los artículos</a></li><li><a href="/glosario/">Glosario de inversión</a></li><li><a href="/articles/como-empezar-a-invertir-desde-cero.html">Empezar desde cero</a></li><li><a href="/articles/que-es-un-etf.html">Qué es un ETF</a></li><li><a href="/articles/que-es-el-interes-compuesto.html">Interés compuesto</a></li><li><a href="/articles/que-es-la-diversificacion.html">Diversificación</a></li></ul>
+        </div><div>
+          <h3>Proyecto</h3>
+          <ul><li><a href="/sobre/">Sobre el proyecto</a></li><li><a href="mailto:hola@empezar-a-invertir.com">Contacto</a></li><li><a href="/privacidad/">Privacidad</a></li><li><a href="/aviso-legal/">Aviso legal</a></li><li><a href="/feed.xml">RSS</a></li></ul>
+        </div>
+      </div>
+      <div class="footer__note">
+        <span>© 2026 Empezar a invertir</span>
+        <span>Hecho en España · Contenido educativo, no asesoramiento financiero</span>
+      </div>
+    </div>
+  </footer>
+  
+</body>
+</html>

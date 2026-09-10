@@ -2,104 +2,206 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.empezar-a-invertir.com/</loc>
-    <lastmod>2026-04-07</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.empezar-a-invertir.com/articles/</loc>
-    <lastmod>2026-04-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.empezar-a-invertir.com/app/</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.empezar-a-invertir.com/articles/como-empezar-a-invertir-desde-cero.html</loc>
-    <lastmod>2025-05-01</lastmod>
+    <loc>https://www.empezar-a-invertir.com/libro/</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/calculadora-interes-compuesto/</loc>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.empezar-a-invertir.com/articles/guia-basica-invertir-espana.html</loc>
-    <lastmod>2025-05-01</lastmod>
+    <loc>https://www.empezar-a-invertir.com/articles/app-para-aprender-a-invertir.html</loc>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/cartera-indexada-tres-fondos.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/como-empezar-a-invertir-desde-cero.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.empezar-a-invertir.com/articles/como-invertir-con-poco-dinero.html</loc>
-    <lastmod>2025-05-01</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.empezar-a-invertir.com/articles/donde-invertir-mi-dinero-opciones-novatos.html</loc>
-    <lastmod>2025-05-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.empezar-a-invertir.com/articles/diferencia-entre-activos-y-pasivos.html</loc>
-    <lastmod>2025-05-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.empezar-a-invertir.com/articles/que-es-un-fondo-indexado.html</loc>
-    <lastmod>2026-04-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.empezar-a-invertir.com/articles/que-es-el-interes-compuesto.html</loc>
-    <lastmod>2026-04-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.empezar-a-invertir.com/articles/que-es-la-inflacion-como-afecta-ahorros.html</loc>
-    <lastmod>2026-04-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.empezar-a-invertir.com/articles/fondo-de-emergencia-cuanto-necesito.html</loc>
-    <lastmod>2026-04-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.empezar-a-invertir.com/articles/que-es-un-roboadvisor.html</loc>
-    <lastmod>2026-04-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.empezar-a-invertir.com/articles/renta-fija-vs-renta-variable.html</loc>
-    <lastmod>2026-04-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.empezar-a-invertir.com/articles/que-es-la-diversificacion.html</loc>
-    <lastmod>2026-04-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.empezar-a-invertir.com/articles/errores-comunes-invertir-principiantes.html</loc>
-    <lastmod>2026-04-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.empezar-a-invertir.com/articles/cuanto-dinero-necesito-para-invertir.html</loc>
-    <lastmod>2026-04-07</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/cuanto-puedo-ganar-invirtiendo-100-euros-al-mes.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/dca-invertir-cada-mes.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/diferencia-entre-activos-y-pasivos.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/donde-invertir-mi-dinero-opciones-novatos.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/errores-comunes-invertir-principiantes.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/fiscalidad-fondos-indexados-espana.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/fondo-de-emergencia-cuanto-necesito.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/guia-basica-invertir-espana.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/msci-world-vs-sp-500.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/plan-de-pensiones-o-fondo-indexado.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/psicologia-del-inversor.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/que-es-el-interes-compuesto.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/que-es-la-diversificacion.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/que-es-la-inflacion-como-afecta-ahorros.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.empezar-a-invertir.com/articles/que-es-un-etf.html</loc>
-    <lastmod>2026-04-07</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/que-es-un-fondo-indexado.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/que-es-un-roboadvisor.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/que-son-los-dividendos.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/renta-fija-vs-renta-variable.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/articles/simulador-de-bolsa-como-practicar.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/glosario/</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/aviso-legal/</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/privacidad/</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.empezar-a-invertir.com/sobre/</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
   </url>
 </urlset>

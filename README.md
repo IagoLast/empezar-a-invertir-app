@@ -55,9 +55,11 @@ Configuration: [setup](docs/SETUP.md), [payments](docs/PAYMENTS.md), [TestFlight
 |---|---|
 | `apps/ios` | SwiftUI app, Apple/Google authentication, Keychain and RevenueCat |
 | `apps/api` | Vercel Node.js functions, authentication, quotes and webhook |
+| `apps/web` | Generated static site published at empezar-a-invertir.com |
+| `web` | Authoring sources for the site: pages, article bodies and Open Graph cards |
 | `packages/contracts` | Shared catalog, Spanish lesson content and HTTP contract |
 | `supabase` | PostgreSQL migration, RLS and transactional wallet tests |
-| `scripts` | iOS resource preparation and release automation |
+| `scripts` | iOS resource preparation, release automation and the web builder |
 | `.github/workflows` | API, PostgreSQL and iOS CI; TestFlight upload on every push to `main` |
 
 ## Run in Xcode
@@ -100,13 +102,29 @@ The simulator has no bid/ask spread, order book, fractional shares, limit orders
 
 Before external release, complete service deployment, distribution-rights review, Apple/RevenueCat setup, sandbox integration tests, privacy policy and store metadata. Cached prices are educational data, not a real-time execution feed.
 
+## Web site
+
+The marketing site and blog live in `web/` as sources and are generated into `apps/web/`, which is what gets served. It mirrors the app's appearance (light and dark), uses hand authored line-art illustrations and ships with per-page Open Graph cards, structured data, `sitemap.xml` and an RSS feed.
+
+```bash
+npm run web:build     # regenerate apps/web
+npm run web:assets    # icons, share cards and cover (needs magick and rsvg-convert)
+npm run web:gpu       # rebuild the WebGPU shader bundle (needs npm --prefix web/gpu install)
+npm run web:art       # convert the drawings delivered in web/art
+npm run web:serve     # preview at http://localhost:4173
+```
+
+The home and app heroes render a small vgpu shader behind their copy. It is loaded after the page finishes loading, only when the browser supports WebGPU and the visitor allows motion, so it stays out of the critical path; without support the pages keep their static design.
+
+`npm test` includes `scripts/check-web.mjs`, which fails if the committed pages drift from the sources, if an internal link or share image is missing or if a page breaks the metadata contract. See [web/README.md](web/README.md).
+
 ## Verification
 
 ```bash
 npm test
 ```
 
-Runs 32 API tests and shared-resource checks. [CI](https://github.com/IagoLast/empezar-a-invertir-app/actions/workflows/ci.yml) also validates PostgreSQL wallet/RLS behavior, builds SwiftUI and runs native tests. Screenshot artifacts are produced on PRs and committed on `main` after verification.
+Runs the API test suite plus the shared-resource checks: HTTP contracts, all 20 manuscript chapters and the generated web site. [CI](https://github.com/IagoLast/empezar-a-invertir-app/actions/workflows/ci.yml) also validates PostgreSQL wallet/RLS behavior, builds SwiftUI and runs native tests. Screenshot artifacts are produced on PRs and committed on `main` after verification.
 
 `npm run test:ios:e2e` builds the simulator app and runs 11 Maestro flows against a simulated backend. See [MAESTRO.md](docs/MAESTRO.md). Real OAuth, payments and signed uploads require separate integration verification.
 

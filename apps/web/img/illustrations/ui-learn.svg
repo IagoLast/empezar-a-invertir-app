@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 720" role="img" aria-labelledby="ui-learn-title">
+  <title id="ui-learn-title">Pantalla de aprendizaje de la app con progreso de lectura y capítulos</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <rect width="340" height="720" fill="var(--surface, #FFFFFF)" stroke="none"/>
+
+    <text x="26" y="36" font-size="13" font-weight="600" fill="currentColor" stroke="none">9:41</text>
+    <path d="M262 32 h10" stroke-width="3"/>
+    <path d="M278 28 v8 M284 26 v12 M290 23 v16"/>
+    <rect x="300" y="24" width="26" height="13" rx="4"/>
+    <rect x="303" y="27" width="17" height="7" rx="2" fill="currentColor" stroke="none"/>
+
+    <text x="24" y="88" font-size="25" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.6">Aprender</text>
+    <text x="24" y="110" font-size="13" fill="var(--muted, #596A84)" stroke="none">Tu libro para empezar a invertir</text>
+
+    <!-- progress -->
+    <rect x="24" y="126" width="292" height="132" rx="22" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="158" font-size="11" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" letter-spacing="1">TU PROGRESO</text>
+    <text x="44" y="192" font-size="22" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.5">12 de 20 capítulos</text>
+    <rect x="44" y="210" width="252" height="10" rx="5" fill="var(--surface, #FFFFFF)" stroke="none"/>
+    <rect x="44" y="210" width="151" height="10" rx="5" fill="var(--accent, #165DDE)" stroke="none"/>
+    <text x="44" y="242" font-size="12" fill="var(--muted, #596A84)" stroke="none">127 minutos de lectura en total</text>
+
+    <text x="24" y="298" font-size="11" font-weight="700" fill="var(--muted, #596A84)" stroke="none" letter-spacing="1">CONCEPTOS FINANCIEROS BÁSICOS</text>
+
+    <!-- chapters -->
+    <rect x="24" y="314" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="336" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">01</text>
+    <text x="72" y="336" font-size="15" font-weight="600" fill="currentColor" stroke="none">Dinero</text>
+    <text x="316" y="336" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">8 min</text>
+
+    <rect x="24" y="364" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="386" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">02</text>
+    <text x="72" y="386" font-size="15" font-weight="600" fill="currentColor" stroke="none">Activos y pasivos</text>
+    <text x="316" y="386" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">6 min</text>
+
+    <rect x="24" y="414" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="436" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">03</text>
+    <text x="72" y="436" font-size="15" font-weight="600" fill="currentColor" stroke="none">Inflación</text>
+    <text x="316" y="436" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">8 min</text>
+
+    <rect x="24" y="464" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="486" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">04</text>
+    <text x="72" y="486" font-size="15" font-weight="600" fill="currentColor" stroke="none">El interés compuesto</text>
+    <text x="316" y="486" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">2 min</text>
+
+    <rect x="24" y="514" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="536" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">05</text>
+    <text x="72" y="536" font-size="15" font-weight="600" fill="currentColor" stroke="none">Diversificación</text>
+    <text x="316" y="536" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">2 min</text>
+
+    <rect x="24" y="570" width="292" height="48" rx="16" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="600" font-size="13" font-weight="600" fill="var(--accent, #165DDE)" stroke="none">Cada concepto se explica dentro de la app</text>
+
+    <!-- tab bar -->
+    <path d="M0 646 H340" stroke="var(--line, #DDE7F5)"/>
+    <circle cx="48" cy="677" r="11"/>
+    <text x="48" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Cartera</text>
+    <circle cx="132" cy="677" r="11"/>
+    <text x="132" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Mercados</text>
+    <path d="M212 668 h16 M212 677 h16 M212 686 h16" stroke-width="2.4"/>
+    <text x="220" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Movimientos</text>
+    <path d="M294 670 h14 a3 3 0 0 1 3 3 v13 a3 3 0 0 1 -3 3 h-14 a3 3 0 0 1 -3 -3 v-13 a3 3 0 0 1 3 -3 z M296 670 v-4 h10 v4"/>
+    <text x="300" y="706" font-size="10" font-weight="600" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">Aprender</text>
+  </g>
+</svg>

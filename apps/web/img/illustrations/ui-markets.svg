@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 720" role="img" aria-labelledby="ui-markets-title">
+  <title id="ui-markets-title">Pantalla de mercados de la app con buscador y resultados de acciones</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <rect width="340" height="720" fill="var(--surface, #FFFFFF)" stroke="none"/>
+
+    <text x="26" y="36" font-size="13" font-weight="600" fill="currentColor" stroke="none">9:41</text>
+    <path d="M262 32 h10" stroke-width="3"/>
+    <path d="M278 28 v8 M284 26 v12 M290 23 v16"/>
+    <rect x="300" y="24" width="26" height="13" rx="4"/>
+    <rect x="303" y="27" width="17" height="7" rx="2" fill="currentColor" stroke="none"/>
+
+    <text x="24" y="88" font-size="25" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.6">Mercados</text>
+    <text x="24" y="110" font-size="13" fill="var(--muted, #596A84)" stroke="none">Busca una empresa, un fondo o su símbolo</text>
+
+    <!-- search -->
+    <rect x="24" y="126" width="292" height="48" rx="16" fill="var(--surface-sunken, #EDF1F8)" stroke="none"/>
+    <circle cx="50" cy="150" r="8"/>
+    <path d="M56 156 l6 6"/>
+    <text x="72" y="155" font-size="14" fill="var(--muted, #596A84)" stroke="none">Buscar empresa o símbolo</text>
+
+    <!-- filters -->
+    <rect x="24" y="190" width="66" height="36" rx="18" fill="var(--button, #1757E0)" stroke="none"/>
+    <text x="57" y="213" font-size="13" font-weight="600" fill="#FFFFFF" stroke="none" text-anchor="middle">Todo</text>
+    <rect x="98" y="190" width="82" height="36" rx="18" stroke="var(--line, #DDE7F5)"/>
+    <text x="139" y="213" font-size="13" fill="currentColor" stroke="none" text-anchor="middle">Acciones</text>
+    <rect x="188" y="190" width="56" height="36" rx="18" stroke="var(--line, #DDE7F5)"/>
+    <text x="216" y="213" font-size="13" fill="currentColor" stroke="none" text-anchor="middle">ETF</text>
+    <rect x="252" y="190" width="64" height="36" rx="18" stroke="var(--line, #DDE7F5)"/>
+    <text x="284" y="213" font-size="13" fill="currentColor" stroke="none" text-anchor="middle">Bonos</text>
+
+    <text x="24" y="260" font-size="11" font-weight="700" fill="var(--muted, #596A84)" stroke="none" letter-spacing="1">RESULTADOS</text>
+
+    <!-- results -->
+    <rect x="24" y="276" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="303" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">A</text>
+    <text x="78" y="294" font-size="15" font-weight="600" fill="currentColor" stroke="none">Apple</text>
+    <text x="78" y="312" font-size="12" fill="var(--muted, #596A84)" stroke="none">AAPL · NASDAQ</text>
+    <path d="M308 291 l7 7 l-7 7"/>
+
+    <rect x="24" y="334" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="361" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">G</text>
+    <text x="78" y="352" font-size="15" font-weight="600" fill="currentColor" stroke="none">Alphabet</text>
+    <text x="78" y="370" font-size="12" fill="var(--muted, #596A84)" stroke="none">GOOGL · NASDAQ</text>
+    <path d="M308 349 l7 7 l-7 7"/>
+
+    <rect x="24" y="392" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="419" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">M</text>
+    <text x="78" y="410" font-size="15" font-weight="600" fill="currentColor" stroke="none">Meta Platforms</text>
+    <text x="78" y="428" font-size="12" fill="var(--muted, #596A84)" stroke="none">META · NASDAQ</text>
+    <path d="M308 407 l7 7 l-7 7"/>
+
+    <rect x="24" y="450" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="477" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">V</text>
+    <text x="78" y="468" font-size="15" font-weight="600" fill="currentColor" stroke="none">Vanguard S&amp;P 500</text>
+    <text x="78" y="486" font-size="12" fill="var(--muted, #596A84)" stroke="none">VUSA · LSE</text>
+    <path d="M308 465 l7 7 l-7 7"/>
+
+    <rect x="24" y="508" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="535" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">I</text>
+    <text x="78" y="526" font-size="15" font-weight="600" fill="currentColor" stroke="none">iShares MSCI World</text>
+    <text x="78" y="544" font-size="12" fill="var(--muted, #596A84)" stroke="none">IWDA · AMS</text>
+    <path d="M308 523 l7 7 l-7 7"/>
+
+    <rect x="24" y="566" width="292" height="48" rx="16" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="596" font-size="13" font-weight="600" fill="var(--accent, #165DDE)" stroke="none">Precios con retraso · uso educativo</text>
+
+    <!-- tab bar -->
+    <path d="M0 646 H340" stroke="var(--line, #DDE7F5)"/>
+    <circle cx="48" cy="677" r="11"/>
+    <text x="48" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Cartera</text>
+    <circle cx="132" cy="677" r="11" fill="var(--accent, #165DDE)" stroke="none"/>
+    <text x="132" y="706" font-size="10" font-weight="600" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">Mercados</text>
+    <path d="M212 668 h16 M212 677 h16 M212 686 h16" stroke-width="2.4"/>
+    <text x="220" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Movimientos</text>
+    <path d="M294 670 h14 a3 3 0 0 1 3 3 v13 a3 3 0 0 1 -3 3 h-14 a3 3 0 0 1 -3 -3 v-13 a3 3 0 0 1 3 -3 z M296 670 v-4 h10 v4"/>
+    <text x="300" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Aprender</text>
+  </g>
+</svg>

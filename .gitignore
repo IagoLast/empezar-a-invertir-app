@@ -13,3 +13,6 @@ artifacts/
 supabase/.temp/
 
 .env.*.local
+
+# Shader toolchain for the site background (npm --prefix web/gpu install)
+web/gpu/node_modules/

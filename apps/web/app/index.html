@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>La app para aprender a invertir practicando con dinero ficticio</title>
+  <meta name="description" content="Conoce EAI, la app que combina el contenido del libro con un simulador: lee los 20 capítulos, busca acciones y ETF reales y practica con una cartera de 10.000 USD virtuales.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Empezar a invertir">
+  <meta name="theme-color" content="#F5F6F8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0C1017" media="(prefers-color-scheme: dark)">
+  <link rel="canonical" href="https://www.empezar-a-invertir.com/app/">
+  
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Empezar a invertir">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:url" content="https://www.empezar-a-invertir.com/app/">
+  <meta property="og:title" content="Aprende a invertir practicando con dinero ficticio">
+  <meta property="og:description" content="Conoce EAI, la app que combina el contenido del libro con un simulador: lee los 20 capítulos, busca acciones y ETF reales y practica con una cartera de 10.000 USD virtuales.">
+  <meta property="og:image" content="https://www.empezar-a-invertir.com/img/og/app.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Aprende a invertir practicando con dinero ficticio">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Aprende a invertir practicando con dinero ficticio">
+  <meta name="twitter:description" content="Conoce EAI, la app que combina el contenido del libro con un simulador: lee los 20 capítulos, busca acciones y ETF reales y practica con una cartera de 10.000 USD virtuales.">
+  <meta name="twitter:image" content="https://www.empezar-a-invertir.com/img/og/app.jpg">
+
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/img/logo/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="alternate" type="application/rss+xml" title="Empezar a invertir" href="/feed.xml">
+  <link rel="stylesheet" href="/style.css">
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "EAI",
+  "alternateName": "Empezar a invertir",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "iOS 17 o posterior",
+  "description": "App educativa en español para aprender a invertir con los 20 capítulos de la guía y practicar con una cartera de dinero ficticio.",
+  "inLanguage": "es",
+  "url": "https://www.empezar-a-invertir.com/app/",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Empezar a invertir",
+    "url": "https://www.empezar-a-invertir.com/"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR",
+    "description": "Contenido y cartera virtual de prueba"
+  }
+}</script>
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-MQBDL6HW');</script>
+</head>
+<body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MQBDL6HW" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="/">
+        <picture>
+      <source srcset="/img/logo/mark-white-128.png" media="(prefers-color-scheme: dark)">
+      <img src="/img/logo/mark-ink-128.png" alt="" width="32" height="26" decoding="async">
+    </picture>
+        <span class="nav__brand-text">Empezar a invertir<small>Guía + app de inversión</small></span>
+      </a>
+      <nav class="nav__links" aria-label="Navegación principal"><a href="/app/" aria-current="page">La app</a><a href="/libro/">El libro</a><a href="/articles/">Artículos</a><a href="/glosario/">Glosario</a><a href="/calculadora-interes-compuesto/">Calculadora</a></nav>
+      <a class="button button--small nav__cta" href="/app/">Probar la app</a>
+      <details class="nav__menu">
+        <summary>Menú <svg class="" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="nav__menu-panel">
+          <a href="/app/">La app</a><a href="/libro/">El libro</a><a href="/articles/">Artículos</a><a href="/glosario/">Glosario</a><a href="/calculadora-interes-compuesto/">Calculadora</a>
+          <a href="/sobre/">Sobre el proyecto</a>
+        </div>
+      </details>
+    </div>
+  </header>
+  <main id="contenido">
+
+    <section class="hero">
+      <canvas class="hero__gpu" data-webgpu="ribbon" data-intensity="0.5" aria-hidden="true"></canvas>
+      <div class="container hero__inner">
+        <div class="hero__copy">
+          <h1>Aprende invirtiendo, no arriesgando.</h1>
+          <p class="lead">EAI reúne el contenido del libro y un simulador de inversión en la misma app: lee, busca activos reales y practica con 10.000 USD virtuales que no puedes perder.</p>
+          <div class="actions">
+            <span class="appstore-badge"><svg width="26" height="26" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516.024.034 1.52.087 2.475-1.258.955-1.345.762-2.391.728-2.43Zm3.314 11.733c-.048-.096-2.325-1.234-2.113-3.422.212-2.189 1.675-2.789 1.698-2.854.023-.065-.597-.79-1.254-1.157a3.692 3.692 0 0 0-1.563-.434c-.108-.003-.483-.095-1.254.116-.508.139-1.653.589-1.968.607-.316.018-1.256-.522-2.267-.665-.647-.125-1.333.131-1.824.328-.49.196-1.422.754-2.074 2.237-.652 1.482-.311 3.83-.067 4.56.244.729.625 1.924 1.273 2.796.576.984 1.34 1.667 1.659 1.899.319.232 1.219.386 1.843.067.502-.308 1.408-.485 1.766-.472.357.013 1.061.154 1.782.539.571.197 1.111.115 1.652-.105.541-.221 1.324-1.059 2.238-2.758.347-.79.505-1.217.473-1.282Z"/></svg><span><small>Muy pronto en</small>App Store</span></span>
+            <a class="button button--secondary" href="/articles/como-empezar-a-invertir-desde-cero.html"><span>Empezar por la teoría</span></a>
+          </div>
+          <div class="hero__proof">
+            <span><svg class="" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> 20 capítulos dentro de la app</span>
+            <span><svg class="" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM16 12h2"/></svg> Sin dinero real</span>
+            <span><svg class="" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4"/></svg> Inicio de sesión con Apple</span>
+          </div>
+        </div>
+        <div class="hero__art">
+          <figure class="illustration illustration--plain"><img src="/img/illustrations/practice.png" alt="Una persona practica con una cartera virtual en el móvil, rodeada de monedas" width="1100" height="899" loading="lazy" decoding="async"></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--surface">
+      <div class="container">
+        <div class="section__head section__head--center">
+    <span class="eyebrow">Qué puedes hacer</span>
+    <h2>Tres cosas, bien hechas</h2>
+    <p class="lead">Sin gráficos de velas, sin apalancamiento y sin promesas. Solo lo que necesitas para entender cómo funciona invertir.</p>
+  </div>
+        
+        <div class="grid grid--split" style="margin-top:0">
+          <div class="stack">
+            <div class="section__head">
+    <span class="eyebrow">01</span>
+    <h2>Aprende paso a paso</h2>
+    <p class="lead">Los 20 capítulos de la guía en formato lectura, con marcadores, progreso guardado y explicaciones de cada concepto dentro de la propia interfaz.</p>
+  </div>
+          </div>
+          <figure class="illustration"><img src="/img/illustrations/learning.png" alt="Una persona estudia inversión con un portátil, apuntes y una gráfica ascendente" width="1100" height="670" loading="lazy" decoding="async"></figure>
+        </div>
+        <div class="grid grid--split split--reverse" style="margin-top:56px">
+          <div class="stack">
+            <div class="section__head">
+    <span class="eyebrow">02</span>
+    <h2>Explora el mercado</h2>
+    <p class="lead">Busca acciones y ETF de todo el mundo, consulta su ficha, su gráfico y los datos clave antes de decidir. Sin análisis técnico ni ruido.</p>
+  </div>
+          </div>
+          <figure class="illustration"><img src="/img/illustrations/markets.png" alt="Una lupa examina un gráfico de velas" width="1100" height="668" loading="lazy" decoding="async"></figure>
+        </div>
+        <div class="grid grid--split" style="margin-top:56px">
+          <div class="stack">
+            <div class="section__head">
+    <span class="eyebrow">03</span>
+    <h2>Practica con dinero ficticio</h2>
+    <p class="lead">Empieza con 10.000 USD virtuales, lanza órdenes de compra y venta simuladas y observa cómo evoluciona tu cartera con precios reales de mercado.</p>
+  </div>
+          </div>
+          <figure class="illustration"><img src="/img/illustrations/practice.png" alt="Una persona practica con una cartera virtual en el móvil, rodeada de monedas" width="1100" height="899" loading="lazy" decoding="async"></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section__head section__head--center">
+    <span class="eyebrow">Las pantallas</span>
+    <h2>Así está pensada por dentro</h2>
+    <p class="lead">Lectura integrada, buscador de activos y cartera simulada, con la misma jerarquía clara de la app y adaptada a la apariencia clara u oscura de tu iPhone.</p>
+  </div>
+        <div class="device-row">
+          <div class="device device--small" role="img" aria-label="Pantalla de cartera con el saldo virtual y las posiciones de ejemplo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 720" role="img" aria-labelledby="ui-portfolio-title-3">
+  <title id="ui-portfolio-title-3">Pantalla de cartera de la app con saldo virtual y posiciones</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <rect width="340" height="720" fill="var(--surface, #FFFFFF)" stroke="none"/>
+
+    <!-- status bar -->
+    <text x="26" y="36" font-size="13" font-weight="600" fill="currentColor" stroke="none">9:41</text>
+    <path d="M262 32 h10" stroke-width="3"/>
+    <path d="M278 28 v8 M284 26 v12 M290 23 v16"/>
+    <rect x="300" y="24" width="26" height="13" rx="4"/>
+    <rect x="303" y="27" width="17" height="7" rx="2" fill="currentColor" stroke="none"/>
+
+    <!-- title -->
+    <text x="24" y="88" font-size="25" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.6">Mi cartera</text>
+
+    <!-- balance -->
+    <rect x="24" y="106" width="292" height="124" rx="22" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="138" font-size="11" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" letter-spacing="1">SALDO VIRTUAL</text>
+    <text x="44" y="176" font-size="27" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.6">10.000,00 US$</text>
+    <text x="44" y="202" font-size="13" fill="var(--muted, #596A84)" stroke="none">Dinero ficticio para practicar</text>
+
+    <!-- actions -->
+    <rect x="24" y="246" width="140" height="46" rx="16" fill="var(--button, #1757E0)" stroke="none"/>
+    <text x="94" y="275" font-size="14" font-weight="600" fill="#FFFFFF" stroke="none" text-anchor="middle">Comprar acciones</text>
+    <rect x="176" y="246" width="140" height="46" rx="16" stroke="var(--line, #DDE7F5)"/>
+    <text x="246" y="275" font-size="14" font-weight="600" fill="currentColor" stroke="none" text-anchor="middle">Añadir saldo</text>
+
+    <!-- positions -->
+    <text x="24" y="330" font-size="11" font-weight="700" fill="var(--muted, #596A84)" stroke="none" letter-spacing="1">TUS ACTIVOS</text>
+
+    <rect x="24" y="346" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="373" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">A</text>
+    <text x="78" y="364" font-size="15" font-weight="600" fill="currentColor" stroke="none">Apple</text>
+    <text x="78" y="382" font-size="12" fill="var(--muted, #596A84)" stroke="none">4 unidades · AAPL</text>
+    <text x="316" y="364" font-size="15" font-weight="600" fill="currentColor" stroke="none" text-anchor="end">1.024,40 US$</text>
+    <text x="316" y="382" font-size="12" font-weight="600" fill="var(--gain, #087C60)" stroke="none" text-anchor="end">+1,82 %</text>
+
+    <rect x="24" y="404" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="431" font-size="14" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">€</text>
+    <text x="78" y="422" font-size="15" font-weight="600" fill="currentColor" stroke="none">MSCI World</text>
+    <text x="78" y="440" font-size="12" fill="var(--muted, #596A84)" stroke="none">12 unidades · IWDA</text>
+    <text x="316" y="422" font-size="15" font-weight="600" fill="currentColor" stroke="none" text-anchor="end">986,10 US$</text>
+    <text x="316" y="440" font-size="12" font-weight="600" fill="var(--loss, #BD3349)" stroke="none" text-anchor="end">−0,64 %</text>
+
+    <rect x="24" y="462" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="489" font-size="14" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">S</text>
+    <text x="78" y="480" font-size="15" font-weight="600" fill="currentColor" stroke="none">S&amp;P 500</text>
+    <text x="78" y="498" font-size="12" fill="var(--muted, #596A84)" stroke="none">8 unidades · VUSA</text>
+    <text x="316" y="480" font-size="15" font-weight="600" fill="currentColor" stroke="none" text-anchor="end">742,80 US$</text>
+    <text x="316" y="498" font-size="12" font-weight="600" fill="var(--gain, #087C60)" stroke="none" text-anchor="end">+0,41 %</text>
+
+    <rect x="24" y="524" width="292" height="52" rx="18" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="547" font-size="12" font-weight="600" fill="var(--accent, #165DDE)" stroke="none">SALDO DISPONIBLE</text>
+    <text x="44" y="566" font-size="13" fill="currentColor" stroke="none">7.246,70 US$ para practicar</text>
+
+    <!-- tab bar -->
+    <path d="M0 646 H340" stroke="var(--line, #DDE7F5)"/>
+    <circle cx="48" cy="677" r="11" fill="var(--accent, #165DDE)" stroke="none"/>
+    <text x="48" y="706" font-size="10" font-weight="600" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">Cartera</text>
+    <circle cx="132" cy="677" r="11"/>
+    <text x="132" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Mercados</text>
+    <path d="M212 668 h16 M212 677 h16 M212 686 h16" stroke-width="2.4"/>
+    <text x="220" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Movimientos</text>
+    <path d="M294 670 h14 a3 3 0 0 1 3 3 v13 a3 3 0 0 1 -3 3 h-14 a3 3 0 0 1 -3 -3 v-13 a3 3 0 0 1 3 -3 z M296 670 v-4 h10 v4"/>
+    <text x="300" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Aprender</text>
+  </g>
+</svg></div>
+          <div class="device device--small" role="img" aria-label="Pantalla de mercados con el buscador de acciones y ETF"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 720" role="img" aria-labelledby="ui-markets-title-4">
+  <title id="ui-markets-title-4">Pantalla de mercados de la app con buscador y resultados de acciones</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <rect width="340" height="720" fill="var(--surface, #FFFFFF)" stroke="none"/>
+
+    <text x="26" y="36" font-size="13" font-weight="600" fill="currentColor" stroke="none">9:41</text>
+    <path d="M262 32 h10" stroke-width="3"/>
+    <path d="M278 28 v8 M284 26 v12 M290 23 v16"/>
+    <rect x="300" y="24" width="26" height="13" rx="4"/>
+    <rect x="303" y="27" width="17" height="7" rx="2" fill="currentColor" stroke="none"/>
+
+    <text x="24" y="88" font-size="25" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.6">Mercados</text>
+    <text x="24" y="110" font-size="13" fill="var(--muted, #596A84)" stroke="none">Busca una empresa, un fondo o su símbolo</text>
+
+    <!-- search -->
+    <rect x="24" y="126" width="292" height="48" rx="16" fill="var(--surface-sunken, #EDF1F8)" stroke="none"/>
+    <circle cx="50" cy="150" r="8"/>
+    <path d="M56 156 l6 6"/>
+    <text x="72" y="155" font-size="14" fill="var(--muted, #596A84)" stroke="none">Buscar empresa o símbolo</text>
+
+    <!-- filters -->
+    <rect x="24" y="190" width="66" height="36" rx="18" fill="var(--button, #1757E0)" stroke="none"/>
+    <text x="57" y="213" font-size="13" font-weight="600" fill="#FFFFFF" stroke="none" text-anchor="middle">Todo</text>
+    <rect x="98" y="190" width="82" height="36" rx="18" stroke="var(--line, #DDE7F5)"/>
+    <text x="139" y="213" font-size="13" fill="currentColor" stroke="none" text-anchor="middle">Acciones</text>
+    <rect x="188" y="190" width="56" height="36" rx="18" stroke="var(--line, #DDE7F5)"/>
+    <text x="216" y="213" font-size="13" fill="currentColor" stroke="none" text-anchor="middle">ETF</text>
+    <rect x="252" y="190" width="64" height="36" rx="18" stroke="var(--line, #DDE7F5)"/>
+    <text x="284" y="213" font-size="13" fill="currentColor" stroke="none" text-anchor="middle">Bonos</text>
+
+    <text x="24" y="260" font-size="11" font-weight="700" fill="var(--muted, #596A84)" stroke="none" letter-spacing="1">RESULTADOS</text>
+
+    <!-- results -->
+    <rect x="24" y="276" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="303" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">A</text>
+    <text x="78" y="294" font-size="15" font-weight="600" fill="currentColor" stroke="none">Apple</text>
+    <text x="78" y="312" font-size="12" fill="var(--muted, #596A84)" stroke="none">AAPL · NASDAQ</text>
+    <path d="M308 291 l7 7 l-7 7"/>
+
+    <rect x="24" y="334" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="361" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">G</text>
+    <text x="78" y="352" font-size="15" font-weight="600" fill="currentColor" stroke="none">Alphabet</text>
+    <text x="78" y="370" font-size="12" fill="var(--muted, #596A84)" stroke="none">GOOGL · NASDAQ</text>
+    <path d="M308 349 l7 7 l-7 7"/>
+
+    <rect x="24" y="392" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="419" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">M</text>
+    <text x="78" y="410" font-size="15" font-weight="600" fill="currentColor" stroke="none">Meta Platforms</text>
+    <text x="78" y="428" font-size="12" fill="var(--muted, #596A84)" stroke="none">META · NASDAQ</text>
+    <path d="M308 407 l7 7 l-7 7"/>
+
+    <rect x="24" y="450" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="477" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">V</text>
+    <text x="78" y="468" font-size="15" font-weight="600" fill="currentColor" stroke="none">Vanguard S&amp;P 500</text>
+    <text x="78" y="486" font-size="12" fill="var(--muted, #596A84)" stroke="none">VUSA · LSE</text>
+    <path d="M308 465 l7 7 l-7 7"/>
+
+    <rect x="24" y="508" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="535" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">I</text>
+    <text x="78" y="526" font-size="15" font-weight="600" fill="currentColor" stroke="none">iShares MSCI World</text>
+    <text x="78" y="544" font-size="12" fill="var(--muted, #596A84)" stroke="none">IWDA · AMS</text>
+    <path d="M308 523 l7 7 l-7 7"/>
+
+    <rect x="24" y="566" width="292" height="48" rx="16" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="596" font-size="13" font-weight="600" fill="var(--accent, #165DDE)" stroke="none">Precios con retraso · uso educativo</text>
+
+    <!-- tab bar -->
+    <path d="M0 646 H340" stroke="var(--line, #DDE7F5)"/>
+    <circle cx="48" cy="677" r="11"/>
+    <text x="48" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Cartera</text>
+    <circle cx="132" cy="677" r="11" fill="var(--accent, #165DDE)" stroke="none"/>
+    <text x="132" y="706" font-size="10" font-weight="600" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">Mercados</text>
+    <path d="M212 668 h16 M212 677 h16 M212 686 h16" stroke-width="2.4"/>
+    <text x="220" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Movimientos</text>
+    <path d="M294 670 h14 a3 3 0 0 1 3 3 v13 a3 3 0 0 1 -3 3 h-14 a3 3 0 0 1 -3 -3 v-13 a3 3 0 0 1 3 -3 z M296 670 v-4 h10 v4"/>
+    <text x="300" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Aprender</text>
+  </g>
+</svg></div>
+          <div class="device device--small" role="img" aria-label="Pantalla de aprendizaje con el progreso de lectura y los capítulos"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 720" role="img" aria-labelledby="ui-learn-title-5">
+  <title id="ui-learn-title-5">Pantalla de aprendizaje de la app con progreso de lectura y capítulos</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <rect width="340" height="720" fill="var(--surface, #FFFFFF)" stroke="none"/>
+
+    <text x="26" y="36" font-size="13" font-weight="600" fill="currentColor" stroke="none">9:41</text>
+    <path d="M262 32 h10" stroke-width="3"/>
+    <path d="M278 28 v8 M284 26 v12 M290 23 v16"/>
+    <rect x="300" y="24" width="26" height="13" rx="4"/>
+    <rect x="303" y="27" width="17" height="7" rx="2" fill="currentColor" stroke="none"/>
+
+    <text x="24" y="88" font-size="25" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.6">Aprender</text>
+    <text x="24" y="110" font-size="13" fill="var(--muted, #596A84)" stroke="none">Tu libro para empezar a invertir</text>
+
+    <!-- progress -->
+    <rect x="24" y="126" width="292" height="132" rx="22" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="158" font-size="11" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" letter-spacing="1">TU PROGRESO</text>
+    <text x="44" y="192" font-size="22" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.5">12 de 20 capítulos</text>
+    <rect x="44" y="210" width="252" height="10" rx="5" fill="var(--surface, #FFFFFF)" stroke="none"/>
+    <rect x="44" y="210" width="151" height="10" rx="5" fill="var(--accent, #165DDE)" stroke="none"/>
+    <text x="44" y="242" font-size="12" fill="var(--muted, #596A84)" stroke="none">127 minutos de lectura en total</text>
+
+    <text x="24" y="298" font-size="11" font-weight="700" fill="var(--muted, #596A84)" stroke="none" letter-spacing="1">CONCEPTOS FINANCIEROS BÁSICOS</text>
+
+    <!-- chapters -->
+    <rect x="24" y="314" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="336" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">01</text>
+    <text x="72" y="336" font-size="15" font-weight="600" fill="currentColor" stroke="none">Dinero</text>
+    <text x="316" y="336" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">8 min</text>
+
+    <rect x="24" y="364" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="386" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">02</text>
+    <text x="72" y="386" font-size="15" font-weight="600" fill="currentColor" stroke="none">Activos y pasivos</text>
+    <text x="316" y="386" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">6 min</text>
+
+    <rect x="24" y="414" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="436" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">03</text>
+    <text x="72" y="436" font-size="15" font-weight="600" fill="currentColor" stroke="none">Inflación</text>
+    <text x="316" y="436" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">8 min</text>
+
+    <rect x="24" y="464" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="486" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">04</text>
+    <text x="72" y="486" font-size="15" font-weight="600" fill="currentColor" stroke="none">El interés compuesto</text>
+    <text x="316" y="486" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">2 min</text>
+
+    <rect x="24" y="514" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="536" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">05</text>
+    <text x="72" y="536" font-size="15" font-weight="600" fill="currentColor" stroke="none">Diversificación</text>
+    <text x="316" y="536" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">2 min</text>
+
+    <rect x="24" y="570" width="292" height="48" rx="16" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="600" font-size="13" font-weight="600" fill="var(--accent, #165DDE)" stroke="none">Cada concepto se explica dentro de la app</text>
+
+    <!-- tab bar -->
+    <path d="M0 646 H340" stroke="var(--line, #DDE7F5)"/>
+    <circle cx="48" cy="677" r="11"/>
+    <text x="48" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Cartera</text>
+    <circle cx="132" cy="677" r="11"/>
+    <text x="132" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Mercados</text>
+    <path d="M212 668 h16 M212 677 h16 M212 686 h16" stroke-width="2.4"/>
+    <text x="220" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Movimientos</text>
+    <path d="M294 670 h14 a3 3 0 0 1 3 3 v13 a3 3 0 0 1 -3 3 h-14 a3 3 0 0 1 -3 -3 v-13 a3 3 0 0 1 3 -3 z M296 670 v-4 h10 v4"/>
+    <text x="300" y="706" font-size="10" font-weight="600" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">Aprender</text>
+  </g>
+</svg></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--ink">
+      <div class="container">
+        <div class="section__head section__head--center">
+    <span class="eyebrow">Cómo funciona</span>
+    <h2>De la curiosidad a la primera decisión simulada</h2>
+    
+  </div>
+        <div class="steps">
+          <div class="step">
+            <span class="step__index">1</span>
+            <h3>Lee y entiende</h3>
+            <p>Recorre los capítulos a tu ritmo. Cada concepto financiero se explica dentro de la interfaz, sin dar nada por sabido.</p>
+          </div>
+          <div class="step">
+            <span class="step__index">2</span>
+            <h3>Explora activos reales</h3>
+            <p>Busca acciones y ETF, mira su gráfico y sus datos. Los precios son de mercado; las operaciones, no.</p>
+          </div>
+          <div class="step">
+            <span class="step__index">3</span>
+            <h3>Practica sin riesgo</h3>
+            <p>Compra y vende con saldo virtual y observa el resultado. Equivocarse aquí es gratis y enseña mucho.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--surface">
+      <div class="container container--narrow">
+        <div class="section__head section__head--center">
+    <span class="eyebrow">Preguntas frecuentes</span>
+    <h2>Todo lo que suelen preguntarnos</h2>
+    
+  </div>
+        <div class="accordion"><details>
+        <summary>¿La app sirve para aprender si nunca he invertido?</summary>
+        <div class="accordion__content"><p>Sí, está pensada para eso. Empieza por los conceptos —dinero, inflación, riesgo, interés compuesto— y avanza hasta productos concretos como acciones, renta fija y fondos. Cada término se explica dentro de la app, sin dar nada por sabido.</p></div>
+      </details><details>
+        <summary>¿Puedo perder dinero usando la app?</summary>
+        <div class="accordion__content"><p>No puedes perder dinero real porque las operaciones son simuladas y el saldo es ficticio. Lo que sí vas a notar son las emociones de una cartera que sube y baja, que es justo lo que conviene entrenar antes de invertir.</p></div>
+      </details><details>
+        <summary>¿Necesito cuenta para usarla?</summary>
+        <div class="accordion__content"><p>Sí. El acceso se hace con Iniciar sesión con Apple, que evita crear y recordar otra contraseña.</p></div>
+      </details><details>
+        <summary>¿Puedo leer el contenido sin comprar saldo virtual?</summary>
+        <div class="accordion__content"><p>Sí. La compra de la app da acceso al contenido educativo y a la cartera virtual inicial. Las recargas de saldo simulado son opcionales, no son suscripciones y no se renuevan solas.</p></div>
+      </details><details>
+        <summary>¿En qué idioma está la app?</summary>
+        <div class="accordion__content"><p>Toda la interfaz y el contenido educativo están en español.</p></div>
+      </details></div>
+      </div>
+    </section>
+
+    <section class="section section--ink">
+      <div class="container container--narrow center">
+        <h2>Mientras llega al App Store</h2>
+        <p class="lead" style="margin-top:16px">La guía cubre exactamente los mismos fundamentos que la app, con ejemplos y sin tecnicismos. Es la mejor forma de llegar preparado.</p>
+        <div class="actions actions--center" style="margin-top:28px">
+          <a class="button" href="/libro/"><span>Conseguir la guía</span><svg class="button__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="button button--secondary" href="/articles/"><span>Leer el blog</span></a>
+        </div>
+        <p class="disclaimer" style="margin-top:24px">iPhone con iOS 17 o posterior · Inicio de sesión con Apple</p>
+      </div>
+    </section>
+  
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand"><picture>
+      <source srcset="/img/logo/mark-white-128.png" media="(prefers-color-scheme: dark)">
+      <img src="/img/logo/mark-ink-128.png" alt="" width="34" height="28" decoding="async">
+    </picture><span>Empezar a invertir</span></div>
+          <p class="muted" style="margin-top:16px;max-width:34ch">Aprende a invertir y practícalo sin arriesgar dinero. Material educativo en español, sin promesas de rentabilidad.</p>
+        </div>
+        <div>
+          <h3>Producto</h3>
+          <ul><li><a href="/app/">La app</a></li><li><a href="/libro/">El libro</a></li><li><a href="/calculadora-interes-compuesto/">Calculadora de interés compuesto</a></li></ul>
+        </div><div>
+          <h3>Aprender</h3>
+          <ul><li><a href="/articles/">Todos los artículos</a></li><li><a href="/glosario/">Glosario de inversión</a></li><li><a href="/articles/como-empezar-a-invertir-desde-cero.html">Empezar desde cero</a></li><li><a href="/articles/que-es-un-etf.html">Qué es un ETF</a></li><li><a href="/articles/que-es-el-interes-compuesto.html">Interés compuesto</a></li><li><a href="/articles/que-es-la-diversificacion.html">Diversificación</a></li></ul>
+        </div><div>
+          <h3>Proyecto</h3>
+          <ul><li><a href="/sobre/">Sobre el proyecto</a></li><li><a href="mailto:hola@empezar-a-invertir.com">Contacto</a></li><li><a href="/privacidad/">Privacidad</a></li><li><a href="/aviso-legal/">Aviso legal</a></li><li><a href="/feed.xml">RSS</a></li></ul>
+        </div>
+      </div>
+      <div class="footer__note">
+        <span>© 2026 Empezar a invertir</span>
+        <span>Hecho en España · Contenido educativo, no asesoramiento financiero</span>
+      </div>
+    </div>
+  </footer>
+  <script type="module" src="/js/webgpu.js"></script>
+</body>
+</html>

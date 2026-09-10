@@ -1,375 +1,523 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guía para empezar a invertir — Tu primer paso, sin tecnicismos</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Empezar a invertir — Aprende con una guía clara y practica sin riesgo</title>
+  <meta name="description" content="Aprende a invertir desde cero con una guía clara y una app para practicar con una cartera de dinero ficticio. Sin jerga, sin promesas y sin arriesgar un euro.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Empezar a invertir">
+  <meta name="theme-color" content="#F5F6F8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0C1017" media="(prefers-color-scheme: dark)">
+  <link rel="canonical" href="https://www.empezar-a-invertir.com/">
+  
 
-    <!-- SEO Meta Tags -->
-    <meta name="description"
-        content="Una guía clara y directa para empezar a invertir desde cero. Entiende lo esencial, evita el ruido y da tus primeros pasos con sentido común, sin jerga financiera ni promesas irreales.">
-    <meta name="keywords"
-        content="invertir, inversiones, bolsa, finanzas personales, acciones, fondos indexados, renta fija, guía inversión, empezar a invertir">
-    <meta name="robots" content="index, follow">
-    <meta name="author" content="Empezar a Invertir">
-    <meta name="theme-color" content="#15213B">
-    <link rel="canonical" href="https://www.empezar-a-invertir.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Empezar a invertir">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:url" content="https://www.empezar-a-invertir.com/">
+  <meta property="og:title" content="Aprende a invertir sin arriesgar tu dinero">
+  <meta property="og:description" content="Aprende a invertir desde cero con una guía clara y una app para practicar con una cartera de dinero ficticio. Sin jerga, sin promesas y sin arriesgar un euro.">
+  <meta property="og:image" content="https://www.empezar-a-invertir.com/img/og/home.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Aprende a invertir sin arriesgar tu dinero">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Aprende a invertir sin arriesgar tu dinero">
+  <meta name="twitter:description" content="Aprende a invertir desde cero con una guía clara y una app para practicar con una cartera de dinero ficticio. Sin jerga, sin promesas y sin arriesgar un euro.">
+  <meta name="twitter:image" content="https://www.empezar-a-invertir.com/img/og/home.jpg">
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="book">
-    <meta property="og:url" content="https://www.empezar-a-invertir.com/">
-    <meta property="og:title" content="Guía para empezar a invertir — Tu primer paso, sin tecnicismos">
-    <meta property="og:description"
-        content="Una guía clara y directa para empezar a invertir desde cero, sin jerga financiera ni promesas irreales.">
-    <meta property="og:site_name" content="Empezar a Invertir">
-    <meta property="og:image" content="https://www.empezar-a-invertir.com/img/twitter.png">
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://www.empezar-a-invertir.com/">
-    <meta name="twitter:title" content="Guía para empezar a invertir — Tu primer paso, sin tecnicismos">
-    <meta name="twitter:description"
-        content="Una guía clara y directa para empezar a invertir desde cero, sin jerga financiera ni promesas irreales.">
-    <meta name="twitter:image" content="https://www.empezar-a-invertir.com/img/twitter.png">
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="img/twitter.png">
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Geist:wght@100..900&family=IBM+Plex+Mono:wght@400;500&display=swap"
-        rel="stylesheet">
-
-    <link rel="stylesheet" href="style.css">
-
-    <!-- JSON-LD structured data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Book",
-      "name": "Guía para empezar a invertir",
-      "url": "https://www.empezar-a-invertir.com/",
-      "image": "https://www.empezar-a-invertir.com/img/twitter.png",
-      "description": "Una guía clara y directa para empezar a invertir desde cero. Conceptos fundamentales, riesgos, y primeros pasos con sentido común.",
-      "inLanguage": "es",
-      "genre": ["Finanzas", "Inversiones", "Educación financiera"],
-      "audience": {
-        "@type": "Audience",
-        "audienceType": "Principiantes en inversión"
-      },
-      "offers": [
-        {
-          "@type": "Offer",
-          "price": "5.00",
-          "priceCurrency": "USD",
-          "availability": "http://schema.org/InStock",
-          "url": "https://leanpub.com/guia-empezar-invertir"
-        },
-        {
-          "@type": "Offer",
-          "availability": "http://schema.org/InStock",
-          "url": "https://www.amazon.es/dp/B0F6JRM84H"
-        }
-      ]
-    }
-    </script>
-
-    <!-- Google Tag Manager -->
-    <script>(function (w, d, s, l, i) {
-            w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-            var f = d.getElementsByTagName(s)[0], j = d.createElement(s),
-                dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-MQBDL6HW');</script>
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/img/logo/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="alternate" type="application/rss+xml" title="Empezar a invertir" href="/feed.xml">
+  <link rel="stylesheet" href="/style.css">
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Empezar a invertir",
+  "url": "https://www.empezar-a-invertir.com/",
+  "inLanguage": "es",
+  "description": "Aprende a invertir desde cero con una guía clara y una app para practicar con una cartera de dinero ficticio. Sin jerga, sin promesas y sin arriesgar un euro."
+}</script>
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Empezar a invertir",
+  "url": "https://www.empezar-a-invertir.com/",
+  "logo": "https://www.empezar-a-invertir.com/img/logo/icon-512.png",
+  "email": "hola@empezar-a-invertir.com"
+}</script>
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-MQBDL6HW');</script>
 </head>
-
 <body>
-    <!-- GTM noscript -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MQBDL6HW" height="0" width="0"
-            style="display:none;visibility:hidden"></iframe></noscript>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MQBDL6HW" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="/">
+        <picture>
+      <source srcset="/img/logo/mark-white-128.png" media="(prefers-color-scheme: dark)">
+      <img src="/img/logo/mark-ink-128.png" alt="" width="32" height="26" decoding="async">
+    </picture>
+        <span class="nav__brand-text">Empezar a invertir<small>Guía + app de inversión</small></span>
+      </a>
+      <nav class="nav__links" aria-label="Navegación principal"><a href="/app/">La app</a><a href="/libro/">El libro</a><a href="/articles/">Artículos</a><a href="/glosario/">Glosario</a><a href="/calculadora-interes-compuesto/">Calculadora</a></nav>
+      <a class="button button--small nav__cta" href="/app/">Probar la app</a>
+      <details class="nav__menu">
+        <summary>Menú <svg class="" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="nav__menu-panel">
+          <a href="/app/">La app</a><a href="/libro/">El libro</a><a href="/articles/">Artículos</a><a href="/glosario/">Glosario</a><a href="/calculadora-interes-compuesto/">Calculadora</a>
+          <a href="/sobre/">Sobre el proyecto</a>
+        </div>
+      </details>
+    </div>
+  </header>
+  <main id="contenido">
 
-    <!-- ====== Hero ====== -->
     <section class="hero">
-        <div class="hero__left">
-            <div class="hero__top">
-                <span class="eyebrow">Guía para empezar a invertir</span>
-                <h1 class="hero__title">El primer paso hacia tu futuro financiero, sin tecnicismos.</h1>
-                <p class="hero__body">Una guía clara y directa para invertir desde cero. Entiende lo esencial, evita el
-                    ruido y empieza con criterio, aunque hoy no sepas ni por dónde empezar.</p>
-                <div class="hero__cta">
-                    <a href="https://leanpub.com/guia-empezar-invertir" class="btn btn--primary">Comprar en Leanpub</a>
-                    <a href="https://www.amazon.es/dp/B0F6JRM84H?maas=maas_adg_C6F4C3B555BEA3BC23C57D03DE163D10_afap_abs&ref_=aa_maas&tag=maas&ascsubtag=landing_web"
-                        class="btn btn--outline" target="_blank" rel="noopener noreferrer">Comprar en Amazon</a>
-                </div>
-            </div>
-            <div class="hero__proof">
-                <span>SIN JERGA</span>
-                <span>DESDE CERO</span>
-                <span>CON SENTIDO COMÚN</span>
-            </div>
+      <canvas class="hero__gpu" data-webgpu="aurora" data-intensity="0.45" aria-hidden="true"></canvas>
+      <div class="container hero__inner">
+        <div class="hero__copy">
+          <h1 class="display">Aprende a invertir sin arriesgar tu dinero.</h1>
+          <p class="lead">Una guía clara para entender lo esencial y una app para practicarlo con una cartera de dinero ficticio. Sin jerga, sin promesas y sin dar el primer paso a ciegas.</p>
+          <div class="actions">
+            <a class="button" href="/app/"><span>Descubrir la app</span><svg class="button__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="button button--secondary" href="/libro/"><span>Ver la guía</span></a>
+          </div>
+          <div class="hero__proof">
+            <span><svg class="" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> 20 capítulos completos</span>
+            <span><svg class="" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 2 h 7 min</span>
+            <span><svg class="" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM16 12h2"/></svg> Cartera virtual de 10.000 USD</span>
+          </div>
         </div>
-        <div class="hero__right">
-            <img src="img/cover.png" alt="Portada de la Guía para empezar a invertir" class="hero__cover">
+        <div class="hero__art">
+          <figure class="illustration illustration--plain"><img src="/img/illustrations/onboarding.png" alt="" width="1100" height="682" loading="lazy" decoding="async"></figure>
         </div>
+      </div>
     </section>
 
-    <!-- ====== Intro ====== -->
-    <section class="intro">
-        <div class="intro__left">
-            <span class="eyebrow">Una introducción honesta</span>
-            <h2 class="intro__title">Si invertir te abruma, este libro está hecho para bajarte el ruido.</h2>
-            <p class="intro__body">Este libro no vende atajos ni humo. Te explica qué significa invertir, por qué da miedo
-                empezar y cómo puedes dar tus primeros pasos con sentido común, sin fórmulas mágicas ni grandes
-                cantidades de dinero.</p>
+    <section class="section section--surface">
+      <div class="container">
+        <div class="section__head">
+    <span class="eyebrow">Dos formas de aprender</span>
+    <h2>Un libro para entenderlo, una app para practicarlo</h2>
+    <p class="lead">Los dos productos cubren lo mismo desde ángulos distintos: el libro te da los cimientos con calma y la app convierte esos conceptos en decisiones simuladas.</p>
+  </div>
+        <div class="grid grid--2">
+          <article class="card">
+            <figure class="illustration illustration--plain card__art"><img src="/img/illustrations/book.png" alt="Un libro abierto del que brota una planta" width="1100" height="624" loading="lazy" decoding="async"></figure>
+            <h3>La guía completa</h3>
+            <p class="muted">20 capítulos que empiezan en qué es el dinero y terminan comparando acciones, renta fija y fondos. Disponible en PDF, EPUB, MOBI, Kindle y tapa blanda.</p>
+            <a class="text-link" href="/libro/">Ver el índice y los formatos →</a>
+          </article>
+          <article class="card">
+            <figure class="illustration illustration--plain card__art"><img src="/img/illustrations/practice.png" alt="Una persona practica con una cartera virtual en el móvil, rodeada de monedas" width="1100" height="899" loading="lazy" decoding="async"></figure>
+            <h3>La app para practicar</h3>
+            <p class="muted">Lee el mismo contenido desde el móvil, busca acciones y ETF reales y gestiona una cartera de 10.000 USD virtuales para ver cómo se comportan tus decisiones.</p>
+            <a class="text-link" href="/app/">Ver qué puedes hacer →</a>
+          </article>
         </div>
-        <div class="intro__right">
-            <div class="value-point">
-                <h3 class="value-point__title">Empieza desde cero</h3>
-                <p class="value-point__body">No necesitas entender acciones, bonos ni gráficos con velas para
-                    aprovechar el libro.</p>
-            </div>
-            <div class="value-point">
-                <h3 class="value-point__title">Te da criterio, no urgencia</h3>
-                <p class="value-point__body">Aprenderás a entender riesgos, costes e interés compuesto antes de mover
-                    tu dinero.</p>
-            </div>
-            <div class="value-point">
-                <h3 class="value-point__title">Te ayuda a actuar</h3>
-                <p class="value-point__body">La meta no es convertirte en experto, sino que dejes de posponer una
-                    decisión importante.</p>
-            </div>
-        </div>
+      </div>
     </section>
 
-    <!-- ====== Contenido del libro ====== -->
-    <section class="syllabus">
-        <div class="syllabus__left">
-            <span class="eyebrow">Contenido del libro</span>
-            <h2 class="syllabus__title">Un recorrido claro por lo que necesitas entender antes de invertir.</h2>
-            <p class="syllabus__body">La guía avanza como debería hacerlo una primera conversación seria sobre dinero:
-                empieza por los conceptos, sigue por los riesgos y termina aterrizando dónde puedes invertir y cómo
-                pensar cada decisión.</p>
-            <ul class="syllabus__list">
-                <li>Introducción y mentalidad para empezar</li>
-                <li>Dinero, activos, pasivos, liquidez e inflación</li>
-                <li>Riesgo, volatilidad, interés compuesto y diversificación</li>
-                <li>Acciones, renta fija, fondos y otras formas de invertir</li>
-                <li>Conclusión práctica para dar el primer paso</li>
-            </ul>
+    <section class="section">
+      <div class="container">
+        <div class="section__head section__head--center">
+    <span class="eyebrow">La app</span>
+    <h2>Aprender, explorar y practicar en el mismo sitio</h2>
+    <p class="lead">La app no te pide dinero real ni te promete rentabilidades: te deja equivocarte en un entorno simulado y entender por qué.</p>
+  </div>
+        <div class="grid grid--3">
+          <article class="card card--fill">
+            <div class="card__icon"><svg class="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+            <h3>Aprende paso a paso</h3>
+            <p class="muted">Los 20 capítulos de la guía en formato lectura, con progreso guardado, marcadores y explicaciones de cada concepto dentro de la propia interfaz.</p>
+          </article>
+          <article class="card card--fill">
+            <div class="card__icon"><svg class="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35"/></svg></div>
+            <h3>Explora el mercado</h3>
+            <p class="muted">Busca acciones y ETF de todo el mundo, consulta su ficha, su gráfico y los datos clave antes de decidir. Sin análisis técnico ni ruido.</p>
+          </article>
+          <article class="card card--fill">
+            <div class="card__icon"><svg class="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM16 12h2"/></svg></div>
+            <h3>Practica con dinero ficticio</h3>
+            <p class="muted">Empieza con 10.000 USD virtuales, lanza órdenes simuladas y observa cómo evoluciona tu cartera con precios reales de mercado.</p>
+          </article>
         </div>
-        <div class="syllabus__right">
-            <div class="quote-card">
-                <p class="quote-card__text">No necesitas una cartera sofisticada para empezar. Necesitas entender qué
-                    estás haciendo y por qué.</p>
-                <span class="quote-card__meta">ENFOQUE DEL LIBRO</span>
-            </div>
+        <div class="device-row" style="margin-top:48px">
+          <div class="device device--small" role="img" aria-label="Pantalla de cartera con el saldo virtual y las posiciones de ejemplo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 720" role="img" aria-labelledby="ui-portfolio-title-0">
+  <title id="ui-portfolio-title-0">Pantalla de cartera de la app con saldo virtual y posiciones</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <rect width="340" height="720" fill="var(--surface, #FFFFFF)" stroke="none"/>
+
+    <!-- status bar -->
+    <text x="26" y="36" font-size="13" font-weight="600" fill="currentColor" stroke="none">9:41</text>
+    <path d="M262 32 h10" stroke-width="3"/>
+    <path d="M278 28 v8 M284 26 v12 M290 23 v16"/>
+    <rect x="300" y="24" width="26" height="13" rx="4"/>
+    <rect x="303" y="27" width="17" height="7" rx="2" fill="currentColor" stroke="none"/>
+
+    <!-- title -->
+    <text x="24" y="88" font-size="25" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.6">Mi cartera</text>
+
+    <!-- balance -->
+    <rect x="24" y="106" width="292" height="124" rx="22" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="138" font-size="11" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" letter-spacing="1">SALDO VIRTUAL</text>
+    <text x="44" y="176" font-size="27" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.6">10.000,00 US$</text>
+    <text x="44" y="202" font-size="13" fill="var(--muted, #596A84)" stroke="none">Dinero ficticio para practicar</text>
+
+    <!-- actions -->
+    <rect x="24" y="246" width="140" height="46" rx="16" fill="var(--button, #1757E0)" stroke="none"/>
+    <text x="94" y="275" font-size="14" font-weight="600" fill="#FFFFFF" stroke="none" text-anchor="middle">Comprar acciones</text>
+    <rect x="176" y="246" width="140" height="46" rx="16" stroke="var(--line, #DDE7F5)"/>
+    <text x="246" y="275" font-size="14" font-weight="600" fill="currentColor" stroke="none" text-anchor="middle">Añadir saldo</text>
+
+    <!-- positions -->
+    <text x="24" y="330" font-size="11" font-weight="700" fill="var(--muted, #596A84)" stroke="none" letter-spacing="1">TUS ACTIVOS</text>
+
+    <rect x="24" y="346" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="373" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">A</text>
+    <text x="78" y="364" font-size="15" font-weight="600" fill="currentColor" stroke="none">Apple</text>
+    <text x="78" y="382" font-size="12" fill="var(--muted, #596A84)" stroke="none">4 unidades · AAPL</text>
+    <text x="316" y="364" font-size="15" font-weight="600" fill="currentColor" stroke="none" text-anchor="end">1.024,40 US$</text>
+    <text x="316" y="382" font-size="12" font-weight="600" fill="var(--gain, #087C60)" stroke="none" text-anchor="end">+1,82 %</text>
+
+    <rect x="24" y="404" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="431" font-size="14" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">€</text>
+    <text x="78" y="422" font-size="15" font-weight="600" fill="currentColor" stroke="none">MSCI World</text>
+    <text x="78" y="440" font-size="12" fill="var(--muted, #596A84)" stroke="none">12 unidades · IWDA</text>
+    <text x="316" y="422" font-size="15" font-weight="600" fill="currentColor" stroke="none" text-anchor="end">986,10 US$</text>
+    <text x="316" y="440" font-size="12" font-weight="600" fill="var(--loss, #BD3349)" stroke="none" text-anchor="end">−0,64 %</text>
+
+    <rect x="24" y="462" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="489" font-size="14" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">S</text>
+    <text x="78" y="480" font-size="15" font-weight="600" fill="currentColor" stroke="none">S&amp;P 500</text>
+    <text x="78" y="498" font-size="12" fill="var(--muted, #596A84)" stroke="none">8 unidades · VUSA</text>
+    <text x="316" y="480" font-size="15" font-weight="600" fill="currentColor" stroke="none" text-anchor="end">742,80 US$</text>
+    <text x="316" y="498" font-size="12" font-weight="600" fill="var(--gain, #087C60)" stroke="none" text-anchor="end">+0,41 %</text>
+
+    <rect x="24" y="524" width="292" height="52" rx="18" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="547" font-size="12" font-weight="600" fill="var(--accent, #165DDE)" stroke="none">SALDO DISPONIBLE</text>
+    <text x="44" y="566" font-size="13" fill="currentColor" stroke="none">7.246,70 US$ para practicar</text>
+
+    <!-- tab bar -->
+    <path d="M0 646 H340" stroke="var(--line, #DDE7F5)"/>
+    <circle cx="48" cy="677" r="11" fill="var(--accent, #165DDE)" stroke="none"/>
+    <text x="48" y="706" font-size="10" font-weight="600" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">Cartera</text>
+    <circle cx="132" cy="677" r="11"/>
+    <text x="132" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Mercados</text>
+    <path d="M212 668 h16 M212 677 h16 M212 686 h16" stroke-width="2.4"/>
+    <text x="220" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Movimientos</text>
+    <path d="M294 670 h14 a3 3 0 0 1 3 3 v13 a3 3 0 0 1 -3 3 h-14 a3 3 0 0 1 -3 -3 v-13 a3 3 0 0 1 3 -3 z M296 670 v-4 h10 v4"/>
+    <text x="300" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Aprender</text>
+  </g>
+</svg></div>
+          <div class="device device--small" role="img" aria-label="Pantalla de mercados con el buscador de acciones y ETF"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 720" role="img" aria-labelledby="ui-markets-title-1">
+  <title id="ui-markets-title-1">Pantalla de mercados de la app con buscador y resultados de acciones</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <rect width="340" height="720" fill="var(--surface, #FFFFFF)" stroke="none"/>
+
+    <text x="26" y="36" font-size="13" font-weight="600" fill="currentColor" stroke="none">9:41</text>
+    <path d="M262 32 h10" stroke-width="3"/>
+    <path d="M278 28 v8 M284 26 v12 M290 23 v16"/>
+    <rect x="300" y="24" width="26" height="13" rx="4"/>
+    <rect x="303" y="27" width="17" height="7" rx="2" fill="currentColor" stroke="none"/>
+
+    <text x="24" y="88" font-size="25" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.6">Mercados</text>
+    <text x="24" y="110" font-size="13" fill="var(--muted, #596A84)" stroke="none">Busca una empresa, un fondo o su símbolo</text>
+
+    <!-- search -->
+    <rect x="24" y="126" width="292" height="48" rx="16" fill="var(--surface-sunken, #EDF1F8)" stroke="none"/>
+    <circle cx="50" cy="150" r="8"/>
+    <path d="M56 156 l6 6"/>
+    <text x="72" y="155" font-size="14" fill="var(--muted, #596A84)" stroke="none">Buscar empresa o símbolo</text>
+
+    <!-- filters -->
+    <rect x="24" y="190" width="66" height="36" rx="18" fill="var(--button, #1757E0)" stroke="none"/>
+    <text x="57" y="213" font-size="13" font-weight="600" fill="#FFFFFF" stroke="none" text-anchor="middle">Todo</text>
+    <rect x="98" y="190" width="82" height="36" rx="18" stroke="var(--line, #DDE7F5)"/>
+    <text x="139" y="213" font-size="13" fill="currentColor" stroke="none" text-anchor="middle">Acciones</text>
+    <rect x="188" y="190" width="56" height="36" rx="18" stroke="var(--line, #DDE7F5)"/>
+    <text x="216" y="213" font-size="13" fill="currentColor" stroke="none" text-anchor="middle">ETF</text>
+    <rect x="252" y="190" width="64" height="36" rx="18" stroke="var(--line, #DDE7F5)"/>
+    <text x="284" y="213" font-size="13" fill="currentColor" stroke="none" text-anchor="middle">Bonos</text>
+
+    <text x="24" y="260" font-size="11" font-weight="700" fill="var(--muted, #596A84)" stroke="none" letter-spacing="1">RESULTADOS</text>
+
+    <!-- results -->
+    <rect x="24" y="276" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="303" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">A</text>
+    <text x="78" y="294" font-size="15" font-weight="600" fill="currentColor" stroke="none">Apple</text>
+    <text x="78" y="312" font-size="12" fill="var(--muted, #596A84)" stroke="none">AAPL · NASDAQ</text>
+    <path d="M308 291 l7 7 l-7 7"/>
+
+    <rect x="24" y="334" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="361" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">G</text>
+    <text x="78" y="352" font-size="15" font-weight="600" fill="currentColor" stroke="none">Alphabet</text>
+    <text x="78" y="370" font-size="12" fill="var(--muted, #596A84)" stroke="none">GOOGL · NASDAQ</text>
+    <path d="M308 349 l7 7 l-7 7"/>
+
+    <rect x="24" y="392" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="419" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">M</text>
+    <text x="78" y="410" font-size="15" font-weight="600" fill="currentColor" stroke="none">Meta Platforms</text>
+    <text x="78" y="428" font-size="12" fill="var(--muted, #596A84)" stroke="none">META · NASDAQ</text>
+    <path d="M308 407 l7 7 l-7 7"/>
+
+    <rect x="24" y="450" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="477" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">V</text>
+    <text x="78" y="468" font-size="15" font-weight="600" fill="currentColor" stroke="none">Vanguard S&amp;P 500</text>
+    <text x="78" y="486" font-size="12" fill="var(--muted, #596A84)" stroke="none">VUSA · LSE</text>
+    <path d="M308 465 l7 7 l-7 7"/>
+
+    <rect x="24" y="508" width="42" height="42" rx="14" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="45" y="535" font-size="15" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">I</text>
+    <text x="78" y="526" font-size="15" font-weight="600" fill="currentColor" stroke="none">iShares MSCI World</text>
+    <text x="78" y="544" font-size="12" fill="var(--muted, #596A84)" stroke="none">IWDA · AMS</text>
+    <path d="M308 523 l7 7 l-7 7"/>
+
+    <rect x="24" y="566" width="292" height="48" rx="16" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="596" font-size="13" font-weight="600" fill="var(--accent, #165DDE)" stroke="none">Precios con retraso · uso educativo</text>
+
+    <!-- tab bar -->
+    <path d="M0 646 H340" stroke="var(--line, #DDE7F5)"/>
+    <circle cx="48" cy="677" r="11"/>
+    <text x="48" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Cartera</text>
+    <circle cx="132" cy="677" r="11" fill="var(--accent, #165DDE)" stroke="none"/>
+    <text x="132" y="706" font-size="10" font-weight="600" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">Mercados</text>
+    <path d="M212 668 h16 M212 677 h16 M212 686 h16" stroke-width="2.4"/>
+    <text x="220" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Movimientos</text>
+    <path d="M294 670 h14 a3 3 0 0 1 3 3 v13 a3 3 0 0 1 -3 3 h-14 a3 3 0 0 1 -3 -3 v-13 a3 3 0 0 1 3 -3 z M296 670 v-4 h10 v4"/>
+    <text x="300" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Aprender</text>
+  </g>
+</svg></div>
+          <div class="device device--small" role="img" aria-label="Pantalla de aprendizaje con el progreso de lectura y los capítulos"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 720" role="img" aria-labelledby="ui-learn-title-2">
+  <title id="ui-learn-title-2">Pantalla de aprendizaje de la app con progreso de lectura y capítulos</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <rect width="340" height="720" fill="var(--surface, #FFFFFF)" stroke="none"/>
+
+    <text x="26" y="36" font-size="13" font-weight="600" fill="currentColor" stroke="none">9:41</text>
+    <path d="M262 32 h10" stroke-width="3"/>
+    <path d="M278 28 v8 M284 26 v12 M290 23 v16"/>
+    <rect x="300" y="24" width="26" height="13" rx="4"/>
+    <rect x="303" y="27" width="17" height="7" rx="2" fill="currentColor" stroke="none"/>
+
+    <text x="24" y="88" font-size="25" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.6">Aprender</text>
+    <text x="24" y="110" font-size="13" fill="var(--muted, #596A84)" stroke="none">Tu libro para empezar a invertir</text>
+
+    <!-- progress -->
+    <rect x="24" y="126" width="292" height="132" rx="22" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="158" font-size="11" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" letter-spacing="1">TU PROGRESO</text>
+    <text x="44" y="192" font-size="22" font-weight="700" fill="currentColor" stroke="none" letter-spacing="-0.5">12 de 20 capítulos</text>
+    <rect x="44" y="210" width="252" height="10" rx="5" fill="var(--surface, #FFFFFF)" stroke="none"/>
+    <rect x="44" y="210" width="151" height="10" rx="5" fill="var(--accent, #165DDE)" stroke="none"/>
+    <text x="44" y="242" font-size="12" fill="var(--muted, #596A84)" stroke="none">127 minutos de lectura en total</text>
+
+    <text x="24" y="298" font-size="11" font-weight="700" fill="var(--muted, #596A84)" stroke="none" letter-spacing="1">CONCEPTOS FINANCIEROS BÁSICOS</text>
+
+    <!-- chapters -->
+    <rect x="24" y="314" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="336" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">01</text>
+    <text x="72" y="336" font-size="15" font-weight="600" fill="currentColor" stroke="none">Dinero</text>
+    <text x="316" y="336" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">8 min</text>
+
+    <rect x="24" y="364" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="386" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">02</text>
+    <text x="72" y="386" font-size="15" font-weight="600" fill="currentColor" stroke="none">Activos y pasivos</text>
+    <text x="316" y="386" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">6 min</text>
+
+    <rect x="24" y="414" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="436" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">03</text>
+    <text x="72" y="436" font-size="15" font-weight="600" fill="currentColor" stroke="none">Inflación</text>
+    <text x="316" y="436" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">8 min</text>
+
+    <rect x="24" y="464" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="486" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">04</text>
+    <text x="72" y="486" font-size="15" font-weight="600" fill="currentColor" stroke="none">El interés compuesto</text>
+    <text x="316" y="486" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">2 min</text>
+
+    <rect x="24" y="514" width="34" height="34" rx="12" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="41" y="536" font-size="13" font-weight="700" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">05</text>
+    <text x="72" y="536" font-size="15" font-weight="600" fill="currentColor" stroke="none">Diversificación</text>
+    <text x="316" y="536" font-size="12" fill="var(--muted, #596A84)" stroke="none" text-anchor="end">2 min</text>
+
+    <rect x="24" y="570" width="292" height="48" rx="16" fill="var(--pale, #EAF1FF)" stroke="none"/>
+    <text x="44" y="600" font-size="13" font-weight="600" fill="var(--accent, #165DDE)" stroke="none">Cada concepto se explica dentro de la app</text>
+
+    <!-- tab bar -->
+    <path d="M0 646 H340" stroke="var(--line, #DDE7F5)"/>
+    <circle cx="48" cy="677" r="11"/>
+    <text x="48" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Cartera</text>
+    <circle cx="132" cy="677" r="11"/>
+    <text x="132" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Mercados</text>
+    <path d="M212 668 h16 M212 677 h16 M212 686 h16" stroke-width="2.4"/>
+    <text x="220" y="706" font-size="10" fill="var(--muted, #596A84)" stroke="none" text-anchor="middle">Movimientos</text>
+    <path d="M294 670 h14 a3 3 0 0 1 3 3 v13 a3 3 0 0 1 -3 3 h-14 a3 3 0 0 1 -3 -3 v-13 a3 3 0 0 1 3 -3 z M296 670 v-4 h10 v4"/>
+    <text x="300" y="706" font-size="10" font-weight="600" fill="var(--accent, #165DDE)" stroke="none" text-anchor="middle">Aprender</text>
+  </g>
+</svg></div>
         </div>
+        <div class="actions actions--center" style="margin-top:40px">
+          <span class="appstore-badge"><svg width="26" height="26" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516.024.034 1.52.087 2.475-1.258.955-1.345.762-2.391.728-2.43Zm3.314 11.733c-.048-.096-2.325-1.234-2.113-3.422.212-2.189 1.675-2.789 1.698-2.854.023-.065-.597-.79-1.254-1.157a3.692 3.692 0 0 0-1.563-.434c-.108-.003-.483-.095-1.254.116-.508.139-1.653.589-1.968.607-.316.018-1.256-.522-2.267-.665-.647-.125-1.333.131-1.824.328-.49.196-1.422.754-2.074 2.237-.652 1.482-.311 3.83-.067 4.56.244.729.625 1.924 1.273 2.796.576.984 1.34 1.667 1.659 1.899.319.232 1.219.386 1.843.067.502-.308 1.408-.485 1.766-.472.357.013 1.061.154 1.782.539.571.197 1.111.115 1.652-.105.541-.221 1.324-1.059 2.238-2.758.347-.79.505-1.217.473-1.282Z"/></svg><span><small>Muy pronto en</small>App Store</span></span>
+          <a class="button button--secondary" href="/app/"><span>Cómo funciona</span></a>
+        </div>
+      </div>
     </section>
 
-    <!-- ====== Contenido detallado ====== -->
-    <section class="toc">
-        <div class="toc__inner">
-        <h2 class="toc__title">Contenido del libro</h2>
-        <div class="accordion">
-            <details>
-                <summary>Introducción</summary>
-                <div class="details-content">
-                    <p>Por qué invertir es fundamental para tu futuro financiero, ideas erróneas que desmontamos desde el
-                        principio y cómo está estructurada la guía para llevarte paso a paso desde cero.</p>
-                </div>
-            </details>
-
-            <details>
-                <summary>Conceptos financieros básicos</summary>
-                <div class="details-content">
-                    <p>Los pilares que necesitas para navegar el mundo de las finanzas sin perderte.</p>
-                    <div class="accordion nested-accordion">
-                        <details>
-                            <summary>Dinero</summary>
-                            <div class="details-content">
-                                <p>¿Qué es realmente el dinero más allá de monedas y billetes? Sus funciones esenciales y
-                                    cómo ha cambiado hasta la era digital.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Activos y Pasivos</summary>
-                            <div class="details-content">
-                                <p>Aprende a identificar qué te genera ingresos (activos) y qué te genera gastos
-                                    (pasivos). Clave para construir riqueza.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Liquidez</summary>
-                            <div class="details-content">
-                                <p>La capacidad de convertir un activo en dinero rápidamente. Por qué importa para
-                                    emergencias y oportunidades.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Inflación</summary>
-                            <div class="details-content">
-                                <p>El enemigo silencioso de tus ahorros. Cómo reduce tu poder adquisitivo y por qué
-                                    invertir es la mejor herramienta para combatirla.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Volatilidad</summary>
-                            <div class="details-content">
-                                <p>Las fluctuaciones de precios no siempre son sinónimo de riesgo si tienes un horizonte
-                                    temporal adecuado.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Riesgo</summary>
-                            <div class="details-content">
-                                <p>Los tipos más comunes de riesgo, cómo se relacionan con la rentabilidad y estrategias
-                                    básicas para gestionarlo.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>El interés compuesto</summary>
-                            <div class="details-content">
-                                <p>Cómo reinvertir tus ganancias genera crecimiento exponencial. La octava maravilla del
-                                    mundo financiero.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Diversificación</summary>
-                            <div class="details-content">
-                                <p>No pongas todos los huevos en la misma canasta. Por qué distribuir tus inversiones
-                                    reduce la exposición a riesgos.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Relación entre rentabilidad y riesgo</summary>
-                            <div class="details-content">
-                                <p>Mayores rentabilidades potenciales requieren mayores niveles de riesgo. Cómo encontrar
-                                    tu equilibrio.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Los costes de invertir</summary>
-                            <div class="details-content">
-                                <p>Comisiones, impuestos y otros gastos que pueden mermar tus ganancias. La importancia
-                                    de minimizarlos.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Tipos de interés</summary>
-                            <div class="details-content">
-                                <p>El "precio del dinero". Cómo los tipos fijados por los bancos centrales afectan a tus
-                                    ahorros e inversiones.</p>
-                            </div>
-                        </details>
-                    </div>
-                </div>
-            </details>
-
-            <details>
-                <summary>¿Dónde invertir?</summary>
-                <div class="details-content">
-                    <p>Las principales categorías de inversión donde puedes empezar a colocar tu dinero.</p>
-                    <div class="accordion nested-accordion">
-                        <details>
-                            <summary>El origen de la Bolsa</summary>
-                            <div class="details-content">
-                                <p>Cómo nacieron los mercados de valores, desde las primeras lonjas hasta las bolsas
-                                    electrónicas modernas.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Acciones</summary>
-                            <div class="details-content">
-                                <p>Qué implica ser accionista, cómo se valoran y los factores clave a considerar antes
-                                    de invertir.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Renta fija</summary>
-                            <div class="details-content">
-                                <p>Bonos de gobiernos y empresas: sus características, riesgos y papel en una cartera
-                                    diversificada.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Fondos de inversión</summary>
-                            <div class="details-content">
-                                <p>Qué son, cómo funcionan, tipos (indexados, gestión activa) y sus ventajas e
-                                    inconvenientes.</p>
-                            </div>
-                        </details>
-                        <details>
-                            <summary>Otras formas de invertir</summary>
-                            <div class="details-content">
-                                <p>Bienes raíces, materias primas, criptomonedas y otras alternativas con sus
-                                    particularidades.</p>
-                            </div>
-                        </details>
-                    </div>
-                </div>
-            </details>
-
-            <details>
-                <summary>Conclusión</summary>
-                <div class="details-content">
-                    <p>Recapitulamos los aprendizajes clave, reforzamos la mentalidad necesaria para invertir con éxito a
-                        largo plazo y te animamos a dar el siguiente paso práctico.</p>
-                </div>
-            </details>
+    <section class="section section--ink">
+      <div class="container book-grid">
+        <img class="book-cover" src="/img/cover-800.jpg" alt="Portada del libro Guía para empezar a invertir" width="800" height="1277" loading="lazy" decoding="async">
+        <div class="stack stack--lg">
+          <div class="section__head">
+    <span class="eyebrow">El libro</span>
+    <h2>La guía que empezó todo esto</h2>
+    <p class="lead">Empezar a invertir nació como un libro para explicar la inversión sin humo. Hoy sigue siendo la base de todo el contenido de la app.</p>
+  </div>
+          <ul class="checklist"><li><svg class="" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg><span><strong>20 capítulos</strong> y 127 minutos de lectura, de cero a productos concretos.</span></li><li><svg class="" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg><span><strong>Sin jerga</strong>: cada término se explica la primera vez que aparece.</span></li><li><svg class="" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg><span><strong>Con criterio</strong>: riesgo, costes e interés compuesto antes de mover dinero.</span></li></ul>
+          <div class="actions">
+            <a class="button" href="https://leanpub.com/guia-empezar-invertir" target="_blank" rel="noopener"><span>Comprar en Leanpub</span></a>
+            <a class="button button--secondary" href="/libro/"><span>Ver el índice</span></a>
+          </div>
+          <p class="disclaimer">Algunos enlaces de compra son de afiliado. El precio no cambia para ti y nos ayuda a mantener el proyecto.</p>
         </div>
-        </div>
+      </div>
     </section>
 
-    <!-- ====== CTA ====== -->
-    <section class="cta-section">
-        <div class="cta-section__left">
-            <span class="eyebrow">Da el primer paso</span>
-            <h2 class="cta-section__title">Deja de procrastinar tu futuro financiero.</h2>
-            <p class="cta-section__body">Consigue una guía sencilla, directa y útil para entender la inversión sin caer
-                en el lenguaje opaco ni en las promesas irreales que abundan online.</p>
-            <div class="hero__cta">
-                <a href="https://leanpub.com/guia-empezar-invertir" class="btn btn--primary">Leanpub · PDF EPUB
-                    MOBI</a>
-            </div>
+    <section class="section">
+      <div class="container">
+        <div class="section__head">
+    <span class="eyebrow">Por dónde empezar</span>
+    <h2>Los conceptos que de verdad importan</h2>
+    <p class="lead">Si prefieres empezar por el blog, estos son los artículos que cubren la base. Todos se leen en menos de 15 minutos.</p>
+  </div>
+        <div class="grid grid--3">
+          <a class="card card--flat" href="/articles/diferencia-entre-activos-y-pasivos.html">
+                <div class="card__icon"><svg class="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM16 12h2"/></svg></div>
+                <h3>Activos y pasivos</h3>
+                <p class="muted">Aprende qué son activos y pasivos con ejemplos claros. Entiende por qué esta distinción es vital para tus finanzas personales y la construcción de riqueza.</p>
+              </a><a class="card card--flat" href="/articles/que-es-la-inflacion-como-afecta-ahorros.html">
+                <div class="card__icon"><svg class="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 3v18h18M7 15l4-4 3 3 5-6"/></svg></div>
+                <h3>Inflación</h3>
+                <p class="muted">Entiende qué es la inflación, cómo erosiona el poder adquisitivo de tus ahorros y por qué invertir es la mejor forma de proteger tu dinero a largo plazo.</p>
+              </a><a class="card card--flat" href="/articles/que-es-el-interes-compuesto.html">
+                <div class="card__icon"><svg class="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.5 6.5 9 9M15 15l2.5 2.5M17.5 6.5 15 9M9 15l-2.5 2.5"/></svg></div>
+                <h3>Interés compuesto</h3>
+                <p class="muted">Entiende qué es el interés compuesto, cómo funciona el efecto bola de nieve, ejemplos con números reales y por qué empezar a invertir pronto marca una diferencia enorme.</p>
+              </a><a class="card card--flat" href="/articles/que-es-la-diversificacion.html">
+                <div class="card__icon"><svg class="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg></div>
+                <h3>Diversificación</h3>
+                <p class="muted">Aprende qué es la diversificación de inversiones, por qué reduce el riesgo de tu cartera y cómo diversificar aunque tengas poco dinero. Guía para principiantes.</p>
+              </a><a class="card card--flat" href="/articles/que-es-un-etf.html">
+                <div class="card__icon"><svg class="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35"/></svg></div>
+                <h3>ETFs y fondos</h3>
+                <p class="muted">Aprende qué es un ETF, cómo funciona, en qué se diferencia de un fondo indexado, sus ventajas e inconvenientes, y cómo comprar ETFs en España. Guía para principiantes.</p>
+              </a><a class="card card--flat" href="/articles/renta-fija-vs-renta-variable.html">
+                <div class="card__icon"><svg class="" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                <h3>Renta fija y variable</h3>
+                <p class="muted">Descubre las diferencias entre renta fija y renta variable. Qué es cada una, riesgos, rentabilidad esperada y cómo combinarlas en tu cartera de inversión.</p>
+              </a>
         </div>
-        <div class="cta-section__right">
-            <div class="price-card">
-                <span class="eyebrow">Formatos disponibles</span>
-                <h3 class="price-card__title">Compra donde te resulte más cómodo y empieza hoy.</h3>
-                <p class="price-card__item">Leanpub · PDF, EPUB y MOBI para leer en cualquier dispositivo.</p>
-                <p class="price-card__item">Amazon · Kindle o tapa blanda si prefieres formato físico.</p>
-                <p class="price-card__item">Sin promesas grandilocuentes: solo una base clara para empezar a invertir
-                    mejor.</p>
-                <a href="https://www.amazon.es/dp/B0F6JRM84H?maas=maas_adg_C6F4C3B555BEA3BC23C57D03DE163D10_afap_abs&ref_=aa_maas&tag=maas&ascsubtag=landing_web"
-                    class="btn btn--outline-dark" target="_blank" rel="noopener noreferrer">Amazon · Kindle / Tapa
-                    blanda</a>
-            </div>
-        </div>
+      </div>
     </section>
 
-    <!-- ====== Footer ====== -->
-    <footer class="footer">
-        <span>&copy; 2025 · Guía para empezar a invertir</span>
-        <a href="articles/index.html">Blog</a>
-    </footer>
+    <section class="section section--surface">
+      <div class="container">
+        <div class="section__head">
+    <span class="eyebrow">Blog</span>
+    <h2>Artículos recientes</h2>
+    <p class="lead">Guías prácticas sobre fondos, inflación, riesgo y errores frecuentes. Contenido en español, actualizado y sin recomendaciones de compra.</p>
+  </div>
+        <div class="grid grid--3"><a class="article-card" href="/articles/msci-world-vs-sp-500.html">
+    <span class="article-card__category">Dónde invertir</span>
+    <h3 class="article-card__title">MSCI World vs S&amp;P 500: cuál elegir</h3>
+    <p class="article-card__desc">Comparamos el MSCI World y el S&amp;P 500: qué empresas incluye cada índice, cuánto peso tiene Estados Unidos, qué riesgo asumes y cuál encaja mejor en tu cartera.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 8 min</span>
+  </a><a class="article-card" href="/articles/cartera-indexada-tres-fondos.html">
+    <span class="article-card__category">Dónde invertir</span>
+    <h3 class="article-card__title">Cómo construir una cartera indexada con tres fondos</h3>
+    <p class="article-card__desc">Aprende a montar una cartera indexada sencilla con tres fondos, qué porcentaje dedicar a cada uno según tu horizonte y cómo rebalancear sin pagar impuestos.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 9 min</span>
+  </a><a class="article-card" href="/articles/dca-invertir-cada-mes.html">
+    <span class="article-card__category">Primeros pasos</span>
+    <h3 class="article-card__title">DCA: invertir la misma cantidad cada mes</h3>
+    <p class="article-card__desc">Qué es el DCA o inversión periódica, por qué funciona mejor de lo que parece, en qué casos no supera a invertir de golpe y cómo automatizar tus aportaciones.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 7 min</span>
+  </a></div>
+        <div class="actions" style="margin-top:32px"><a class="button button--secondary" href="/articles/"><span>Ver los 25 artículos</span><svg class="button__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      </div>
+    </section>
 
-    <script async defer>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('consent', 'default', {
-            'ad_storage': 'denied', 'ad_user_data': 'denied',
-            'ad_personalization': 'denied', 'analytics_storage': 'denied'
-        });
-        setTimeout(() => {
-            gtag('consent', 'update', {
-                'ad_storage': 'granted', 'ad_user_data': 'granted',
-                'ad_personalization': 'granted', 'analytics_storage': 'granted'
-            });
-        }, 1000);
-    </script>
+    <section class="section">
+      <div class="container container--narrow">
+        <div class="section__head section__head--center">
+    <span class="eyebrow">Preguntas frecuentes</span>
+    <h2>Dudas habituales antes de empezar</h2>
+    
+  </div>
+        <div class="accordion"><details>
+        <summary>¿Necesito dinero real para practicar con la app?</summary>
+        <div class="accordion__content"><p>No. La app arranca con una cartera virtual de 10.000 USD que no es dinero real y no se puede retirar ni canjear. Puedes comprar y vender acciones y ETF simulados para entender cómo se comporta una cartera antes de invertir tu dinero.</p></div>
+      </details><details>
+        <summary>¿Esto es asesoramiento financiero?</summary>
+        <div class="accordion__content"><p>No. El libro y la app son material educativo. Explican conceptos, muestran ejemplos y te ayudan a practicar, pero no recomiendan productos ni sustituyen el consejo de un profesional que conozca tu situación.</p></div>
+      </details><details>
+        <summary>¿Puedo empezar a invertir con poco dinero?</summary>
+        <div class="accordion__content"><p>Sí. Muchos fondos indexados y roboadvisors permiten empezar con aportaciones de 50 o 100 euros al mes. Antes de invertir conviene tener un fondo de emergencia y las deudas caras bajo control.</p></div>
+      </details><details>
+        <summary>¿En qué se diferencia el libro de la app?</summary>
+        <div class="accordion__content"><p>El libro es la guía completa: 20 capítulos que explican el dinero, el riesgo, el interés compuesto o los fondos de inversión con calma. La app convierte ese contenido en práctica diaria con lectura integrada y una cartera simulada.</p></div>
+      </details><details>
+        <summary>¿Cuándo estará disponible la app?</summary>
+        <div class="accordion__content"><p>Está en fase final de preparación para el App Store. Mientras tanto puedes leer los artículos del blog y conseguir la guía, que cubre exactamente los mismos fundamentos.</p></div>
+      </details></div>
+      </div>
+    </section>
+
+    <section class="section section--ink">
+      <div class="container container--narrow center">
+        <h2>Deja de posponer una decisión importante</h2>
+        <p class="lead" style="margin-top:16px">Empieza por entender, sigue practicando y decide después. Sin prisa y sin arriesgar dinero que no puedas permitirte perder.</p>
+        <div class="actions actions--center" style="margin-top:28px">
+          <a class="button" href="/app/"><span>Descubrir la app</span><svg class="button__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="button button--secondary" href="/libro/"><span>Conseguir la guía</span></a>
+        </div>
+      </div>
+    </section>
+    
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand"><picture>
+      <source srcset="/img/logo/mark-white-128.png" media="(prefers-color-scheme: dark)">
+      <img src="/img/logo/mark-ink-128.png" alt="" width="34" height="28" decoding="async">
+    </picture><span>Empezar a invertir</span></div>
+          <p class="muted" style="margin-top:16px;max-width:34ch">Aprende a invertir y practícalo sin arriesgar dinero. Material educativo en español, sin promesas de rentabilidad.</p>
+        </div>
+        <div>
+          <h3>Producto</h3>
+          <ul><li><a href="/app/">La app</a></li><li><a href="/libro/">El libro</a></li><li><a href="/calculadora-interes-compuesto/">Calculadora de interés compuesto</a></li></ul>
+        </div><div>
+          <h3>Aprender</h3>
+          <ul><li><a href="/articles/">Todos los artículos</a></li><li><a href="/glosario/">Glosario de inversión</a></li><li><a href="/articles/como-empezar-a-invertir-desde-cero.html">Empezar desde cero</a></li><li><a href="/articles/que-es-un-etf.html">Qué es un ETF</a></li><li><a href="/articles/que-es-el-interes-compuesto.html">Interés compuesto</a></li><li><a href="/articles/que-es-la-diversificacion.html">Diversificación</a></li></ul>
+        </div><div>
+          <h3>Proyecto</h3>
+          <ul><li><a href="/sobre/">Sobre el proyecto</a></li><li><a href="mailto:hola@empezar-a-invertir.com">Contacto</a></li><li><a href="/privacidad/">Privacidad</a></li><li><a href="/aviso-legal/">Aviso legal</a></li><li><a href="/feed.xml">RSS</a></li></ul>
+        </div>
+      </div>
+      <div class="footer__note">
+        <span>© 2026 Empezar a invertir</span>
+        <span>Hecho en España · Contenido educativo, no asesoramiento financiero</span>
+      </div>
+    </div>
+  </footer>
+  <script type="module" src="/js/webgpu.js"></script>
 </body>
-
 </html>

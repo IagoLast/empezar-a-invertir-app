@@ -1,214 +1,457 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog de Inversión para Principiantes — Empezar a Invertir</title>
-    <meta name="description"
-        content="Artículos y guías sobre inversión para principiantes. Aprende conceptos básicos, estrategias y consejos para empezar a invertir tu dinero de forma inteligente.">
-    <meta name="robots" content="index, follow">
-    <meta name="author" content="Empezar a Invertir">
-    <meta name="theme-color" content="#15213B">
-    <link rel="canonical" href="https://www.empezar-a-invertir.com/articles/">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog de inversión para principiantes — Empezar a invertir</title>
+  <meta name="description" content="Artículos y guías sobre inversión para principiantes: cómo empezar desde cero, qué es un ETF o un fondo indexado, cómo funciona el interés compuesto y qué errores evitar.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Empezar a invertir">
+  <meta name="theme-color" content="#F5F6F8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0C1017" media="(prefers-color-scheme: dark)">
+  <link rel="canonical" href="https://www.empezar-a-invertir.com/articles/">
+  
 
-    <script type="application/ld+json">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Empezar a invertir">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:url" content="https://www.empezar-a-invertir.com/articles/">
+  <meta property="og:title" content="Guías de inversión para principiantes">
+  <meta property="og:description" content="Artículos y guías sobre inversión para principiantes: cómo empezar desde cero, qué es un ETF o un fondo indexado, cómo funciona el interés compuesto y qué errores evitar.">
+  <meta property="og:image" content="https://www.empezar-a-invertir.com/img/og/articles.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Guías de inversión para principiantes">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Guías de inversión para principiantes">
+  <meta name="twitter:description" content="Artículos y guías sobre inversión para principiantes: cómo empezar desde cero, qué es un ETF o un fondo indexado, cómo funciona el interés compuesto y qué errores evitar.">
+  <meta name="twitter:image" content="https://www.empezar-a-invertir.com/img/og/articles.jpg">
+
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/img/logo/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="alternate" type="application/rss+xml" title="Empezar a invertir" href="/feed.xml">
+  <link rel="stylesheet" href="/style.css">
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Blog de inversión para principiantes",
+  "url": "https://www.empezar-a-invertir.com/articles/",
+  "description": "Artículos y guías sobre inversión para principiantes.",
+  "inLanguage": "es",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Empezar a invertir",
+    "url": "https://www.empezar-a-invertir.com/"
+  }
+}</script>
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
     {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      "name": "Blog de inversión para principiantes",
-      "url": "https://www.empezar-a-invertir.com/articles/",
-      "description": "Artículos y guías sobre inversión para principiantes.",
-      "inLanguage": "es",
-      "isPartOf": { "@type": "WebSite", "name": "Empezar a Invertir", "url": "https://www.empezar-a-invertir.com/" }
+      "@type": "ListItem",
+      "position": 1,
+      "url": "https://www.empezar-a-invertir.com/articles/como-empezar-a-invertir-desde-cero.html",
+      "name": "Cómo empezar a invertir desde cero"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "url": "https://www.empezar-a-invertir.com/articles/como-invertir-con-poco-dinero.html",
+      "name": "Cómo invertir con poco dinero"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "url": "https://www.empezar-a-invertir.com/articles/cuanto-dinero-necesito-para-invertir.html",
+      "name": "Cuánto dinero necesito para empezar a invertir"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "url": "https://www.empezar-a-invertir.com/articles/diferencia-entre-activos-y-pasivos.html",
+      "name": "Diferencia entre activos y pasivos"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "url": "https://www.empezar-a-invertir.com/articles/donde-invertir-mi-dinero-opciones-novatos.html",
+      "name": "¿Dónde invertir mi dinero? Opciones para principiantes"
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "url": "https://www.empezar-a-invertir.com/articles/errores-comunes-invertir-principiantes.html",
+      "name": "9 errores comunes al invertir siendo principiante"
+    },
+    {
+      "@type": "ListItem",
+      "position": 7,
+      "url": "https://www.empezar-a-invertir.com/articles/fondo-de-emergencia-cuanto-necesito.html",
+      "name": "Fondo de emergencia: cuánto necesito y dónde guardarlo"
+    },
+    {
+      "@type": "ListItem",
+      "position": 8,
+      "url": "https://www.empezar-a-invertir.com/articles/guia-basica-invertir-espana.html",
+      "name": "Guía básica para invertir en España"
+    },
+    {
+      "@type": "ListItem",
+      "position": 9,
+      "url": "https://www.empezar-a-invertir.com/articles/que-es-el-interes-compuesto.html",
+      "name": "Qué es el interés compuesto y cómo funciona"
+    },
+    {
+      "@type": "ListItem",
+      "position": 10,
+      "url": "https://www.empezar-a-invertir.com/articles/que-es-la-diversificacion.html",
+      "name": "Qué es la diversificación en inversiones"
+    },
+    {
+      "@type": "ListItem",
+      "position": 11,
+      "url": "https://www.empezar-a-invertir.com/articles/que-es-la-inflacion-como-afecta-ahorros.html",
+      "name": "Qué es la inflación y cómo afecta a tus ahorros"
+    },
+    {
+      "@type": "ListItem",
+      "position": 12,
+      "url": "https://www.empezar-a-invertir.com/articles/que-es-un-etf.html",
+      "name": "Qué es un ETF y cómo funciona"
+    },
+    {
+      "@type": "ListItem",
+      "position": 13,
+      "url": "https://www.empezar-a-invertir.com/articles/que-es-un-fondo-indexado.html",
+      "name": "Qué es un fondo indexado y cómo funciona"
+    },
+    {
+      "@type": "ListItem",
+      "position": 14,
+      "url": "https://www.empezar-a-invertir.com/articles/que-es-un-roboadvisor.html",
+      "name": "Qué es un roboadvisor y cómo funciona"
+    },
+    {
+      "@type": "ListItem",
+      "position": 15,
+      "url": "https://www.empezar-a-invertir.com/articles/renta-fija-vs-renta-variable.html",
+      "name": "Renta fija vs renta variable"
+    },
+    {
+      "@type": "ListItem",
+      "position": 16,
+      "url": "https://www.empezar-a-invertir.com/articles/msci-world-vs-sp-500.html",
+      "name": "MSCI World vs S&P 500: cuál elegir"
+    },
+    {
+      "@type": "ListItem",
+      "position": 17,
+      "url": "https://www.empezar-a-invertir.com/articles/cartera-indexada-tres-fondos.html",
+      "name": "Cómo construir una cartera indexada con tres fondos"
+    },
+    {
+      "@type": "ListItem",
+      "position": 18,
+      "url": "https://www.empezar-a-invertir.com/articles/dca-invertir-cada-mes.html",
+      "name": "DCA: invertir la misma cantidad cada mes"
+    },
+    {
+      "@type": "ListItem",
+      "position": 19,
+      "url": "https://www.empezar-a-invertir.com/articles/cuanto-puedo-ganar-invirtiendo-100-euros-al-mes.html",
+      "name": "Cuánto puedo ganar invirtiendo 100 euros al mes"
+    },
+    {
+      "@type": "ListItem",
+      "position": 20,
+      "url": "https://www.empezar-a-invertir.com/articles/simulador-de-bolsa-como-practicar.html",
+      "name": "Simulador de bolsa: cómo practicar sin arriesgar dinero"
+    },
+    {
+      "@type": "ListItem",
+      "position": 21,
+      "url": "https://www.empezar-a-invertir.com/articles/psicologia-del-inversor.html",
+      "name": "Psicología del inversor: por qué vendes en el peor momento"
+    },
+    {
+      "@type": "ListItem",
+      "position": 22,
+      "url": "https://www.empezar-a-invertir.com/articles/fiscalidad-fondos-indexados-espana.html",
+      "name": "Fiscalidad de los fondos indexados en España"
+    },
+    {
+      "@type": "ListItem",
+      "position": 23,
+      "url": "https://www.empezar-a-invertir.com/articles/plan-de-pensiones-o-fondo-indexado.html",
+      "name": "Plan de pensiones o fondo indexado"
+    },
+    {
+      "@type": "ListItem",
+      "position": 24,
+      "url": "https://www.empezar-a-invertir.com/articles/que-son-los-dividendos.html",
+      "name": "Qué son los dividendos y cómo funcionan"
+    },
+    {
+      "@type": "ListItem",
+      "position": 25,
+      "url": "https://www.empezar-a-invertir.com/articles/app-para-aprender-a-invertir.html",
+      "name": "Cómo elegir una app para aprender a invertir"
     }
-    </script>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Geist:wght@100..900&family=IBM+Plex+Mono:wght@400;500&display=swap"
-        rel="stylesheet">
-
-    <link rel="stylesheet" href="../style.css">
-
-    <!-- Google Tag Manager -->
-    <script>(function (w, d, s, l, i) {
-            w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-            var f = d.getElementsByTagName(s)[0], j = d.createElement(s),
-                dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-MQBDL6HW');</script>
+  ]
+}</script>
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-MQBDL6HW');</script>
 </head>
-
 <body>
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MQBDL6HW" height="0" width="0"
-            style="display:none;visibility:hidden"></iframe></noscript>
-
-    <!-- Nav -->
-    <nav class="nav">
-        <a href="../index.html" class="nav__logo">Guía para empezar a invertir</a>
-        <div class="nav__links">
-            <a href="index.html" class="active">Blog</a>
-            <a href="../index.html">Conseguir la guía</a>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MQBDL6HW" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="/">
+        <picture>
+      <source srcset="/img/logo/mark-white-128.png" media="(prefers-color-scheme: dark)">
+      <img src="/img/logo/mark-ink-128.png" alt="" width="32" height="26" decoding="async">
+    </picture>
+        <span class="nav__brand-text">Empezar a invertir<small>Guía + app de inversión</small></span>
+      </a>
+      <nav class="nav__links" aria-label="Navegación principal"><a href="/app/">La app</a><a href="/libro/">El libro</a><a href="/articles/" aria-current="page">Artículos</a><a href="/glosario/">Glosario</a><a href="/calculadora-interes-compuesto/">Calculadora</a></nav>
+      <a class="button button--small nav__cta" href="/app/">Probar la app</a>
+      <details class="nav__menu">
+        <summary>Menú <svg class="" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="nav__menu-panel">
+          <a href="/app/">La app</a><a href="/libro/">El libro</a><a href="/articles/">Artículos</a><a href="/glosario/">Glosario</a><a href="/calculadora-interes-compuesto/">Calculadora</a>
+          <a href="/sobre/">Sobre el proyecto</a>
         </div>
-    </nav>
+      </details>
+    </div>
+  </header>
+  <main id="contenido">
 
-    <!-- Header -->
-    <header class="blog-header">
-        <h1 class="blog-header__title">Blog de inversión para principiantes</h1>
-        <p class="blog-header__subtitle">Recursos y guías para dar tus primeros pasos en el mundo de la inversión.</p>
-    </header>
-
-    <!-- Article Grid -->
-    <section class="blog-list">
-        <div class="card-grid">
-            <a href="como-empezar-a-invertir-desde-cero.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Primeros pasos</span>
-                    <h2 class="card__title">Cómo empezar a invertir desde cero</h2>
-                    <p class="card__desc">La guía definitiva paso a paso para quienes no saben por dónde comenzar.
-                        Objetivos, perfil de riesgo, fondo de emergencia y primeros pasos prácticos.</p>
-                </div>
-            </a>
-
-            <a href="guia-basica-invertir-espana.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Inversión en España</span>
-                    <h2 class="card__title">Guía básica para invertir en España</h2>
-                    <p class="card__desc">¿Inviertes desde España? Conoce las opciones, plataformas y aspectos
-                        fiscales clave que debes tener en cuenta.</p>
-                </div>
-            </a>
-
-            <a href="como-invertir-con-poco-dinero.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Primeros pasos</span>
-                    <h2 class="card__title">Cómo invertir con poco dinero</h2>
-                    <p class="card__desc">No necesitas ser rico para invertir. Descubre cómo empezar con 50€ o 100€
-                        gracias a los fondos indexados y la inversión periódica.</p>
-                </div>
-            </a>
-
-            <a href="donde-invertir-mi-dinero-opciones-novatos.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Dónde invertir</span>
-                    <h2 class="card__title">¿Dónde invertir mi dinero? Opciones para principiantes</h2>
-                    <p class="card__desc">Un repaso a las alternativas más comunes: cuentas remuneradas, fondos
-                        indexados, roboadvisors, acciones y bonos.</p>
-                </div>
-            </a>
-
-            <a href="diferencia-entre-activos-y-pasivos.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Conceptos básicos</span>
-                    <h2 class="card__title">Diferencia entre activos y pasivos</h2>
-                    <p class="card__desc">Un concepto fundamental: aprende a distinguir qué pone dinero en tu
-                        bolsillo y qué lo saca.</p>
-                </div>
-            </a>
-
-            <a href="que-es-un-fondo-indexado.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Conceptos básicos</span>
-                    <h2 class="card__title">Qué es un fondo indexado y cómo funciona</h2>
-                    <p class="card__desc">La forma más sencilla, barata y eficaz de invertir a largo plazo. Qué son, cómo funcionan y cómo invertir en ellos desde España.</p>
-                </div>
-            </a>
-
-            <a href="que-es-el-interes-compuesto.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Conceptos básicos</span>
-                    <h2 class="card__title">Qué es el interés compuesto</h2>
-                    <p class="card__desc">La fuerza más poderosa de la inversión: cómo tus ganancias generan más ganancias y por qué empezar pronto marca la diferencia.</p>
-                </div>
-            </a>
-
-            <a href="que-es-la-inflacion-como-afecta-ahorros.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Conceptos básicos</span>
-                    <h2 class="card__title">Qué es la inflación y cómo afecta a tus ahorros</h2>
-                    <p class="card__desc">El enemigo silencioso de tu dinero. Descubre por qué tener los ahorros parados en el banco es perder dinero cada año.</p>
-                </div>
-            </a>
-
-            <a href="fondo-de-emergencia-cuanto-necesito.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Primeros pasos</span>
-                    <h2 class="card__title">Fondo de emergencia: cuánto necesitas</h2>
-                    <p class="card__desc">El paso previo imprescindible antes de invertir. Cómo calcular tu fondo de emergencia, dónde guardarlo y errores comunes.</p>
-                </div>
-            </a>
-
-            <a href="que-es-un-roboadvisor.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Dónde invertir</span>
-                    <h2 class="card__title">Qué es un roboadvisor y cómo funciona</h2>
-                    <p class="card__desc">Inversión automatizada con fondos indexados. Descubre los principales roboadvisors en España y si te conviene usar uno.</p>
-                </div>
-            </a>
-
-            <a href="renta-fija-vs-renta-variable.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Conceptos básicos</span>
-                    <h2 class="card__title">Renta fija vs renta variable</h2>
-                    <p class="card__desc">Los dos grandes bloques de la inversión: qué es cada uno, cuánto riesgo
-                        implican y cómo combinarlos según tu situación.</p>
-                </div>
-            </a>
-
-            <a href="que-es-la-diversificacion.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Conceptos básicos</span>
-                    <h2 class="card__title">Qué es la diversificación y por qué es clave al invertir</h2>
-                    <p class="card__desc">No pongas todos los huevos en la misma cesta. Aprende a repartir tus
-                        inversiones para reducir el riesgo.</p>
-                </div>
-            </a>
-
-            <a href="errores-comunes-invertir-principiantes.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Primeros pasos</span>
-                    <h2 class="card__title">9 errores comunes al invertir siendo principiante</h2>
-                    <p class="card__desc">Los fallos típicos que cometen los novatos y cómo evitarlos para no
-                        perder dinero innecesariamente.</p>
-                </div>
-            </a>
-
-            <a href="cuanto-dinero-necesito-para-invertir.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Primeros pasos</span>
-                    <h2 class="card__title">Cuánto dinero necesito para empezar a invertir</h2>
-                    <p class="card__desc">Spoiler: mucho menos de lo que crees. Cantidades mínimas reales y el
-                        poder de las aportaciones pequeñas.</p>
-                </div>
-            </a>
-
-            <a href="que-es-un-etf.html" class="card">
-                <div class="card__body">
-                    <span class="card__category">Conceptos básicos</span>
-                    <h2 class="card__title">Qué es un ETF y cómo funciona</h2>
-                    <p class="card__desc">Fondos cotizados en bolsa: qué son, cómo se compran y en qué se
-                        diferencian de los fondos indexados.</p>
-                </div>
-            </a>
+    <section class="section section--tight">
+      <div class="container">
+        <div class="section__head">
+          <h1>Aprende a invertir, concepto a concepto</h1>
+          <p class="lead">25 guías en español sobre los fundamentos de la inversión. Sin recomendaciones de compra, sin promesas de rentabilidad y sin jerga innecesaria.</p>
         </div>
+        <div class="actions">
+          <a class="button" href="/articles/como-empezar-a-invertir-desde-cero.html"><span>Empezar por aquí</span><svg class="button__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="button button--secondary" href="/calculadora-interes-compuesto/"><span>Calcular interés compuesto</span></a>
+        </div>
+      </div>
     </section>
 
-    <!-- Book CTA -->
-    <section class="book-cta">
-        <h2 class="book-cta__title">¿Quieres una base sólida para empezar a invertir?</h2>
-        <p class="book-cta__body">Consigue la guía completa con todos los conceptos que necesitas entender antes de
-            mover tu dinero.</p>
-        <a href="../index.html" class="btn btn--primary">Conseguir la guía</a>
+    <section class="section section--surface" id="primeros-pasos">
+      <div class="container">
+        <div class="section__head">
+    <span class="eyebrow">9 artículos</span>
+    <h2>Primeros pasos</h2>
+    <p class="lead">Cómo pasar de la intención a la primera aportación sin cometer errores caros.</p>
+  </div>
+        <div class="grid grid--3"><a class="article-card" href="/articles/como-empezar-a-invertir-desde-cero.html">
+    <span class="article-card__category">Primeros pasos</span>
+    <h3 class="article-card__title">Cómo empezar a invertir desde cero</h3>
+    <p class="article-card__desc">Guía paso a paso para principiantes que no saben por dónde empezar a invertir. Define objetivos, perfil de riesgo, fondo de emergencia y primeros pasos prácticos.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 12 min</span>
+  </a><a class="article-card" href="/articles/como-invertir-con-poco-dinero.html">
+    <span class="article-card__category">Primeros pasos</span>
+    <h3 class="article-card__title">Cómo invertir con poco dinero</h3>
+    <p class="article-card__desc">No necesitas ser rico para invertir. Descubre cómo empezar a invertir con 50€ o 100€ al mes gracias a fondos indexados, roboadvisors y la estrategia DCA.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 7 min</span>
+  </a><a class="article-card" href="/articles/cuanto-dinero-necesito-para-invertir.html">
+    <span class="article-card__category">Primeros pasos</span>
+    <h3 class="article-card__title">Cuánto dinero necesito para empezar a invertir</h3>
+    <p class="article-card__desc">Descubre cuánto dinero necesitas realmente para empezar a invertir. Cantidades mínimas por producto, plataformas accesibles en España y el poder de las aportaciones pequeñas.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 10 min</span>
+  </a><a class="article-card" href="/articles/errores-comunes-invertir-principiantes.html">
+    <span class="article-card__category">Primeros pasos</span>
+    <h3 class="article-card__title">9 errores comunes al invertir siendo principiante</h3>
+    <p class="article-card__desc">Descubre los errores más habituales que cometen los inversores principiantes y aprende a evitarlos. Desde vender en pánico hasta ignorar las comisiones.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 12 min</span>
+  </a><a class="article-card" href="/articles/fondo-de-emergencia-cuanto-necesito.html">
+    <span class="article-card__category">Primeros pasos</span>
+    <h3 class="article-card__title">Fondo de emergencia: cuánto necesito y dónde guardarlo</h3>
+    <p class="article-card__desc">Aprende qué es un fondo de emergencia, cómo calcular cuánto necesitas, dónde guardarlo y por qué es imprescindible antes de empezar a invertir.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 10 min</span>
+  </a><a class="article-card" href="/articles/dca-invertir-cada-mes.html">
+    <span class="article-card__category">Primeros pasos</span>
+    <h3 class="article-card__title">DCA: invertir la misma cantidad cada mes</h3>
+    <p class="article-card__desc">Qué es el DCA o inversión periódica, por qué funciona mejor de lo que parece, en qué casos no supera a invertir de golpe y cómo automatizar tus aportaciones.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 7 min</span>
+  </a><a class="article-card" href="/articles/cuanto-puedo-ganar-invirtiendo-100-euros-al-mes.html">
+    <span class="article-card__category">Primeros pasos</span>
+    <h3 class="article-card__title">Cuánto puedo ganar invirtiendo 100 euros al mes</h3>
+    <p class="article-card__desc">Tabla de resultados invirtiendo 100 euros al mes durante 10, 20, 30 y 40 años con distintas rentabilidades, y qué factores reducen el resultado final.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 8 min</span>
+  </a><a class="article-card" href="/articles/simulador-de-bolsa-como-practicar.html">
+    <span class="article-card__category">Primeros pasos</span>
+    <h3 class="article-card__title">Simulador de bolsa: cómo practicar sin arriesgar dinero</h3>
+    <p class="article-card__desc">Qué es un simulador de bolsa, qué se aprende de verdad practicando con dinero ficticio, cuáles son sus límites y cómo usarlo para mejorar tus decisiones reales.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 8 min</span>
+  </a><a class="article-card" href="/articles/app-para-aprender-a-invertir.html">
+    <span class="article-card__category">Primeros pasos</span>
+    <h3 class="article-card__title">Cómo elegir una app para aprender a invertir</h3>
+    <p class="article-card__desc">Cinco criterios para distinguir una app educativa de un producto especulativo, qué se aprende practicando con dinero ficticio y qué límites conviene tener claros.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 7 min</span>
+  </a></div>
+      </div>
+    </section><section class="section section--surface" id="conceptos-basicos">
+      <div class="container">
+        <div class="section__head">
+    <span class="eyebrow">9 artículos</span>
+    <h2>Conceptos básicos</h2>
+    <p class="lead">El vocabulario imprescindible para entender qué estás haciendo con tu dinero.</p>
+  </div>
+        <div class="grid grid--3"><a class="article-card" href="/articles/diferencia-entre-activos-y-pasivos.html">
+    <span class="article-card__category">Conceptos básicos</span>
+    <h3 class="article-card__title">Diferencia entre activos y pasivos</h3>
+    <p class="article-card__desc">Aprende qué son activos y pasivos con ejemplos claros. Entiende por qué esta distinción es vital para tus finanzas personales y la construcción de riqueza.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 6 min</span>
+  </a><a class="article-card" href="/articles/que-es-el-interes-compuesto.html">
+    <span class="article-card__category">Conceptos básicos</span>
+    <h3 class="article-card__title">Qué es el interés compuesto y cómo funciona</h3>
+    <p class="article-card__desc">Entiende qué es el interés compuesto, cómo funciona el efecto bola de nieve, ejemplos con números reales y por qué empezar a invertir pronto marca una diferencia enorme.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 9 min</span>
+  </a><a class="article-card" href="/articles/que-es-la-diversificacion.html">
+    <span class="article-card__category">Conceptos básicos</span>
+    <h3 class="article-card__title">Qué es la diversificación en inversiones</h3>
+    <p class="article-card__desc">Aprende qué es la diversificación de inversiones, por qué reduce el riesgo de tu cartera y cómo diversificar aunque tengas poco dinero. Guía para principiantes.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 11 min</span>
+  </a><a class="article-card" href="/articles/que-es-la-inflacion-como-afecta-ahorros.html">
+    <span class="article-card__category">Conceptos básicos</span>
+    <h3 class="article-card__title">Qué es la inflación y cómo afecta a tus ahorros</h3>
+    <p class="article-card__desc">Entiende qué es la inflación, cómo erosiona el poder adquisitivo de tus ahorros y por qué invertir es la mejor forma de proteger tu dinero a largo plazo.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 9 min</span>
+  </a><a class="article-card" href="/articles/que-es-un-etf.html">
+    <span class="article-card__category">Conceptos básicos</span>
+    <h3 class="article-card__title">Qué es un ETF y cómo funciona</h3>
+    <p class="article-card__desc">Aprende qué es un ETF, cómo funciona, en qué se diferencia de un fondo indexado, sus ventajas e inconvenientes, y cómo comprar ETFs en España. Guía para principiantes.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 12 min</span>
+  </a><a class="article-card" href="/articles/que-es-un-fondo-indexado.html">
+    <span class="article-card__category">Conceptos básicos</span>
+    <h3 class="article-card__title">Qué es un fondo indexado y cómo funciona</h3>
+    <p class="article-card__desc">Descubre qué es un fondo indexado, cómo funciona, por qué es la opción favorita de los inversores a largo plazo y cómo invertir en fondos indexados desde España.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 10 min</span>
+  </a><a class="article-card" href="/articles/renta-fija-vs-renta-variable.html">
+    <span class="article-card__category">Conceptos básicos</span>
+    <h3 class="article-card__title">Renta fija vs renta variable</h3>
+    <p class="article-card__desc">Descubre las diferencias entre renta fija y renta variable. Qué es cada una, riesgos, rentabilidad esperada y cómo combinarlas en tu cartera de inversión.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 10 min</span>
+  </a><a class="article-card" href="/articles/psicologia-del-inversor.html">
+    <span class="article-card__category">Conceptos básicos</span>
+    <h3 class="article-card__title">Psicología del inversor: por qué vendes en el peor momento</h3>
+    <p class="article-card__desc">Aversión a la pérdida, sesgo de recencia, efecto manada y exceso de confianza: los sesgos que explican por qué compramos caro y vendemos barato, y cómo evitarlos.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 9 min</span>
+  </a><a class="article-card" href="/articles/que-son-los-dividendos.html">
+    <span class="article-card__category">Conceptos básicos</span>
+    <h3 class="article-card__title">Qué son los dividendos y cómo funcionan</h3>
+    <p class="article-card__desc">Aprende qué es un dividendo, cómo se calcula la rentabilidad por dividendo, qué pasa el día ex-dividendo, cómo tributan en España y qué alternativas tienes.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 8 min</span>
+  </a></div>
+      </div>
+    </section><section class="section section--surface" id="donde-invertir">
+      <div class="container">
+        <div class="section__head">
+    <span class="eyebrow">4 artículos</span>
+    <h2>Dónde invertir</h2>
+    <p class="lead">Productos, plataformas y alternativas comparadas con criterio.</p>
+  </div>
+        <div class="grid grid--3"><a class="article-card" href="/articles/donde-invertir-mi-dinero-opciones-novatos.html">
+    <span class="article-card__category">Dónde invertir</span>
+    <h3 class="article-card__title">¿Dónde invertir mi dinero? Opciones para principiantes</h3>
+    <p class="article-card__desc">Un repaso a las opciones más comunes para empezar a invertir: cuentas remuneradas, fondos indexados, roboadvisors, acciones, bonos y más. Ventajas y riesgos de cada una.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 10 min</span>
+  </a><a class="article-card" href="/articles/que-es-un-roboadvisor.html">
+    <span class="article-card__category">Dónde invertir</span>
+    <h3 class="article-card__title">Qué es un roboadvisor y cómo funciona</h3>
+    <p class="article-card__desc">Descubre qué es un roboadvisor, cómo funciona la inversión automatizada, cuáles son los principales en España y si te conviene usar uno.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 11 min</span>
+  </a><a class="article-card" href="/articles/msci-world-vs-sp-500.html">
+    <span class="article-card__category">Dónde invertir</span>
+    <h3 class="article-card__title">MSCI World vs S&amp;P 500: cuál elegir</h3>
+    <p class="article-card__desc">Comparamos el MSCI World y el S&amp;P 500: qué empresas incluye cada índice, cuánto peso tiene Estados Unidos, qué riesgo asumes y cuál encaja mejor en tu cartera.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 8 min</span>
+  </a><a class="article-card" href="/articles/cartera-indexada-tres-fondos.html">
+    <span class="article-card__category">Dónde invertir</span>
+    <h3 class="article-card__title">Cómo construir una cartera indexada con tres fondos</h3>
+    <p class="article-card__desc">Aprende a montar una cartera indexada sencilla con tres fondos, qué porcentaje dedicar a cada uno según tu horizonte y cómo rebalancear sin pagar impuestos.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 9 min</span>
+  </a></div>
+      </div>
+    </section><section class="section section--surface" id="inversion-en-espana">
+      <div class="container">
+        <div class="section__head">
+    <span class="eyebrow">3 artículos</span>
+    <h2>Inversión en España</h2>
+    <p class="lead">Fiscalidad, plataformas y particularidades de invertir desde España.</p>
+  </div>
+        <div class="grid grid--3"><a class="article-card" href="/articles/guia-basica-invertir-espana.html">
+    <span class="article-card__category">Inversión en España</span>
+    <h3 class="article-card__title">Guía básica para invertir en España</h3>
+    <p class="article-card__desc">¿Inviertes desde España? Conoce las opciones disponibles, las mejores plataformas, los aspectos fiscales clave y cómo empezar a invertir en el mercado español.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 10 min</span>
+  </a><a class="article-card" href="/articles/fiscalidad-fondos-indexados-espana.html">
+    <span class="article-card__category">Inversión en España</span>
+    <h3 class="article-card__title">Fiscalidad de los fondos indexados en España</h3>
+    <p class="article-card__desc">Cómo tributan los fondos indexados en España: traspaso sin tributar, tramos del ahorro del 19 % al 28 %, compensación de pérdidas y acumulación frente a distribución.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 10 min</span>
+  </a><a class="article-card" href="/articles/plan-de-pensiones-o-fondo-indexado.html">
+    <span class="article-card__category">Inversión en España</span>
+    <h3 class="article-card__title">Plan de pensiones o fondo indexado</h3>
+    <p class="article-card__desc">Comparamos el plan de pensiones y el fondo indexado: desgravación, límites de aportación, comisiones, flexibilidad y en qué casos conviene cada uno.</p>
+    <span class="article-card__meta"><svg class="" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"/></svg> 9 min</span>
+  </a></div>
+      </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <span>&copy; 2025 · Guía para empezar a invertir</span>
-        <a href="../index.html">Inicio</a>
-    </footer>
+    <section class="section">
+      <div class="container grid grid--split">
+        <div class="stack stack--lg">
+          <div class="section__head">
+    <span class="eyebrow">La app</span>
+    <h2>Practica lo que acabas de leer</h2>
+    <p class="lead">Los artículos explican la teoría. La app te deja aplicarla con una cartera de dinero ficticio y precios reales de mercado.</p>
+  </div>
+          <div class="actions"><a class="button" href="/app/"><span>Descubrir la app</span><svg class="button__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+        </div>
+        <figure class="illustration"><img src="/img/illustrations/learn.png" alt="" width="1100" height="767" loading="lazy" decoding="async"></figure>
+      </div>
+    </section>
+  
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand"><picture>
+      <source srcset="/img/logo/mark-white-128.png" media="(prefers-color-scheme: dark)">
+      <img src="/img/logo/mark-ink-128.png" alt="" width="34" height="28" decoding="async">
+    </picture><span>Empezar a invertir</span></div>
+          <p class="muted" style="margin-top:16px;max-width:34ch">Aprende a invertir y practícalo sin arriesgar dinero. Material educativo en español, sin promesas de rentabilidad.</p>
+        </div>
+        <div>
+          <h3>Producto</h3>
+          <ul><li><a href="/app/">La app</a></li><li><a href="/libro/">El libro</a></li><li><a href="/calculadora-interes-compuesto/">Calculadora de interés compuesto</a></li></ul>
+        </div><div>
+          <h3>Aprender</h3>
+          <ul><li><a href="/articles/">Todos los artículos</a></li><li><a href="/glosario/">Glosario de inversión</a></li><li><a href="/articles/como-empezar-a-invertir-desde-cero.html">Empezar desde cero</a></li><li><a href="/articles/que-es-un-etf.html">Qué es un ETF</a></li><li><a href="/articles/que-es-el-interes-compuesto.html">Interés compuesto</a></li><li><a href="/articles/que-es-la-diversificacion.html">Diversificación</a></li></ul>
+        </div><div>
+          <h3>Proyecto</h3>
+          <ul><li><a href="/sobre/">Sobre el proyecto</a></li><li><a href="mailto:hola@empezar-a-invertir.com">Contacto</a></li><li><a href="/privacidad/">Privacidad</a></li><li><a href="/aviso-legal/">Aviso legal</a></li><li><a href="/feed.xml">RSS</a></li></ul>
+        </div>
+      </div>
+      <div class="footer__note">
+        <span>© 2026 Empezar a invertir</span>
+        <span>Hecho en España · Contenido educativo, no asesoramiento financiero</span>
+      </div>
+    </div>
+  </footer>
+  
 </body>
-
 </html>
