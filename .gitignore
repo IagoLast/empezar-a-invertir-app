@@ -16,3 +16,4 @@ supabase/.temp/
 
 # Shader toolchain for the site background (npm --prefix web/gpu install)
 web/gpu/node_modules/
+.vercel

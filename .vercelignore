@@ -1,0 +1,17 @@
+# Local development and native build output
+node_modules
+apps/ios/build
+apps/ios/.derived-data
+artifacts
+
+# Repository and local tooling metadata
+.git
+.codex
+.agents
+.maestro
+.vercel
+
+# Native-only and backend sources are not part of the static website
+apps/ios
+apps/api
+supabase
