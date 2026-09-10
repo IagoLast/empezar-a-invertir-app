@@ -20,5 +20,8 @@ xcodebuild build -project apps/ios/Empezar.xcodeproj -scheme Empezar \
 app="$build_directory/Build/Products/Debug-iphonesimulator/Empezar.app"
 python3 scripts/verify-ios-simulator-signing.py "$app"
 xcrun simctl install "$simulator_id" "$app"
-xcrun simctl launch --terminate-running-process "$simulator_id" com.empezarainvertir.app \
-  -has-onboarded-v0 YES -preview-tab 0 -preview-profile NO -preview-screen main
+launch_arguments=(-preview-tab 0 -preview-profile NO -preview-screen main)
+if [[ "${IOS_SHOW_INTRODUCTION:-0}" == "1" ]]; then
+  launch_arguments+=(-has-seen-introduction NO -preview-introduction YES)
+fi
+xcrun simctl launch --terminate-running-process "$simulator_id" com.empezarainvertir.app "${launch_arguments[@]}"

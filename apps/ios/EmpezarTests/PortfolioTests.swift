@@ -2,6 +2,20 @@ import XCTest
 @testable import Empezar
 
 final class PortfolioTests: XCTestCase {
+    func testAccessRequiresConfirmedPurchaseAndSurvivesSpendingCash() {
+        var portfolio = Portfolio.empty
+        XCTAssertFalse(portfolio.hasConfirmedCashPurchase)
+        portfolio.cashCents = 1_000_000
+        XCTAssertFalse(portfolio.hasConfirmedCashPurchase)
+        portfolio.purchases = [PurchaseReceipt(transactionId: "paid", productId: "ei.cash.10000", credited: false, refunded: false)]
+        XCTAssertFalse(portfolio.hasConfirmedCashPurchase)
+        portfolio.purchases = [PurchaseReceipt(transactionId: "paid", productId: "ei.cash.10000", credited: true, refunded: false)]
+        portfolio.cashCents = 0
+        XCTAssertTrue(portfolio.hasConfirmedCashPurchase)
+        portfolio.purchases = [PurchaseReceipt(transactionId: "paid", productId: "ei.cash.10000", credited: true, refunded: true)]
+        XCTAssertFalse(portfolio.hasConfirmedCashPurchase)
+    }
+
     func testTopUpsAreNotProfit() {
         var p = Portfolio.empty
         p.cashCents += 1_000_000
@@ -14,13 +28,13 @@ final class PortfolioTests: XCTestCase {
         XCTAssertNil(p.equityCents)
         XCTAssertNil(p.profitCents)
     }
-    func testCashIsPartOfEquity() { XCTAssertEqual(Portfolio.empty.equityCents, 1_000_000) }
+    func testCashIsPartOfEquity() { XCTAssertEqual(Portfolio.empty.equityCents, 0) }
     func testInvestedValueExcludesCash() {
         var p = Portfolio.empty
         p.positions = [Position(symbol: "AAPL", units: 2, costCents: 40100)]
         p.quotes = [quote(price: 22000)]
         XCTAssertEqual(p.investedCents, 44000)
-        XCTAssertEqual(p.equityCents, 1_044_000)
+        XCTAssertEqual(p.equityCents, 44_000)
         p.quotes = []
         XCTAssertNil(p.investedCents)
     }
@@ -68,6 +82,8 @@ final class PortfolioTests: XCTestCase {
     }
     func testRoundTripAtSamePriceLosesOnlyCommissions() {
         var p = Portfolio.empty
+        p.cashCents = 1_000_000
+        p.contributedCents = 1_000_000
         p.cashCents -= 10100
         p.positions = [Position(symbol: "AAPL", units: 1, costCents: 10100)]
         p.quotes = [quote(price: 10000)]

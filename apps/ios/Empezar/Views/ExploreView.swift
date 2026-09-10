@@ -161,7 +161,7 @@ struct InstrumentView: View {
                 quoteCard
                 AssetChartView(symbol: instrument.symbol, reloadID: historyReload)
                 if let position { positionCard(position) }
-                Text("Practica con dinero ficticio. Cada compra o venta tiene una comisión simulada de 1 US$.")
+                Text("Practica con dinero ficticio. Cada compra o venta tiene una comisión simulada de \(store.money.text(100)).")
                     .font(.caption).foregroundStyle(Theme.muted).lineSpacing(3)
             }.padding(20)
         }.appCanvas().navigationTitle(instrument.symbol).navigationBarTitleDisplayMode(.inline)
@@ -191,16 +191,16 @@ struct InstrumentView: View {
             HStack {
                 ConceptLabel(title: instrument.kind == "stock" ? "Precio por acción" : "Precio por participación", concept: .cachedPrice).font(.subheadline)
                 Spacer()
-                Text(quote?.nativeCurrency ?? "USD").font(.caption.weight(.semibold)).foregroundStyle(Theme.muted)
+                Text(store.displayCurrency).font(.caption.weight(.semibold)).foregroundStyle(Theme.muted)
                     .redacted(reason: waiting ? .placeholder : [])
             }
-            Text(quote?.nativePriceText ?? (waiting ? "000,00 US$" : "—"))
+            Text(quote.map { store.money.text($0.priceCents) } ?? "—")
                 .font(.system(.largeTitle, design: .rounded).weight(.bold)).monospacedDigit()
                 .minimumScaleFactor(0.6).lineLimit(1)
                 .redacted(reason: waiting ? .placeholder : [])
-                .accessibilityLabel(quote?.nativePriceText ?? "Cargando precio")
+                .accessibilityLabel(quote.map { store.money.text($0.priceCents) } ?? "Cargando precio")
             // Reserve the conversion line before the provider establishes the currency.
-            Text(quote?.usesConversion == true ? "En USD: \(Money.text(quote!.priceCents)) por unidad" : "Operaciones en USD")
+            Text(quote.map { "Cotización original: \($0.nativePriceText)" } ?? "Cambio no disponible")
                 .font(.caption).foregroundStyle(Theme.muted).lineLimit(2)
                 .frame(minHeight: metadataHeight, alignment: .topLeading)
             HStack(spacing: 8) {
@@ -229,14 +229,14 @@ struct InstrumentView: View {
     private func positionCard(_ position: Position) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             ConceptLabel(title: "Tu inversión · \(position.units) unidades", concept: .positions).font(.headline)
-            detailLine("Precio medio de compra", value: Money.text(position.averageCostCents))
-            detailLine("Coste total", value: Money.text(position.costCents))
-            detailLine("Valor actual", value: quote.map { Money.text(position.marketValueCents(at: $0)) } ?? "—")
+            detailLine("Precio medio de compra", value: store.money.text(position.averageCostCents))
+            detailLine("Coste total", value: store.money.text(position.costCents))
+            detailLine("Valor actual", value: quote.map { store.money.text(position.marketValueCents(at: $0)) } ?? "—")
             HStack {
                 Text("Resultado").font(.subheadline).foregroundStyle(Theme.muted)
                 Spacer()
                 let profit = quote.map { position.profitCents(at: $0) }
-                Text(profit.map(Money.signed) ?? "—").font(.headline).monospacedDigit()
+                Text(profit.map(store.money.signed) ?? "—").font(.headline).monospacedDigit()
                     .foregroundStyle(profit.map { $0 < 0 ? Theme.loss : Theme.gain } ?? Theme.muted)
             }
             Text("El coste incluye las comisiones de compra.").font(.caption).foregroundStyle(Theme.muted)

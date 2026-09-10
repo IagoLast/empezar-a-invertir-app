@@ -3,6 +3,7 @@ import RevenueCat
 import AuthenticationServices
 
 struct AuthView: View {
+    var required = false
     @EnvironmentObject var store: AppStore
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -14,58 +15,22 @@ struct AuthView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 25) {
-                    Image(systemName: "person.crop.circle").font(.largeTitle).foregroundStyle(Theme.accent).padding(.top, 8)
-                    Text("Tu aprendizaje,\nsiempre contigo.").font(.system(.largeTitle, design: .rounded).weight(.bold))
-                    Text("Guarda tus inversiones de práctica y las lecciones completadas. Podrás retomarlas cuando quieras.")
-                        .foregroundStyle(Theme.muted).lineSpacing(4)
-                    if let error { Text(error).font(.subheadline).foregroundStyle(Theme.loss) }
-
-                    VStack(spacing: 12) {
-                        if access.providers?.appleEnabled == true {
-                            SignInWithAppleButton(.continue) { request in
-                                appleNonce = AuthStore.nonce()
-                                request.requestedScopes = [.fullName, .email]
-                                request.nonce = AuthStore.sha256(appleNonce)
-                            } onCompletion: { result in
-                                switch result {
-                                case .failure(let failure):
-                                    if (failure as? ASAuthorizationError)?.code != .canceled { error = "No hemos podido continuar con Apple. Vuelve a intentarlo." }
-                                case .success(let authorization):
-                                    guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
-                                          let tokenData = credential.identityToken,
-                                          let token = String(data: tokenData, encoding: .utf8),
-                                          !appleNonce.isEmpty else {
-                                        error = "No hemos podido completar el acceso con Apple. Vuelve a intentarlo."
-                                        return
-                                    }
-                                    finishLogin { try await store.auth.signInWithApple(identityToken: token, nonce: appleNonce) }
-                                }
-                            }
-                            .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
-                            .frame(height: 56)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                            .disabled(busy)
-                            .accessibilityIdentifier("sign-in-apple")
-                        }
-
-                        if access.providers?.googleEnabled == true {
-                            Button {
-                                finishLogin { try await store.auth.signInWithGoogle() }
-                            } label: {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "g.circle.fill").font(.title3)
-                                    Text("Continuar con Google").font(.body.weight(.semibold))
-                                }
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 54)
-                                .foregroundStyle(Theme.ink)
-                                .flatControl(radius: 16)
-                            }
-                            .buttonStyle(.plain)
-                            .disabled(busy)
-                            .accessibilityIdentifier("sign-in-google")
+                    Group {
+                        if colorScheme == .dark {
+                            Image("OnboardingIllustration").resizable().scaledToFit()
+                                .colorInvert().blendMode(.screen)
+                        } else {
+                            Image("OnboardingIllustration").resizable().scaledToFit()
+                                .blendMode(.multiply)
                         }
                     }
+                    .frame(maxWidth: .infinity)
+                    .accessibilityHidden(true)
+                    Text("Empieza a invertir")
+                        .font(.system(.largeTitle, design: .rounded).weight(.bold))
+                    Text("Crea tu cuenta para aprender los conceptos básicos y practicar con dinero de mentira.")
+                        .foregroundStyle(Theme.muted).lineSpacing(4)
+                    if let error { Text(error).font(.subheadline).foregroundStyle(Theme.loss) }
 
                     if busy {
                         HStack(spacing: 10) { ProgressView(); Text("Conectando…") }
@@ -80,21 +45,76 @@ struct AuthView: View {
                     } else if access.phase == .failed {
                         VStack(alignment: .leading, spacing: 10) {
                             Label("No hemos podido conectar", systemImage: "wifi.exclamationmark").font(.headline)
-                            Text("Desliza hacia abajo para volver a intentarlo. También puedes seguir explorando y entrar más tarde.")
+                            Text("Desliza hacia abajo para volver a intentarlo. Necesitas iniciar sesión para continuar.")
                                 .font(.subheadline).foregroundStyle(Theme.muted)
                         }.padding(20).dataCard().accessibilityIdentifier("auth-load-error")
                     } else if let providers = access.providers, !providers.appleEnabled && !providers.googleEnabled {
-                        Text("El acceso no está disponible ahora. Puedes seguir explorando y volver más tarde.")
+                        Text("El acceso no está disponible ahora. Vuelve a intentarlo más tarde.")
                             .font(.subheadline).foregroundStyle(Theme.muted).accessibilityIdentifier("auth-unavailable")
                     }
-                    Button("Seguir explorando") { dismiss() }
-                        .font(.subheadline.weight(.semibold)).frame(minHeight: 44)
-                        .accessibilityIdentifier("auth-explore")
-                    Text("Tu cuenta comienza con 10.000 US$ virtuales gratuitos. Ningún saldo puede retirarse ni canjearse por dinero real.")
-                        .font(.caption).foregroundStyle(Theme.muted)
                 }.padding(25)
-            }.refreshable { await checkProviders() }.task { await checkProviders() }.onDisappear { access.cancel() }.appCanvas().navigationTitle("Tu cuenta").navigationBarTitleDisplayMode(.inline).toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Cerrar") { dismiss() } } }
+            }
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: 12) {
+                    signInButtons
+                }
+                .padding(.horizontal, 25)
+                .padding(.top, 16)
+                .padding(.bottom, 12)
+                .background(Theme.paper)
+            }
+            .refreshable { await checkProviders() }.task { await checkProviders() }.onDisappear { access.cancel() }.appCanvas().navigationTitle("").navigationBarTitleDisplayMode(.inline).toolbar { ToolbarItem(placement: .topBarTrailing) { if !required { Button("Cerrar") { dismiss() } } } }
+        }.interactiveDismissDisabled(required || busy)
+    }
+
+    private var signInButtons: some View {
+        VStack(spacing: 12) {
+            if access.providers?.appleEnabled == true {
+                SignInWithAppleButton(.continue) { request in
+                    appleNonce = AuthStore.nonce()
+                    request.requestedScopes = [.fullName, .email]
+                    request.nonce = AuthStore.sha256(appleNonce)
+                } onCompletion: { result in
+                    switch result {
+                    case .failure(let failure):
+                        if (failure as? ASAuthorizationError)?.code != .canceled { error = "No hemos podido continuar con Apple. Vuelve a intentarlo." }
+                    case .success(let authorization):
+                        guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
+                              let tokenData = credential.identityToken,
+                              let token = String(data: tokenData, encoding: .utf8),
+                              !appleNonce.isEmpty else {
+                            error = "No hemos podido completar el acceso con Apple. Vuelve a intentarlo."
+                            return
+                        }
+                        finishLogin { try await store.auth.signInWithApple(identityToken: token, nonce: appleNonce) }
+                    }
+                }
+                .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
+                .frame(height: 56)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .disabled(busy)
+                .accessibilityIdentifier("sign-in-apple")
+            }
+
+            if access.providers?.googleEnabled == true {
+                Button {
+                    finishLogin { try await store.auth.signInWithGoogle() }
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "g.circle.fill").font(.title3)
+                        Text("Continuar con Google").font(.body.weight(.semibold))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 54)
+                    .foregroundStyle(Theme.ink)
+                    .flatControl(radius: 16)
+                }
+                .buttonStyle(.plain)
+                .disabled(busy)
+                .accessibilityIdentifier("sign-in-google")
+            }
         }
+
     }
 
     private func checkProviders() async {
@@ -111,47 +131,63 @@ struct AuthView: View {
                 await store.loggedIn()
                 dismiss()
             } catch {
-                self.error = "No hemos podido iniciar sesión. Vuelve a intentarlo más tarde; mientras tanto puedes explorar la app."
+                self.error = "No hemos podido iniciar sesión. Vuelve a intentarlo más tarde."
             }
         }
     }
 }
 struct WalletView: View {
+    var required = false
     @EnvironmentObject var store: AppStore
     @Environment(\.dismiss) private var dismiss
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 25) {
-                    Pill(text: "Opcional", icon: "leaf")
-                    Text("Más espacio\npara practicar.").font(.system(.largeTitle, design: .rounded))
-                    Text("Añade saldo virtual si quieres explorar más ideas. Las recargas son compras adicionales al acceso a Empezar Plus.").foregroundStyle(Theme.muted).lineSpacing(4)
+                    Pill(text: required ? "EMPIEZA A PRACTICAR" : "SALDO VIRTUAL", icon: "leaf")
+                    Text(required ? "10.000 US$ ficticios\npara empezar." : "Más espacio\npara practicar.").font(.system(.largeTitle, design: .rounded))
+                    Text("Compra única de saldo para practicar. Sin suscripción ni renovación automática.").foregroundStyle(Theme.muted).lineSpacing(4)
                     ConceptLabel(title: "Saldo virtual", concept: .virtualCash).font(.headline)
-                    ReadingCard(eyebrow: "Tu saldo disponible", title: Money.text(store.portfolio.cashCents), text: "Dinero ficticio. Las recargas no cuentan como ganancias.", dark: true, concept: .virtualCash)
+                    ReadingCard(eyebrow: "Tu saldo disponible", title: store.money.text(store.portfolio.cashCents), text: "Dinero ficticio. Las recargas no cuentan como ganancias.", dark: true, concept: .virtualCash)
                     if !store.signedIn {
                         PrimaryButton(title: "Iniciar sesión") { dismiss(); store.showAuth = true }
+                    } else if store.purchasesLoading {
+                        ProgressView("Cargando compra…")
                     } else if store.packages.isEmpty {
-                        Text("Las recargas no están disponibles ahora. Puedes seguir consultando activos y haciendo las lecciones.").font(.subheadline).foregroundStyle(Theme.muted)
+                        Text("La compra no está disponible ahora. Desliza hacia abajo para volver a intentarlo.").font(.subheadline).foregroundStyle(Theme.muted)
                     } else {
                         ForEach(store.packages, id: \.identifier) { package in
-                            let cents: Int64 = package.storeProduct.productIdentifier == "ei.cash.10000" ? 1_000_000 : 2_500_000
+                            let cents = CashPack.cents[package.storeProduct.productIdentifier] ?? 0
                             VStack(alignment: .leading, spacing: 15) {
-                                Text(Money.text(cents) + " virtuales").font(.title2.weight(.medium))
+                                Text(store.money.text(cents) + " virtuales").font(.title2.weight(.medium))
+                                Text("Saldo base: " + Money.text(cents)).font(.caption).foregroundStyle(Theme.muted)
                                 Text("Recarga de compra única").font(.caption).foregroundStyle(Theme.muted)
-                                PrimaryButton(title: "Comprar por \(package.storeProduct.localizedPriceString)", icon: "plus", disabled: store.pendingPurchase != nil, loading: store.busy) { Task { await store.purchase(package) } }
+                                PrimaryButton(title: "Comprar por \(package.storeProduct.localizedPriceString)", icon: "plus", disabled: store.pendingPurchase != nil || !store.portfolioLoaded, loading: store.busy) { Task { await store.purchase(package) } }
                             }.padding(20).dataCard()
                         }
                     }
+                    if !store.portfolioLoaded {
+                        Text("Comprobando el saldo de tu cuenta. Si no carga, desliza hacia abajo para volver a intentarlo antes de comprar.")
+                            .font(.subheadline).foregroundStyle(Theme.muted)
+                    }
+                    if let message = store.purchasesError { Text(message).font(.subheadline).foregroundStyle(Theme.loss) }
+                    Button("Restaurar compras") { Task { await store.restorePurchases() } }
+                        .disabled(store.busy || store.purchasesLoading)
                     if store.pendingPurchase != nil { Text("Estamos añadiendo tu saldo. Desliza hacia abajo para comprobarlo; no necesitas volver a comprar.").font(.subheadline) }
                     if let notice = store.notice { Text(notice).font(.subheadline) }
-                    Text("El precio del botón es dinero real cobrado por Apple. El saldo recibido es ficticio: no se puede retirar, transferir ni canjear. No caduca y se conserva en tu cuenta.").font(.caption).foregroundStyle(Theme.muted).lineSpacing(4)
+                    Text(Configuration.testPurchases ? "Modo de pruebas: no se cobra dinero real. El saldo de pruebas está separado de tu cartera habitual." : "El precio del botón es dinero real cobrado por Apple. El saldo recibido es ficticio: no se puede retirar, transferir ni canjear. No caduca y se conserva en tu cuenta.").font(.caption).foregroundStyle(Theme.muted).lineSpacing(4)
                 }.padding(25)
             }.refreshable {
                 guard !store.busy else { return }
                 await store.refresh()
                 await store.preparePurchases()
             }.appCanvas().navigationTitle("Saldo virtual").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Cerrar") { dismiss() }.disabled(store.busy) } }.interactiveDismissDisabled(store.busy)
+                .toolbar { ToolbarItem(placement: .topBarTrailing) {
+                    if required {
+                        Button("Cerrar sesión") { Task { await store.signOut() } }.disabled(store.busy || store.purchasesLoading)
+                    } else { Button("Cerrar") { dismiss() }.disabled(store.busy) }
+                } }.interactiveDismissDisabled(required || store.busy)
+                .task { await store.preparePurchases() }
         }
     }
 }
@@ -161,6 +197,7 @@ struct ProfileView: View {
     @State private var confirmDelete = false
     @State private var showPaywall = false
     @State private var showAppearance = false
+    @State private var showOnboarding = false
     @AppStorage("app-appearance") private var appearance = AppAppearance.light.rawValue
     var body: some View {
         NavigationStack {
@@ -170,37 +207,54 @@ struct ProfileView: View {
                         ProfileAvatar()
                         VStack(alignment: .leading, spacing: 6) {
                             Text(store.auth.session?.user.displayName ?? "Tu perfil").font(.title2.weight(.bold))
-                            Text("Cuenta virtual · USD").font(.subheadline).foregroundStyle(Theme.muted)
+                            Text("Cuenta virtual · \(store.displayCurrency)").font(.subheadline).foregroundStyle(Theme.muted)
                         }
                     }.padding(.vertical, 8)
                     VStack(alignment: .leading, spacing: 16) {
                         ConceptLabel(title: "Tu cuenta virtual", concept: .virtualCash).font(.headline)
-                        Text(Money.text(store.portfolio.cashCents)).font(.largeTitle.weight(.bold)).monospacedDigit()
+                        Text(store.money.text(store.portfolio.cashCents)).font(.largeTitle.weight(.bold)).monospacedDigit()
                         Text("Saldo disponible para seguir practicando.").font(.subheadline).foregroundStyle(Theme.muted)
+                    }.padding(20).dataCard()
+                    VStack(alignment: .leading, spacing: 12) {
+                        Picker("Moneda", selection: $store.displayCurrency) {
+                            ForEach(DisplayCurrency.supported) { currency in
+                                Text("\(currency.id) · \(currency.title)").tag(currency.id)
+                            }
+                        }.accessibilityIdentifier("currency-picker").disabled(store.busy)
+                        Text("Los importes se convierten al cambio de referencia del BCE. Cambiar de moneda no modifica tu saldo.")
+                            .font(.caption).foregroundStyle(Theme.muted)
+                        if let rates = store.exchangeRates { Text("Cambio del \(rates.date)").font(.caption).foregroundStyle(Theme.muted) }
+                        if let message = store.currencyError { Text(message).font(.caption).foregroundStyle(Theme.loss) }
                     }.padding(20).dataCard()
                     VStack(spacing: 0) {
                         Button { showPaywall = true } label: {
-                            SettingsRow(title: "Empezar Plus", subtitle: store.hasSubscription ? "Suscripción activa" : Configuration.freePreviewEnabled ? "Acceso gratuito" : "Ver plan mensual", icon: "sparkles")
+                            SettingsRow(title: "Comprar saldo virtual", subtitle: "Elige entre tres paquetes de saldo", icon: "plus.circle")
                         }
                         Divider()
                         Button { showAppearance = true } label: {
                             SettingsRow(title: "Apariencia", subtitle: (AppAppearance(rawValue: appearance) ?? .light).title, icon: "circle.lefthalf.filled")
                         }.accessibilityIdentifier("appearance-picker")
+                        Divider()
+                        Button { showOnboarding = true } label: {
+                            SettingsRow(title: "Ver el onboarding", subtitle: "Vuelve a recorrer los primeros pasos", icon: "play.rectangle")
+                        }.accessibilityIdentifier("show-onboarding")
                         if store.signedIn {
                             Divider()
                             Button { Task { await store.restorePurchases() } } label: {
                                 SettingsRow(title: "Restaurar compras", subtitle: "Recupera las compras de tu cuenta de Apple", icon: "arrow.clockwise")
                             }.disabled(store.busy || store.purchasesLoading)
                             Divider()
-                            Link(destination: URL(string: "https://apps.apple.com/account/subscriptions")!) {
-                                SettingsRow(title: "Gestionar suscripción", subtitle: "Abrir las opciones de Apple", icon: "creditcard")
+                            if store.hasSubscription {
+                                Link(destination: URL(string: "https://apps.apple.com/account/subscriptions")!) {
+                                    SettingsRow(title: "Gestionar suscripción", subtitle: "Abrir las opciones de Apple", icon: "creditcard")
+                                }
                             }
                         }
                     }.buttonStyle(.plain).padding(.horizontal, 18).dataCard()
                     if let message = store.purchasesError { Text(message).font(.caption).foregroundStyle(Theme.loss) }
                     VStack(alignment: .leading, spacing: 14) {
                         ConceptLabel(title: "Sobre el simulador", concept: .virtualCash).font(.headline)
-                        Text("Aprendes con precios de mercado y dinero ficticio. Cada compra o venta tiene una comisión virtual de 1 US$.").font(.subheadline).foregroundStyle(Theme.muted).lineSpacing(4)
+                        Text("Aprendes con precios de mercado y dinero ficticio. Cada compra o venta tiene una comisión virtual de \(store.money.text(100)).").font(.subheadline).foregroundStyle(Theme.muted).lineSpacing(4)
                         Link("Proveedor de datos ↗", destination: URL(string: "https://finance.yahoo.com")!).font(.subheadline)
                     }.padding(20).dataCard()
                     if store.signedIn {
@@ -212,10 +266,23 @@ struct ProfileView: View {
                         PrimaryButton(title: "Iniciar sesión", icon: "person") { dismiss(); store.showAuth = true }
                     }
                 }.padding(20)
-            }.appCanvas().navigationTitle("Perfil").navigationBarTitleDisplayMode(.inline)
+            }.refreshable { await store.refreshCurrencies() }.appCanvas().navigationTitle("Perfil").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Cerrar") { dismiss() } } }
-                .sheet(isPresented: $showPaywall) { PaywallView() }
+                .sheet(isPresented: $showPaywall) { WalletView() }
                 .sheet(isPresented: $showAppearance) { AppearanceSheet(appearance: $appearance) }
+                .fullScreenCover(isPresented: $showOnboarding) {
+                    OnboardingView { showOnboarding = false }
+                        .overlay(alignment: .topTrailing) {
+                            Button { showOnboarding = false } label: {
+                                Image(systemName: "xmark")
+                                    .font(.body.weight(.semibold))
+                                    .frame(width: 44, height: 44)
+                                    .background(Theme.surface, in: Circle())
+                            }
+                            .accessibilityLabel("Cerrar onboarding")
+                            .padding(.trailing, 16)
+                        }
+                }
                 .alert("¿Eliminar tu cuenta?", isPresented: $confirmDelete) {
                     Button("Cancelar", role: .cancel) {}
                     Button("Eliminar", role: .destructive) { Task { await store.deleteAccount(); if !store.signedIn { dismiss() } } }

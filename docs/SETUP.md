@@ -28,7 +28,7 @@ Copy values from `apps/api/.env.example` into Vercel environment variables:
 | `REVENUECAT_APP_ID` | RevenueCat iOS app ID; currently `app899c976007` |
 | `REVENUECAT_ENVIRONMENT` | `SANDBOX` for development/TestFlight or `PRODUCTION` |
 
-Use separate Vercel/Supabase projects for sandbox and production. Configure one environment-filtered RevenueCat webhook per backend. Their data and balances must not be shared.
+Keep sandbox and production balances separate. The configured Test Store uses a separate Vercel project and the isolated `ea_sandbox` schema, sharing only Supabase Auth identities. See [PAYMENTS.md](PAYMENTS.md) for the active setup and its limitations. Configure one app/store/environment-filtered RevenueCat webhook per backend.
 
 ```bash
 cd apps/api
@@ -46,21 +46,23 @@ Run `npm run ios:prepare` to generate resources from `packages/contracts` and co
 - `API_BASE_URL`: backend base URL, without a trailing slash or `/api`.
 - `SUPABASE_URL`, `SUPABASE_ANON_KEY`: public values for the same project.
 - `REVENUECAT_PUBLIC_KEY`: public iOS SDK key starting with `appl_`.
-- `FREE_PREVIEW_ENABLED`: `true` keeps current free access.
+- Three introduction screens precede authentication. Cash purchases are optional in the home banner; the legacy `FREE_PREVIEW_ENABLED` flag is ignored.
 - `PRIVACY_POLICY_URL`: HTTPS URL of the published privacy policy.
 
 Never embed service-role keys, `.p8`, `.p12` or webhook secrets. Generate the project with XcodeGen after preparing resources. Physical devices require a signing team and registered bundle ID. The target includes Sign in with Apple and the `empezar://` URL scheme; the provisioning profile and Apple identifier must enable the same capability.
 
 ## 4. App Store Connect and RevenueCat
 
-See [PAYMENTS.md](PAYMENTS.md) for catalog IDs, monthly subscription, proposed prices and remaining Apple/backend work. Free preview is not an Apple subscription trial.
+See [PAYMENTS.md](PAYMENTS.md) for catalog IDs, the three EUR cash packs, ready-to-use Test Store and remaining Apple work.
 
 Create consumable products with these exact identifiers:
 
 | Product ID | Server-granted virtual cash |
 |---|---:|
-| `ei.cash.10000` | USD 10,000 |
-| `ei.cash.25000` | USD 25,000 |
+| `ei.cash.1000` | USD 1,000 (EUR 1.00) |
+| `ei.cash.10000` | USD 10,000 (EUR 5.00) |
+| `ei.cash.1000000` | USD 1,000,000 (EUR 20.00) |
+| `ei.cash.25000` | USD 25,000 (historical receipts only; not offered in the app) |
 
 Set real prices in App Store Connect. The client displays localized StoreKit prices. Import products into RevenueCat and create the `virtual-cash` offering with one package per product. PostgreSQL maintains cash balances; they do not need a RevenueCat entitlement.
 
@@ -84,7 +86,7 @@ Finnhub, EODHD and Alpha Vantage are normalized by the backend. Configure their 
 
 ## External beta checks
 
-Test both packs, StoreKit cancellation, reopening with pending purchases, duplicate webhooks, refunds before/after spending, account switching and deletion. Check opening/closing session behavior. Complete the privacy policy, App Privacy declarations and contact details. Automated tests do not replace real-credential integration checks.
+Test all three packs, StoreKit cancellation, reopening with pending purchases, duplicate webhooks, refunds before/after spending, account switching and deletion. Check opening/closing session behavior. Complete the privacy policy, App Privacy declarations and contact details. Automated tests do not replace real-credential integration checks.
 
 ## Run iOS against the local backend
 

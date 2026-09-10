@@ -30,3 +30,19 @@ test('requires durable app user identity and transaction id', () => {
     const e = event(); Object.assign(e.event, patch); assert.throws(() => validateEvent(e, env.REVENUECAT_WEBHOOK_AUTH, env), { status: 400 });
   }
 });
+
+test('accepts all three cash packs and preserves historical refunds', () => {
+  for (const product of ['ei.cash.1000', 'ei.cash.10000', 'ei.cash.1000000', 'ei.cash.25000']) {
+    const e = event(); e.event.product_id = product;
+    assert.equal(validateEvent(e, env.REVENUECAT_WEBHOOK_AUTH, env).p_product, product);
+  }
+});
+test('Test Store is explicitly scoped to sandbox and its app', () => {
+  const e = event(); e.event.store = 'TEST_STORE';
+  assert.equal(validateEvent(e, env.REVENUECAT_WEBHOOK_AUTH, env), null);
+  const sandbox = { ...env, REVENUECAT_STORE: 'TEST_STORE' };
+  assert.equal(validateEvent(e, env.REVENUECAT_WEBHOOK_AUTH, sandbox).p_kind, 'purchase');
+  assert.throws(() => validateEvent(e, env.REVENUECAT_WEBHOOK_AUTH, { ...sandbox, REVENUECAT_ENVIRONMENT: 'PRODUCTION' }));
+  e.event.store = 'APP_STORE';
+  assert.equal(validateEvent(e, env.REVENUECAT_WEBHOOK_AUTH, sandbox), null);
+});

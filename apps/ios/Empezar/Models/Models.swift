@@ -83,7 +83,10 @@ struct Portfolio: Codable {
     var reservedCashCents: Int64? = nil
     var availableCashCents: Int64 { max(0, cashCents - (reservedCashCents ?? 0)) }
     var queuedOrders: [SimulatedOrder] { (simulatedOrders ?? []).filter { $0.status == "pending" } }
-    static let empty = Portfolio(userId: "", cashCents: 1_000_000, contributedCents: 1_000_000, currency: "USD", positions: [], quotes: [], orders: [], completedLessons: [], purchases: [])
+    static let empty = Portfolio(userId: "", cashCents: 0, contributedCents: 0, currency: "USD", positions: [], quotes: [], orders: [], completedLessons: [], purchases: [])
+    var hasConfirmedCashPurchase: Bool {
+        purchases.contains { ["ei.cash.1000", "ei.cash.10000", "ei.cash.1000000", "ei.cash.25000"].contains($0.productId) && $0.credited && !$0.refunded }
+    }
     func quote(_ symbol: String) -> Quote? { quotes.first { $0.symbol == symbol } }
     var equityCents: Int64? {
         var total = cashCents
@@ -157,4 +160,13 @@ struct SimulatedOrder: Codable, Identifiable {
     let averageDailyVolume: Int64?
     var editable: Bool { status == "pending" && (ISO.date(executeAt) ?? .distantPast) > Date() }
     var totalCents: Int64 { priceCents * Int64(units) + (side == "buy" ? 100 : -100) }
+}
+
+// Display metadata only; the backend independently controls purchase grants.
+enum CashPack {
+    static let cents: [String: Int64] = [
+        "ei.cash.1000": 100_000,
+        "ei.cash.10000": 1_000_000,
+        "ei.cash.1000000": 100_000_000
+    ]
 }

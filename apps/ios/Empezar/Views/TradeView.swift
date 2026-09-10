@@ -10,6 +10,7 @@ struct TradeView: View {
     @State private var orderType = PurchaseOrderType.market
     @State private var explainingOrder = false
     @State private var limitPrice = ""
+    @State private var originalLimitText: String?
     @State private var quote: Quote?
     @State private var reviewing = false
     @State private var sent = false
@@ -24,11 +25,11 @@ struct TradeView: View {
     }
     private var isLimit: Bool { orderType == .limit }
     private var units: Int { Int(quantity) ?? 0 }
+    @State private var currencySnapshot: CurrencyMoney?
+    private var money: CurrencyMoney { currencySnapshot ?? store.money }
     private var limitCents: Int64 {
-        let value = limitPrice.replacingOccurrences(of: ",", with: ".")
-        guard value.range(of: #"^[0-9]{1,8}(\.[0-9]{1,2})?$"#, options: .regularExpression) != nil,
-              let decimal = Decimal(string: value), decimal > 0, decimal <= 10000000 else { return 0 }
-        return NSDecimalNumber(decimal: decimal * 100).int64Value
+        if limitPrice == originalLimitText, let original = editing?.limitCents { return original }
+        return money.settlementCents(limitPrice, buying: side == "buy") ?? 0
     }
     private var price: Int64 {
         guard let quote else { return 0 }
@@ -43,15 +44,16 @@ struct TradeView: View {
     }
     private var maximum: Int { side == "sell" ? availableUnits : (price > 0 ? Int(min(100000, max(0, availableCash - 100) / price)) : 0) }
     private var validation: String? {
+        if !money.available { return "Cambio no disponible. Desliza hacia abajo para actualizar." }
         if let editing, !editing.editable { return "Esta orden ya está en ejecución. Consulta Operaciones." }
         if store.pendingTrade != nil && request == nil { return "Comprueba primero la operación pendiente desde Operaciones." }
         guard let quote else { return "Estamos consultando el precio de referencia." }
         if quote.expired { return "Desliza hacia abajo para actualizar el precio." }
         if units < 1 || units > 100000 { return "Introduce entre 1 y 100.000 unidades." }
-        if isLimit && limitCents <= 0 { return "Introduce un precio válido en USD." }
+        if isLimit && limitCents <= 0 { return "Introduce un precio válido en \(money.currency)." }
         if side == "buy" && total > availableCash { return "Saldo disponible insuficiente. Reduce la cantidad." }
         if side == "sell" && units > availableUnits { return "No tienes suficientes unidades disponibles." }
-        if total < 0 { return "El importe no cubre la comisión de 1 US$." }
+        if total < 0 { return "El importe no cubre la comisión de \(money.text(100))." }
         return nil
     }
     var body: some View {
@@ -80,7 +82,7 @@ struct TradeView: View {
                                         .font(.largeTitle).multilineTextAlignment(.center).accessibilityIdentifier("trade-quantity")
                                     Button { quantity = String(min(maximum, units + 1)) } label: { Image(systemName: "plus.circle.fill").font(.title) }.accessibilityLabel("Añadir una unidad").disabled(units >= maximum)
                                 }
-                                Text(side == "buy" ? "Disponible: \(Money.text(availableCash))" : "Disponibles: \(availableUnits) unidades").font(.caption).foregroundStyle(Theme.muted)
+                                Text(side == "buy" ? "Disponible: \(money.text(availableCash))" : "Disponibles: \(availableUnits) unidades").font(.caption).foregroundStyle(Theme.muted)
                                 Button("Usar máximo · \(maximum) unidades") { quantity = String(maximum) }.disabled(maximum == 0)
                             }.padding(20).dataCard()
                             VStack(alignment: .leading, spacing: 10) {
@@ -98,7 +100,7 @@ struct TradeView: View {
                             }
                             if isLimit {
                                 VStack(alignment: .leading, spacing: 10) {
-                                    Text(side == "buy" ? "Precio máximo por unidad (USD)" : "Precio mínimo por unidad (USD)").font(.subheadline.bold())
+                                    Text(side == "buy" ? "Precio máximo por unidad (\(money.currency))" : "Precio mínimo por unidad (\(money.currency))").font(.subheadline.bold())
                                     TextField("0,00", text: $limitPrice).keyboardType(.decimalPad).focused($fieldFocused).font(.title2).accessibilityIdentifier("limit-price")
                                     Text("En esta práctica simulamos que se alcanza tu precio. En una bolsa real una orden limitada podría no ejecutarse.").font(.caption).foregroundStyle(Theme.muted)
                                 }.padding(20).dataCard()
@@ -107,18 +109,18 @@ struct TradeView: View {
                         VStack(spacing: 12) {
                             summaryLine("Tipo de orden", isLimit ? "Limitada" : "A mercado")
                             summaryLine("Unidades", "\(units)")
-                            summaryLine("Precio simulado por unidad", price > 0 ? Money.text(price) : "—")
-                            summaryLine("Comisión", "1,00 US$")
+                            summaryLine("Precio simulado por unidad", price > 0 ? money.text(price) : "—")
+                            summaryLine("Comisión", money.text(100))
                             Divider()
-                            summaryLine(side == "buy" ? "Total a pagar" : "Total a recibir", price > 0 ? Money.text(total) : "—")
+                            summaryLine(side == "buy" ? "Total a pagar" : "Total a recibir", price > 0 ? money.text(total) : "—")
                         }.padding(20).dataCard()
                         if let quote {
-                            Text("Referencia: \(Money.text(quote.priceCents)) · \(quote.source)").font(.caption).foregroundStyle(Theme.muted)
+                            Text("Referencia: \(money.text(quote.priceCents)) · \(quote.source)").font(.caption).foregroundStyle(Theme.muted)
                             if let date = ISO.date(quote.asOf) { Text(date.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(Theme.muted) }
                             if quote.mode == "eod" { Text("Practicas con un precio de cierre diario, no con una cotización en tiempo real.").font(.subheadline) }
                             else if !quote.marketOpen { Text("Puedes practicar con el último precio disponible.").font(.subheadline) }
                         }
-                        Text("Al confirmar se ejecuta tu operación virtual al precio mostrado. Incluye una comisión simulada de 1 US$.")
+                        Text("Al confirmar se ejecuta tu operación virtual al precio mostrado. Incluye una comisión simulada de \(money.text(100)).")
                             .font(.caption).foregroundStyle(Theme.muted)
 
 
@@ -150,7 +152,10 @@ struct TradeView: View {
                 .interactiveDismissDisabled(store.busy)
                 .refreshable { if !sent && !store.busy && request == nil { await refresh() } }
                 .task {
-                    if let editing { quantity = String(editing.units); orderType = editing.limitCents == nil ? .market : .limit; limitPrice = editing.limitCents.map { String(format: "%.2f", Double($0) / 100) } ?? "" }
+                    await store.refreshCurrencies()
+                    currencySnapshot = store.money
+                    if let editing { quantity = String(editing.units); orderType = editing.limitCents == nil ? .market : .limit; limitPrice = editing.limitCents.map { money.inputText($0) } ?? "" }
+                    originalLimitText = limitPrice
                     await refresh()
                 }
             }
@@ -159,6 +164,7 @@ struct TradeView: View {
     private func summaryLine(_ label: String, _ value: String) -> some View { HStack { Text(label); Spacer(); Text(value).fontWeight(.semibold).monospacedDigit() } }
     private func refresh() async {
         loading = true; defer { loading = false }
+        if !money.available { await store.refreshCurrencies(); currencySnapshot = store.money }
         do { quote = try await store.refreshQuote(instrument.symbol); issue = nil; reviewing = false }
         catch { issue = UserMessage.describe(error) }
     }

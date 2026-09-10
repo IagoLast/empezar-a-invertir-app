@@ -9,15 +9,15 @@ mkdir -p docs/screenshots
 for appearance in light dark; do
   xcrun simctl ui "$device_id" appearance "$appearance"
   for preview_tab in 0 1 2; do
-    xcrun simctl launch --terminate-running-process "$device_id" com.empezarainvertir.app -has-onboarded-v0 YES -preview-tab "$preview_tab" -app-appearance "$appearance" -preview-profile NO -preview-screen main
+    xcrun simctl launch --terminate-running-process "$device_id" com.empezarainvertir.app -maestro-scenario happy -has-onboarded-v0 YES -preview-tab "$preview_tab" -app-appearance "$appearance" -preview-profile NO -preview-screen main
     sleep 3
     xcrun simctl io "$device_id" screenshot "docs/screenshots/iphone-$appearance-$preview_tab.png"
   done
-  xcrun simctl launch --terminate-running-process "$device_id" com.empezarainvertir.app -has-onboarded-v0 YES -preview-tab 0 -app-appearance "$appearance" -preview-profile YES -preview-screen main
+  xcrun simctl launch --terminate-running-process "$device_id" com.empezarainvertir.app -maestro-scenario happy -has-onboarded-v0 YES -preview-tab 0 -app-appearance "$appearance" -preview-profile YES -preview-screen main
   sleep 3
   xcrun simctl io "$device_id" screenshot "docs/screenshots/iphone-$appearance-profile.png"
   for preview_screen in asset trade; do
-    xcrun simctl launch --terminate-running-process "$device_id" com.empezarainvertir.app -has-onboarded-v0 YES -preview-tab 0 -app-appearance "$appearance" -preview-profile NO -preview-screen "$preview_screen"
+    xcrun simctl launch --terminate-running-process "$device_id" com.empezarainvertir.app -maestro-scenario happy -has-onboarded-v0 YES -preview-tab 0 -app-appearance "$appearance" -preview-profile NO -preview-screen "$preview_screen"
     sleep 3
     xcrun simctl io "$device_id" screenshot "docs/screenshots/iphone-$appearance-$preview_screen.png"
   done

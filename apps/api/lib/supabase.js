@@ -35,7 +35,7 @@ const messages = {
 export async function rpc(name, args, authorization, admin = false) {
   const key = config(admin ? 'SUPABASE_SERVICE_ROLE_KEY' : 'SUPABASE_ANON_KEY');
   const response = await fetch(`${config('SUPABASE_URL')}/rest/v1/rpc/${name}`, {
-    method: 'POST', headers: { apikey: key, Authorization: authorization || `Bearer ${key}`, 'Content-Type': 'application/json' },
+    method: 'POST', headers: { apikey: key, Authorization: authorization || `Bearer ${key}`, 'Content-Type': 'application/json', 'Content-Profile': process.env.SUPABASE_DB_SCHEMA || 'public' },
     body: JSON.stringify(args), signal: AbortSignal.timeout(10000)
   });
   const text = await response.text();

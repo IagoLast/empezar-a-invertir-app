@@ -7,16 +7,9 @@ final class AuthScreenTests: XCTestCase {
 
     private func openAuth(_ scenario: String) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["-maestro-scenario", scenario, "-has-onboarded-v0", "YES",
+        app.launchArguments = ["-maestro-scenario", scenario, "-has-seen-introduction", "YES",
                                "-preview-tab", "1", "-preview-profile", "NO", "-preview-screen", "main"]
         app.launch()
-        let search = app.textFields["asset-search"]
-        XCTAssertTrue(search.waitForExistence(timeout: 5))
-        search.tap(); search.typeText("AAPL\n")
-        let asset = app.descendants(matching: .any)["search-result-AAPL"].firstMatch
-        XCTAssertTrue(asset.waitForExistence(timeout: 10)); asset.tap()
-        let login = app.buttons["detail-buy"]
-        XCTAssertTrue(login.waitForExistence(timeout: 5)); login.tap()
         return app
     }
 
@@ -46,30 +39,53 @@ final class AuthScreenTests: XCTestCase {
         capture("Auth recovered")
     }
 
-    func testOfflineErrorCanBeDismissedAndReopened() {
+    func testOfflineErrorKeepsAuthenticationRequiredAndRefreshRecovers() {
         let app = openAuth("auth-error")
         XCTAssertTrue(app.descendants(matching: .any)["auth-load-error"].firstMatch.waitForExistence(timeout: 5))
-        app.buttons["auth-explore"].tap()
-        XCTAssertTrue(app.buttons["detail-buy"].waitForExistence(timeout: 5))
-        app.buttons["detail-buy"].tap()
+        XCTAssertFalse(app.buttons["Cerrar"].exists)
+        XCTAssertFalse(app.buttons["auth-explore"].exists)
+        XCTAssertFalse(app.tabBars.firstMatch.exists)
+        refresh(app)
         XCTAssertTrue(app.buttons["sign-in-apple"].waitForExistence(timeout: 5))
     }
 
-    func testDisabledProvidersOfferAnExitWithoutBrokenButtons() {
+    func testDisabledProvidersCannotBypassAuthentication() {
         let app = openAuth("auth-unavailable")
         XCTAssertTrue(app.descendants(matching: .any)["auth-unavailable"].firstMatch.waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["sign-in-apple"].exists)
         XCTAssertFalse(app.buttons["sign-in-google"].exists)
-        capture("Auth unavailable")
-        app.buttons["auth-explore"].tap()
-        XCTAssertTrue(app.buttons["detail-buy"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["Cerrar"].exists)
+        XCTAssertFalse(app.buttons["auth-explore"].exists)
+        XCTAssertFalse(app.tabBars.firstMatch.exists)
     }
 
-    func testClosingWhileLoadingDoesNotBlockNextPresentation() {
-        let app = openAuth("auth-timeout")
-        XCTAssertTrue(app.descendants(matching: .any)["auth-loading"].firstMatch.waitForExistence(timeout: 3))
-        app.buttons["Cerrar"].tap()
-        app.buttons["detail-buy"].tap()
+    func testIntroductionShowsThreeStepsThenAppleSignIn() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-maestro-scenario", "guest", "-has-seen-introduction", "NO"]
+        app.launch()
+        for title in ["Aprende a invertir", "La bolsa no es complicada", "Este es tu primer paso"] {
+            XCTAssertTrue(app.staticTexts[title].waitForExistence(timeout: 5))
+            XCTAssertFalse(app.buttons["sign-in-apple"].exists)
+            app.buttons["introduction-next"].tap()
+        }
         XCTAssertTrue(app.buttons["sign-in-apple"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.tabBars.firstMatch.exists)
+        app.terminate()
+        app.launchArguments = ["-maestro-scenario", "guest"]
+        app.launch()
+        XCTAssertTrue(app.buttons["sign-in-apple"].waitForExistence(timeout: 5))
+    }
+
+    func testNewAccountCanEnterHomeWithoutBuyingCash() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-maestro-scenario", "first-purchase", "-preview-tab", "0", "-preview-profile", "NO", "-preview-screen", "main"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.descendants(matching: .any)["home-cash-banner"].firstMatch.exists)
+        XCTAssertTrue(app.buttons["Añadir saldo ficticio"].exists)
+        app.buttons["Añadir saldo ficticio"].tap()
+        XCTAssertTrue(app.navigationBars["Saldo virtual"].waitForExistence(timeout: 5))
+        app.buttons["Cerrar"].tap()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
     }
 }

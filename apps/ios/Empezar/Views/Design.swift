@@ -57,6 +57,7 @@ struct PrimaryButton: View {
     var icon = "arrow.right"
     var disabled = false
     var loading = false
+    var backgroundColor: Color = Theme.button
     var action: () -> Void
     var body: some View {
         Button(action: action) {
@@ -67,7 +68,7 @@ struct PrimaryButton: View {
                 if !loading { Image(systemName: icon).font(.subheadline.weight(.semibold)) }
                 Spacer(minLength: 0)
             }.padding(.horizontal, 18).padding(.vertical, 18)
-                .foregroundStyle(.white).background(Theme.button, in: RoundedRectangle(cornerRadius: 16))
+                .foregroundStyle(.white).background(backgroundColor, in: RoundedRectangle(cornerRadius: 16))
         }.buttonStyle(PressStyle()).disabled(disabled || loading).opacity(disabled ? 0.45 : 1)
     }
 }
@@ -144,6 +145,7 @@ struct ChangeLabel: View {
 }
 
 struct AssetRow: View {
+    @EnvironmentObject private var store: AppStore
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let instrument: Instrument
     var quote: Quote?
@@ -178,7 +180,7 @@ struct AssetRow: View {
     }
     private var price: some View {
         VStack(alignment: .trailing, spacing: 6) {
-            Text(quote.map { Money.text($0.priceCents * Int64(units ?? 1)) } ?? "—")
+            Text(quote.map { store.money.text($0.priceCents * Int64(units ?? 1)) } ?? "—")
                 .font(.body.weight(.semibold)).monospacedDigit().foregroundStyle(Theme.ink)
             if let quote { ChangeLabel(percent: quote.changePercent) }
             else { Text("Precio no disponible").font(.caption).foregroundStyle(Theme.muted) }

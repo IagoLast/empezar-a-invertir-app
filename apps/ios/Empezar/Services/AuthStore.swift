@@ -12,13 +12,26 @@ enum Configuration {
               let dict = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: String] else { return [:] }
         return dict
     }()
-    static func value(_ name: String) -> String { values[name] ?? "" }
+    static func value(_ name: String) -> String {
+        if name == "API_BASE_URL", testPurchases { return values["REVENUECAT_TEST_API_BASE_URL"] ?? "" }
+        return values[name] ?? ""
+    }
     static var configured: Bool {
         ["API_BASE_URL", "SUPABASE_URL", "SUPABASE_ANON_KEY"].allSatisfy { !value($0).isEmpty && !value($0).contains("YOUR_") }
     }
-    // Explicit free beta access; disable once Apple products and the backend are ready.
-    static var freePreviewEnabled: Bool { value("FREE_PREVIEW_ENABLED") == "true" }
-    static var purchasesConfigured: Bool { value("REVENUECAT_PUBLIC_KEY").hasPrefix("appl_") && !value("REVENUECAT_PUBLIC_KEY").contains("REPLACE") }
+    static var testPurchases: Bool {
+        #if DEBUG
+        return value("REVENUECAT_TEST_MODE") == "true"
+        #else
+        return false
+        #endif
+    }
+    static var revenueCatKey: String {
+        value(testPurchases ? "REVENUECAT_TEST_KEY" : "REVENUECAT_PUBLIC_KEY")
+    }
+    static var purchasesConfigured: Bool {
+        revenueCatKey.hasPrefix(testPurchases ? "test_" : "appl_") && !revenueCatKey.contains("REPLACE")
+    }
 }
 enum AppError: LocalizedError {
     case message(String)
@@ -149,7 +162,7 @@ enum SessionKeychain {
         guard Configuration.configured,
               let redirect = URL(string: "empezar://auth-callback"),
               var components = URLComponents(string: Configuration.value("SUPABASE_URL") + "/auth/v1/authorize") else {
-            throw AppError.message("El inicio de sesión no está disponible ahora. Puedes seguir explorando los activos y las lecciones.")
+            throw AppError.message("El inicio de sesión no está disponible ahora. Vuelve a intentarlo más tarde.")
         }
         let verifier = Self.nonce()
         components.queryItems = [
@@ -238,7 +251,7 @@ enum SessionKeychain {
         clear()
     }
     private func call(_ path: String, body: [String: Any], bearer: String? = nil) async throws -> Data {
-        guard Configuration.configured, let url = URL(string: Configuration.value("SUPABASE_URL") + "/auth/v1/" + path) else { throw AppError.message("El inicio de sesión no está disponible ahora. Puedes seguir explorando los activos y las lecciones.") }
+        guard Configuration.configured, let url = URL(string: Configuration.value("SUPABASE_URL") + "/auth/v1/" + path) else { throw AppError.message("El inicio de sesión no está disponible ahora. Vuelve a intentarlo más tarde.") }
         var r = URLRequest(url: url); r.httpMethod = "POST"; r.timeoutInterval = 20
         r.setValue(Configuration.value("SUPABASE_ANON_KEY"), forHTTPHeaderField: "apikey")
         r.setValue("application/json", forHTTPHeaderField: "Content-Type")

@@ -8,6 +8,8 @@ Use English for code identifiers, comments, filenames, test descriptions, script
 
 Use pull-to-refresh for reloading screen data instead of refresh buttons. Preserve explicit actions for purchases, purchase restoration and pending-order resolution; refreshing a screen must not submit a trade or initiate a purchase.
 
+Do no test the app manually by default. Use maestro when possible.
+
 ## Local simulator builds
 
 Use `npm run ios:run` to relaunch for manual testing. Real Apple authorization requires simulator signing and embedded entitlements. Never install a `CODE_SIGNING_ALLOWED=NO` test artifact for manual sign-in. Verify the installed candidate with `scripts/verify-ios-simulator-signing.py`.

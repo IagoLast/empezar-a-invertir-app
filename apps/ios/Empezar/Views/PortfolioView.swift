@@ -1,4 +1,5 @@
 import SwiftUI
+import RevenueCat
 
 
 struct PortfolioView: View {
@@ -11,15 +12,17 @@ struct PortfolioView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 header
+                cashBanner
                 balance
                 actions
                 notices
                 positions
-                Text("Dinero virtual · Cuenta en USD").font(.caption).foregroundStyle(Theme.muted)
+                if let message = store.currencyError { Text(message).font(.caption).foregroundStyle(Theme.muted) }
+                Text("Dinero virtual · Importes en \(store.displayCurrency)").font(.caption).foregroundStyle(Theme.muted)
                     .frame(maxWidth: .infinity).padding(.vertical, 8)
             }.padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 24)
         }.appCanvas().toolbar(.hidden, for: .navigationBar)
-            .refreshable { await store.refresh() }
+            .refreshable { await store.refresh(); await store.preparePurchases() }
             .sheet(isPresented: $profile) { ProfileView() }
             .sheet(isPresented: $wallet) { WalletView() }
             .sheet(item: $selling) { TradeView(instrument: $0, side: "sell") }
@@ -40,6 +43,20 @@ struct PortfolioView: View {
             }.accessibilityLabel("Perfil y apariencia").accessibilityIdentifier("open-profile")
         }
     }
+    private var cashBanner: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Label("PONLO EN PRÁCTICA", systemImage: "sparkles")
+                .font(.caption.weight(.bold)).foregroundStyle(Theme.accent)
+            Text("Tu primera cartera empieza aquí")
+                .font(.title2.weight(.bold))
+            Text("Elige tu saldo ficticio y descubre cómo se mueve una inversión. Un pago único, sin suscripción.")
+                .font(.subheadline).foregroundStyle(Theme.muted)
+            PrimaryButton(title: "Añadir saldo ficticio", icon: "plus", disabled: store.busy) { wallet = true }
+            Text(Configuration.testPurchases ? "Modo de pruebas. Las compras no tienen coste." : "El pago es real. El saldo es ficticio y no se puede retirar.")
+                .font(.caption).foregroundStyle(Theme.muted)
+        }.padding(22).background(Theme.pale, in: RoundedRectangle(cornerRadius: 24))
+            .accessibilityIdentifier("home-cash-banner")
+    }
     private var balance: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
@@ -48,7 +65,7 @@ struct PortfolioView: View {
                 Pill(text: "Virtual", icon: "sparkles")
             }
             VStack(alignment: .leading, spacing: 10) {
-                Text(store.portfolio.equityCents.map(Money.text) ?? "—")
+                Text(store.portfolio.equityCents.map(store.money.text) ?? "—")
                     .font(.system(.largeTitle, design: .rounded).weight(.bold)).monospacedDigit()
                     .minimumScaleFactor(0.6).lineLimit(1).contentTransition(.numericText())
                 if !store.signedIn {
@@ -78,8 +95,8 @@ struct PortfolioView: View {
         }.padding(22).dataCard()
     }
     @ViewBuilder private var balanceMetrics: some View {
-        metric("En inversiones", value: store.portfolio.investedCents.map(Money.text) ?? "—", icon: "chart.pie", concept: .investedValue)
-        metric("Disponible", value: Money.text(store.portfolio.availableCashCents), icon: "wallet.bifold", concept: .virtualCash)
+        metric("En inversiones", value: store.portfolio.investedCents.map(store.money.text) ?? "—", icon: "chart.pie", concept: .investedValue)
+        metric("Disponible", value: store.money.text(store.portfolio.availableCashCents), icon: "wallet.bifold", concept: .virtualCash)
     }
     private func metric(_ title: String, value: String, icon: String, concept: LearningConcept? = nil) -> some View {
         VStack(alignment: .leading, spacing: 7) {
@@ -88,7 +105,7 @@ struct PortfolioView: View {
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
     private func profitBadge(_ value: Int64) -> some View {
-        Label(Money.signed(value), systemImage: value < 0 ? "arrow.down.right" : value > 0 ? "arrow.up.right" : "minus")
+        Label(store.money.signed(value), systemImage: value < 0 ? "arrow.down.right" : value > 0 ? "arrow.up.right" : "minus")
             .font(.subheadline.weight(.semibold)).monospacedDigit()
             .foregroundStyle(value < 0 ? Theme.loss : value > 0 ? Theme.gain : Theme.muted)
             .padding(.horizontal, 10).padding(.vertical, 6).background(Theme.pale, in: Capsule())
@@ -152,6 +169,7 @@ struct PortfolioView: View {
 }
 
 struct PositionRow: View {
+    @EnvironmentObject private var store: AppStore
     let instrument: Instrument
     let position: Position
     let quote: Quote?
@@ -175,13 +193,13 @@ struct PositionRow: View {
     @ViewBuilder private var metrics: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Valor actual").font(.caption).foregroundStyle(Theme.muted)
-            Text(quote.map { Money.text(position.marketValueCents(at: $0)) } ?? "—").font(.subheadline.weight(.semibold)).monospacedDigit()
+            Text(quote.map { store.money.text(position.marketValueCents(at: $0)) } ?? "—").font(.subheadline.weight(.semibold)).monospacedDigit()
         }.frame(maxWidth: .infinity, alignment: .leading)
         VStack(alignment: .leading, spacing: 5) {
             Text("Resultado").font(.caption).foregroundStyle(Theme.muted)
             if let quote {
                 let profit = position.profitCents(at: quote)
-                Text(Money.signed(profit)).font(.subheadline.weight(.semibold)).monospacedDigit()
+                Text(store.money.signed(profit)).font(.subheadline.weight(.semibold)).monospacedDigit()
                     .foregroundStyle(profit < 0 ? Theme.loss : profit > 0 ? Theme.gain : Theme.muted)
             } else { Text("—").font(.subheadline) }
         }.frame(maxWidth: .infinity, alignment: .leading)
@@ -236,13 +254,13 @@ struct OrderHistory: View {
                                     .foregroundStyle(Theme.accent).frame(width: 42, height: 42).background(Theme.pale, in: Circle())
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text("\(order.side == "buy" ? "Compra" : "Venta") de \(order.symbol)").font(.body.weight(.semibold))
-                                    Text("\(order.units) unidades · comisión \(Money.text(order.feeCents))").font(.caption).foregroundStyle(Theme.muted)
+                                    Text("\(order.units) unidades · comisión \(store.money.text(order.feeCents))").font(.caption).foregroundStyle(Theme.muted)
                                 }
                             }
                             HStack {
                                 Text(ISO.date(order.createdAt)?.formatted(.dateTime.day().month(.abbreviated).year().hour().minute().locale(Locale(identifier: "es_ES"))) ?? "").font(.caption).foregroundStyle(Theme.muted)
                                 Spacer()
-                                Text(Money.text(order.priceCents * Int64(order.units))).font(.subheadline.weight(.semibold)).monospacedDigit()
+                                Text(store.money.text(order.priceCents * Int64(order.units))).font(.subheadline.weight(.semibold)).monospacedDigit()
                             }
                         }.padding(.vertical, 16)
                         if order.id != store.portfolio.orders.last?.id { Divider().overlay(Theme.line) }
@@ -270,9 +288,9 @@ struct ActivityView: View {
                         TimelineView(.periodic(from: .now, by: 1)) { _ in
                             VStack(alignment: .leading, spacing: 12) {
                                 Label("\(order.side == "buy" ? "Compra" : "Venta") de \(order.symbol)", systemImage: "clock").font(.headline)
-                                Text("\(order.units) unidades · \(Money.text(order.priceCents)) por unidad").font(.subheadline)
+                                Text("\(order.units) unidades · \(store.money.text(order.priceCents)) por unidad").font(.subheadline)
                                 Text(order.editable ? "Pendiente · ejecución prevista a las \((ISO.date(order.executeAt) ?? .now).formatted(date: .omitted, time: .standard))" : "Procesando la ejecución…").font(.caption).foregroundStyle(Theme.muted)
-                                Text(order.side == "buy" ? "Reservado: \(Money.text(order.totalCents))" : "Unidades reservadas: \(order.units)").font(.caption)
+                                Text(order.side == "buy" ? "Reservado: \(store.money.text(order.totalCents))" : "Unidades reservadas: \(order.units)").font(.caption)
                                 HStack {
                                     Button("Editar orden") { editing = order }.accessibilityIdentifier("edit-pending-order")
                                     Spacer()
@@ -287,7 +305,7 @@ struct ActivityView: View {
                     ForEach(store.limitOrders) { order in
                         VStack(alignment: .leading, spacing: 12) {
                             ConceptLabel(title: "Compra de \(order.symbol)", concept: .orderType).font(.headline)
-                            Text("\(order.units) unidades · máximo \(Money.text(order.limitCents)) por unidad").font(.subheadline)
+                            Text("\(order.units) unidades · máximo \(store.money.text(order.limitCents)) por unidad").font(.subheadline)
                             Text("Pendiente · no se ha reservado saldo").font(.caption).foregroundStyle(Theme.muted)
                             PrimaryButton(title: "Comprobar y ejecutar", disabled: store.pendingTrade != nil, loading: store.busy) {
                                 Task { await store.executeLimitOrder(order) }

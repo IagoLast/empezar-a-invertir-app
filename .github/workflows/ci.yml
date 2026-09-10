@@ -36,7 +36,7 @@ jobs:
       PGDATABASE: empezar_test
     steps:
       - uses: actions/checkout@v4
-      - run: psql -v ON_ERROR_STOP=1 -f supabase/test-bootstrap.sql -f supabase/migrations/202609050001_initial.sql -f supabase/migrations/202609070001_global_markets.sql -f supabase/test-wallet.sql -f supabase/test-global-markets.sql -f supabase/migrations/20260907163045_simulated_orders.sql -f supabase/test-simulated-orders.sql -f supabase/migrations/20260907174106_alpha_vantage_cache.sql -f supabase/test-alpha-cache.sql -f supabase/migrations/20260907174558_provider_instruments.sql -f supabase/migrations/20260908120000_simple_investing.sql -f supabase/test-simple-investing.sql
+      - run: psql -v ON_ERROR_STOP=1 -f supabase/test-bootstrap.sql -f supabase/migrations/202609050001_initial.sql -f supabase/migrations/202609070001_global_markets.sql -f supabase/test-wallet.sql -f supabase/test-global-markets.sql -f supabase/migrations/20260907163045_simulated_orders.sql -f supabase/test-simulated-orders.sql -f supabase/migrations/20260907174106_alpha_vantage_cache.sql -f supabase/test-alpha-cache.sql -f supabase/migrations/20260907174558_provider_instruments.sql -f supabase/migrations/20260908120000_simple_investing.sql -f supabase/test-simple-investing.sql -f supabase/migrations/20260910090000_paid_starting_cash.sql -f supabase/test-paid-starting-cash.sql -f supabase/migrations/20260910100000_cash_packs.sql -f supabase/test-cash-packs.sql
   ios:
     runs-on: macos-26
     permissions:

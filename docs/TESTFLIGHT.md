@@ -27,7 +27,7 @@ Create the `testflight` environment in [Settings → Environments](https://githu
 | `SUPABASE_URL` | HTTPS project URL |
 | `SUPABASE_ANON_KEY` | Public publishable/anon key, never service-role |
 | `REVENUECAT_PUBLIC_KEY` | Public iOS `appl_…` SDK key |
-| `FREE_PREVIEW_ENABLED` | Defaults to `true`; `false` gates iOS access on `plus` |
+| `FREE_PREVIEW_ENABLED` | Legacy configuration; ignored by the current authentication/onboarding/cash-purchase flow |
 | `PRIVACY_POLICY_URL` | Published privacy policy HTTPS URL |
 
 Copy Base64 directly to the macOS clipboard without printing it:

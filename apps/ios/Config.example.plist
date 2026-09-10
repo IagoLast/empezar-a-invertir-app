@@ -10,6 +10,12 @@
 	<string></string>
 	<key>REVENUECAT_PUBLIC_KEY</key>
 	<string>appl_RTSnjPlzLPrhdCJHmuxJgfUhKXx</string>
+	<key>REVENUECAT_TEST_API_BASE_URL</key>
+	<string></string>
+	<key>REVENUECAT_TEST_KEY</key>
+	<string></string>
+	<key>REVENUECAT_TEST_MODE</key>
+	<string>false</string>
 	<key>SUPABASE_ANON_KEY</key>
 	<string>YOUR_PUBLISHABLE_KEY</string>
 	<key>SUPABASE_URL</key>

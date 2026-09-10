@@ -14,7 +14,7 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject var store: AppStore
     @Environment(\.scenePhase) private var scenePhase
-    @AppStorage("has-onboarded-v0") private var onboarded = false
+    @State private var introductionCompleted = UserDefaults.standard.bool(forKey: "has-seen-introduction")
     @State private var selected: Int = {
         #if DEBUG
         return UserDefaults.standard.integer(forKey: "preview-tab")
@@ -22,11 +22,22 @@ struct RootView: View {
         return 0
         #endif
     }()
+    private var showsIntroduction: Bool {
+        #if DEBUG
+        if UserDefaults.standard.bool(forKey: "preview-introduction") { return !introductionCompleted }
+        #endif
+        return !store.signedIn && !introductionCompleted
+    }
     var body: some View {
         Group {
-            if (onboarded || store.signedIn) && !store.canAccessApp {
-                PaywallView(required: true)
-            } else if onboarded || store.signedIn {
+            if showsIntroduction {
+                OnboardingView {
+                    UserDefaults.standard.set(true, forKey: "has-seen-introduction")
+                    introductionCompleted = true
+                }
+            } else if !store.signedIn {
+                AuthView(required: true)
+            } else {
                 TabView(selection: $selected) {
                     NavigationStack { portfolioRoot }
                         .tabItem { Label("Inicio", systemImage: "chart.pie.fill") }.tag(0)
@@ -36,11 +47,6 @@ struct RootView: View {
                         .tabItem { Label("Operaciones", systemImage: "arrow.left.arrow.right") }.tag(3)
                     NavigationStack { LearnView() }
                         .tabItem { Label("Aprender", systemImage: "book.closed") }.tag(2)
-                }
-            } else {
-                OnboardingView { authenticate in
-                    onboarded = true
-                    if authenticate { store.showAuth = true }
                 }
             }
         }

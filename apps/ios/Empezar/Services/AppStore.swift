@@ -2,32 +2,40 @@ import SwiftUI
 import RevenueCat
 
 @MainActor final class AppStore: ObservableObject {
+    @Published var displayCurrency = DisplayCurrency.supported.first { $0.id == UserDefaults.standard.string(forKey: "display-currency") }?.id ?? "EUR" {
+        didSet { UserDefaults.standard.set(displayCurrency, forKey: "display-currency") }
+    }
+    @Published var exchangeRates: ExchangeRates?
+    @Published var currencyError: String?
+    var money: CurrencyMoney { CurrencyMoney(currency: displayCurrency, exchangeRates: exchangeRates) }
+    func refreshCurrencies() async {
+        do { exchangeRates = try await api.request("market-preview?resource=currencies", authenticated: false); currencyError = nil }
+        catch { currencyError = UserMessage.describe(error) }
+    }
     @Published var portfolio = Portfolio.empty
     @Published var busy = false
     @Published var marketLoading = false
+    @Published private(set) var portfolioLoaded = false
     @Published var error: String?
     @Published var notice: String?
     @Published var signedIn = false
     @Published var showAuth = false
     @Published var packages: [Package] = []
-    @Published var monthlyPackage: Package?
     @Published var hasSubscription = false
     @Published var purchasesLoading = false
     @Published var purchasesError: String?
-    @Published var trialDescription: String?
     private var customerInfoTask: Task<Void, Never>?
-    var canAccessApp: Bool { Configuration.freePreviewEnabled || hasSubscription }
 
     @Published var pendingPurchase: String?
     @Published var pendingTrade: TradeRequest?
     @Published private(set) var limitOrders: [LocalLimitOrder] = []
-    private var limitKey: String { "limit-orders-\(userKey)" }
+    private var limitKey: String { "limit-orders-\(Configuration.testPurchases ? "sandbox-" : "")\(userKey)" }
     let auth = AuthStore()
     lazy var api = APIClient(auth: auth)
     private var revenueCatReady = false
     private var userKey: String { auth.session?.user.id.lowercased() ?? "guest" }
-    private var pendingKey: String { "pending-purchase-\(userKey)" }
-    private var tradeKey: String { "pending-trade-\(userKey)" }
+    private var pendingKey: String { "pending-purchase-\(Configuration.testPurchases ? "sandbox-" : "")\(userKey)" }
+    private var tradeKey: String { "pending-trade-\(Configuration.testPurchases ? "sandbox-" : "")\(userKey)" }
     init() {
         #if DEBUG && targetEnvironment(simulator)
         if MaestroEnvironment.enabled {
@@ -37,6 +45,7 @@ import RevenueCat
         }
         #endif
         signedIn = auth.session != nil
+
     }
     func start() async {
         guard signedIn else { await refresh(); return }
@@ -48,12 +57,16 @@ import RevenueCat
         await preparePurchases()
         await refresh()
     }
-    func loggedIn() async { signedIn = true; showAuth = false; await start() }
+    func loggedIn() async {
+        signedIn = true; showAuth = false
+        await start()
+    }
     func refresh() async {
         guard !marketLoading else { return }
         marketLoading = true; defer { marketLoading = false }
+        await refreshCurrencies()
         if signedIn {
-            do { portfolio = try await api.request("state"); reconcilePending() }
+            do { portfolio = try await api.request("state"); portfolioLoaded = true; reconcilePending() }
             catch { self.error = UserMessage.describe(error) }
         }
         var quoteError: Error?
@@ -91,7 +104,7 @@ import RevenueCat
     }
     func refreshOrderState() async {
         guard signedIn, !busy else { return }
-        do { portfolio = try await api.request("state"); reconcilePending() }
+        do { portfolio = try await api.request("state"); portfolioLoaded = true; reconcilePending() }
         catch { self.error = UserMessage.describe(error) }
     }
     func cancelOrder(_ order: SimulatedOrder) async {
@@ -126,7 +139,7 @@ import RevenueCat
             guard signedIn, userKey == account, !busy, pendingTrade == nil,
                   limitOrders.contains(where: { $0.id == order.id }) else { return }
             guard order.accepts(quote) else {
-                notice = "La orden sigue pendiente: necesita un precio válido de \(Money.text(order.limitCents)) o menos con el mercado abierto."
+                notice = "La orden sigue pendiente: necesita un precio válido de \(money.text(order.limitCents)) o menos con el mercado abierto."
                 return
             }
             try await trade(TradeRequest(requestId: order.id, symbol: order.symbol, side: "buy", units: order.units, quoteId: quote.id))
@@ -163,7 +176,7 @@ import RevenueCat
         let account = userKey
         do {
             if !Purchases.isConfigured {
-                Purchases.configure(withAPIKey: Configuration.value("REVENUECAT_PUBLIC_KEY"), appUserID: account)
+                Purchases.configure(withAPIKey: Configuration.revenueCatKey, appUserID: account)
             } else if Purchases.shared.appUserID != account {
                 _ = try await Purchases.shared.logIn(account)
             }
@@ -181,46 +194,14 @@ import RevenueCat
             }
             let offerings = try await Purchases.shared.offerings()
             guard signedIn, userKey == account else { return }
-            packages = (offerings["virtual-cash"]?.availablePackages ?? []).filter { ["ei.cash.10000", "ei.cash.25000"].contains($0.storeProduct.productIdentifier) }.sorted { $0.storeProduct.price < $1.storeProduct.price }
-            let monthly = offerings["plus"]?.monthly
-            monthlyPackage = monthly?.storeProduct.productIdentifier == "ei.plus.monthly" ? monthly : nil
-            trialDescription = nil
-            if let product = monthlyPackage?.storeProduct,
-               let offer = product.introductoryDiscount, offer.paymentMode == .freeTrial {
-                let eligibility = await Purchases.shared.checkTrialOrIntroDiscountEligibility(product: product)
-                guard signedIn, userKey == account else { return }
-                if eligibility == .eligible {
-                    trialDescription = Self.periodDescription(offer.subscriptionPeriod, count: offer.numberOfPeriods)
-                }
-            }
+            packages = (offerings["virtual-cash"]?.availablePackages ?? []).filter { CashPack.cents[$0.storeProduct.productIdentifier] != nil }.sorted { $0.storeProduct.price < $1.storeProduct.price }
+
         } catch {
             purchasesError = "No hemos podido cargar las compras. Comprueba tu conexión e inténtalo de nuevo."
         }
     }
     private func updateAccess(_ info: CustomerInfo) {
         hasSubscription = info.entitlements["plus"]?.isActive == true
-    }
-    private static func periodDescription(_ period: SubscriptionPeriod, count: Int) -> String {
-        let value = period.value * count
-        let unit: String
-        switch period.unit {
-        case .day: unit = value == 1 ? "día" : "días"
-        case .week: unit = value == 1 ? "semana" : "semanas"
-        case .month: unit = value == 1 ? "mes" : "meses"
-        case .year: unit = value == 1 ? "año" : "años"
-        @unknown default: return "un periodo de prueba"
-        }
-        return "\(value) \(unit)"
-    }
-    func subscribe() async {
-        guard signedIn, revenueCatReady, let package = monthlyPackage, !busy else { return }
-        busy = true; purchasesError = nil; defer { busy = false }
-        do {
-            let result = try await Purchases.shared.purchase(package: package)
-            guard !result.userCancelled else { return }
-            updateAccess(result.customerInfo)
-            if !hasSubscription { purchasesError = "Tu suscripción está pendiente de confirmación por Apple. Puedes restaurar las compras cuando se apruebe." }
-        } catch { purchasesError = UserMessage.describe(error) }
     }
     func restorePurchases() async {
         guard signedIn, !busy else { return }
@@ -229,11 +210,14 @@ import RevenueCat
         busy = true; purchasesError = nil; defer { busy = false }
         do {
             updateAccess(try await Purchases.shared.restorePurchases())
-            if !hasSubscription { purchasesError = "No se ha encontrado una suscripción activa para esta cuenta de Apple." }
+            await refresh()
+            notice = portfolio.hasConfirmedCashPurchase
+                ? "Tu saldo y tus compras están sincronizados."
+                : "El saldo comprado se recupera iniciando sesión en la misma cuenta. Si acabas de pagar, espera a que se confirme la compra y desliza hacia abajo."
         } catch { purchasesError = UserMessage.describe(error) }
     }
     func purchase(_ package: Package) async {
-        guard signedIn, revenueCatReady, !busy, pendingPurchase == nil else { return }
+        guard signedIn, portfolioLoaded, revenueCatReady, !busy, pendingPurchase == nil else { return }
         busy = true; defer { busy = false }
         do {
             let result = try await Purchases.shared.purchase(package: package)
@@ -266,8 +250,8 @@ import RevenueCat
         guard !busy, !purchasesLoading else { return }
         customerInfoTask?.cancel(); customerInfoTask = nil
         await auth.signOut()
-        hasSubscription = false; monthlyPackage = nil; trialDescription = nil; purchasesError = nil
-        signedIn = false; limitOrders = []; portfolio = .empty; packages = []; pendingPurchase = nil; pendingTrade = nil; revenueCatReady = false
+        hasSubscription = false; purchasesError = nil
+        signedIn = false; portfolioLoaded = false; limitOrders = []; portfolio = .empty; packages = []; pendingPurchase = nil; pendingTrade = nil; revenueCatReady = false
         if Purchases.isConfigured { _ = try? await Purchases.shared.logOut() }
     }
     func deleteAccount() async {

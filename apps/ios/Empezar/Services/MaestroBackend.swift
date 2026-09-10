@@ -14,7 +14,14 @@ enum MaestroEnvironment {
 
 final class MaestroURLProtocol: URLProtocol {
     private static let lock = NSLock()
-    private static var portfolio = Portfolio.empty
+    private static var portfolio: Portfolio = {
+        var result = Portfolio.empty
+        if MaestroEnvironment.scenario == "first-purchase" { return result }
+        result.cashCents = 1_000_000
+        result.contributedCents = 1_000_000
+        result.purchases = [PurchaseReceipt(transactionId: "fixture-purchase", productId: "ei.cash.10000", credited: true, refunded: false)]
+        return result
+    }()
     private static var failedState = false
     private static var failedLesson = false
     override class func canInit(with request: URLRequest) -> Bool { true }
@@ -57,7 +64,7 @@ final class MaestroURLProtocol: URLProtocol {
         func problem(_ code: String, _ message: String, status: Int = 409) throws -> (Int, Data) {
             (status, try JSONSerialization.data(withJSONObject: ["error": code, "message": message]))
         }
-        guard ["happy", "slow-market", "guest", "trade-rejected", "trade-response-lost", "market-closed", "quote-expired", "state-retry", "lesson-retry", "auth-timeout", "auth-error", "auth-unavailable"].contains(MaestroEnvironment.scenario ?? "") else {
+        guard ["happy", "first-purchase", "slow-market", "guest", "trade-rejected", "trade-response-lost", "market-closed", "quote-expired", "state-retry", "lesson-retry", "auth-timeout", "auth-error", "auth-unavailable"].contains(MaestroEnvironment.scenario ?? "") else {
             return try problem("UNKNOWN_SCENARIO", "Escenario Maestro desconocido.", status: 500)
         }
         let publicQuote = request.httpMethod == "GET" && ["/api/quote", "/api/search", "/api/history", "/api/company-logo"].contains(request.url?.path ?? "")
@@ -69,6 +76,10 @@ final class MaestroURLProtocol: URLProtocol {
             .queryItems?.first(where: { $0.name == "symbol" })?.value ?? ""
         if MaestroEnvironment.scenario == "slow-market" && ["/api/quote", "/api/history"].contains(request.url!.path) {
             Thread.sleep(forTimeInterval: 3)
+        }
+        if request.httpMethod == "GET", request.url!.path == "/api/market-preview",
+           URLComponents(url: request.url!, resolvingAgainstBaseURL: false)?.queryItems?.contains(where: { $0.name == "resource" && $0.value == "currencies" }) == true {
+            return try json(ExchangeRates(base: "EUR", date: String(ISO8601DateFormatter().string(from: .now).prefix(10)), source: "Test fixture", rates: ["EUR": 1, "USD": 1.2, "GBP": 0.8, "JPY": 180]))
         }
         switch (request.httpMethod ?? "GET", request.url!.path) {
         case ("GET", "/api/company-logo"):
